@@ -1,0 +1,155 @@
+{
+	autofocus_id: "7A08000000000101"
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "recovered_evidence"
+	group: ""
+	icon: "oldcivilisation:personal_data_chip"
+	id: "7A08000000000000"
+	images: [ ]
+	order_index: 5
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&8[ EVIDENCE LOG ]&r"
+				""
+				"&7A catalogue, nothing more. Every object recovered from the world before ours gets an entry here.&r"
+				""
+				"&8I do not interpret them. I only record that they exist, and how many I have found. The picture — if there is one — is not my job to draw.&r"
+				""
+				"&8Cross-reference pending. Always pending.&r"
+			]
+			icon: "oldcivilisation:personal_data_chip"
+			id: "7A08000000000101"
+			optional: true
+			rewards: [{ id: "7A08000000000301", type: "xp", xp: 10 }]
+			shape: "hexagon"
+			size: 1.5d
+			subtitle: "Recovered Evidence"
+			tasks: [{ id: "7A08000000000201", item: "oldcivilisation:personal_data_chip", type: "item" }]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A08000000000101"]
+			description: ["&8[ CATALOGUE: PERSONAL EFFECTS ]&r", "", "&7Ordinary lives. The hardest evidence to read, because none of it thinks it is evidence.&r"]
+			id: "7A08000000000102"
+			optional: true
+			rewards: [
+				{ id: "7A08000000000302", type: "xp", xp: 20 }
+				{ count: 8, id: "7A08000000000303", item: "oldcivilisation:old_currency", type: "item" }
+			]
+			subtitle: "Personal Effects"
+			tasks: [
+				{ id: "7A08000000000202", item: "oldcivilisation:id_badge", type: "item" }
+				{ id: "7A08000000000203", item: "oldcivilisation:damaged_photo", type: "item" }
+				{ id: "7A08000000000204", item: "oldcivilisation:employee_handbook", type: "item" }
+			]
+			x: -2.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["7A08000000000101"]
+			description: ["&8[ CATALOGUE: TECHNICAL RECORDS ]&r", "", "&7The engineers' account. Confident, precise, and&r &8— note —&r &7never quite admitting fault.&r"]
+			id: "7A08000000000103"
+			optional: true
+			rewards: [{ id: "7A08000000000304", type: "xp", xp: 20 }]
+			subtitle: "Technical Records"
+			tasks: [
+				{ id: "7A08000000000205", item: "oldcivilisation:incident_report", type: "item" }
+				{ id: "7A08000000000206", item: "oldcivilisation:containment_label", type: "item" }
+				{ id: "7A08000000000207", item: "oldcivilisation:audio_log", type: "item" }
+			]
+			x: 0.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["7A08000000000101"]
+			description: ["&8[ CATALOGUE: MAGICAL RECORDS ]&r", "", "&7The mystics' account. It contradicts the engineers on the single most important point.&r"]
+			id: "7A08000000000104"
+			optional: true
+			rewards: [{ id: "7A08000000000305", type: "xp", xp: 20 }]
+			subtitle: "Magical Records"
+			tasks: [
+				{ id: "7A08000000000208", item: "oldcivilisation:memory_fragment_faded", type: "item" }
+				{ id: "7A08000000000209", item: "oldcivilisation:arcane_notes", type: "item" }
+				{ id: "7A0800000000020A", item: "oldcivilisation:bound_thought", type: "item" }
+			]
+			x: 2.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["7A08000000000101"]
+			description: ["&8[ CATALOGUE: HORROR EVIDENCE ]&r", "", "&7Physical remains that do not obey physical rules. Handle, record, do not theorise aloud.&r"]
+			id: "7A08000000000105"
+			optional: true
+			rewards: [{ id: "7A08000000000306", type: "xp", xp: 25 }]
+			subtitle: "Horror Evidence"
+			tasks: [
+				{ id: "7A0800000000020B", item: "oldcivilisation:biological_sample", type: "item" }
+				{ id: "7A0800000000020C", item: "oldcivilisation:impossible_bone", type: "item" }
+				{ id: "7A0800000000020D", item: "oldcivilisation:corrupted_map_fragment", type: "item" }
+			]
+			x: 2.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["7A08000000000101"]
+			description: ["&8[ CATALOGUE: EXODUS RECORDS ]&r", "", "&7Someone left. These are the papers they dropped on the way out.&r"]
+			id: "7A08000000000106"
+			optional: true
+			rewards: [{ id: "7A08000000000307", type: "xp", xp: 25 }]
+			subtitle: "Exodus Records"
+			tasks: [
+				{ id: "7A0800000000020E", item: "oldcivilisation:colony_manifest", type: "item" }
+				{ id: "7A0800000000020F", item: "oldcivilisation:navigation_fragment", type: "item" }
+				{ id: "7A08000000000210", item: "oldcivilisation:flight_recorder_launch", type: "item" }
+			]
+			x: 0.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A08000000000101"]
+			description: ["&8[ CATALOGUE: ANOMALOUS OBJECTS ]&r", "", "&7These entries update themselves. I did not write the later lines. I do not know who did.&r"]
+			id: "7A08000000000107"
+			optional: true
+			rewards: [{ id: "7A08000000000308", type: "xp", xp: 30 }]
+			subtitle: "Anomalous Objects"
+			tasks: [
+				{ id: "7A08000000000211", item: "oldcivilisation:signal_device", type: "item" }
+				{ id: "7A08000000000212", item: "oldcivilisation:unstable_memory", type: "item" }
+			]
+			x: -2.0d
+			y: 1.5d
+		}
+		{
+			dependencies: ["7A08000000000102", "7A08000000000103", "7A08000000000104", "7A08000000000105", "7A08000000000106", "7A08000000000107"]
+			dependency_requirement: "all_completed"
+			description: [
+				"&8[ CATALOGUE: COMPLETE ]&r"
+				""
+				"&7Every category filled. Five accounts that do not agree, and one object that ends the argument.&r"
+				""
+				"&8I laid them out on the table together for the first time tonight. I understood, all at once, what they add up to.&r"
+				""
+				"&8I have not slept since.&r"
+			]
+			icon: "oldcivilisation:correction_fragment"
+			id: "7A08000000000108"
+			optional: true
+			rewards: [
+				{ id: "7A08000000000309", type: "xp", xp: 100 }
+				{ id: "7A0800000000030A", type: "xp_levels", xp_levels: 5 }
+			]
+			shape: "diamond"
+			size: 1.5d
+			subtitle: "The Whole Picture"
+			tasks: [{ id: "7A08000000000213", item: "oldcivilisation:correction_fragment", type: "item" }]
+			x: 4.5d
+			y: 0.0d
+		}
+	]
+	title: "Recovered Evidence"
+}

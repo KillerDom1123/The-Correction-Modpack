@@ -1,0 +1,234 @@
+{
+	autofocus_id: "7A04000000000101"
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "recovered_data"
+	group: ""
+	icon: "ae2:controller"
+	id: "7A04000000000000"
+	images: [ ]
+	order_index: 3
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&8[ ARCHIVE PATH — \"THE TRUTH EXISTS. SOMEONE REMOVED IT.\" ]&r"
+				""
+				"&7The old systems were not built to hold materials. They were built to hold information — and to keep holding it long after their builders were gone.&r"
+				""
+				"&7\"The old systems were designed to preserve information.\"&r"
+				""
+				"&8Objective: bring one of these systems back online. Then we can start reading.&r"
+			]
+			id: "7A04000000000101"
+			rewards: [
+				{ id: "7A04000000000301", type: "xp", xp: 25 }
+				{ count: 2, id: "7A04000000000302", item: "ae2:item_storage_cell_1k", type: "item" }
+				{ count: 16, id: "7A04000000000303", item: "ae2:certus_quartz_crystal", type: "item" }
+				{ count: 4, id: "7A04000000000304", item: "ae2:logic_processor", type: "item" }
+			]
+			shape: "hexagon"
+			size: 1.5d
+			subtitle: "Storage Is Not Enough"
+			tasks: [
+				{ id: "7A04000000000201", item: "ae2:inscriber", type: "item" }
+				{ id: "7A04000000000202", item: "ae2:controller", type: "item" }
+				{ id: "7A04000000000203", item: "ae2:drive", type: "item" }
+				{ id: "7A04000000000204", item: "ae2:terminal", type: "item" }
+			]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A04000000000101"]
+			description: [
+				"&8[ SYSTEM ANALYSIS ]&r"
+				""
+				"&7The more I connect, the clearer it becomes. This was never a warehouse. Every cell cross-references every other. It recalls.&r"
+				""
+				"&7\"This was not storage.\"&r"
+				"&7\"This was memory.\"&r"
+			]
+			id: "7A04000000000102"
+			rewards: [
+				{ id: "7A04000000000305", type: "xp", xp: 25 }
+				{ id: "7A04000000000306", item: "ae2:item_storage_cell_4k", type: "item" }
+				{ count: 4, id: "7A04000000000307", item: "ae2:calculation_processor", type: "item" }
+				{ count: 8, id: "7A04000000000308", item: "ae2:blank_pattern", type: "item" }
+			]
+			subtitle: "Networks"
+			tasks: [
+				{ id: "7A04000000000205", item: "ae2:wireless_terminal", type: "item" }
+				{ id: "7A04000000000206", item: "ae2:import_bus", type: "item" }
+				{ id: "7A04000000000207", item: "ae2:export_bus", type: "item" }
+			]
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A04000000000102"]
+			description: [
+				"&8[ SYSTEM ANALYSIS — AUTONOMY ]&r"
+				""
+				"&7It does not wait for instructions any more. Given a pattern, it acts. The system rebuilds whatever it is missing, on its own.&r"
+				""
+				"&8I recovered a partial index while it worked. Fragments of a record we were not meant to keep.&r"
+			]
+			id: "7A04000000000103"
+			rewards: [
+				{ id: "7A04000000000309", type: "xp", xp: 30 }
+				{ count: 8, id: "7A0400000000030A", item: "ae2:matter_ball", type: "item" }
+				{ count: 16, id: "7A0400000000030B", item: "ae2:blank_pattern", type: "item" }
+				{ id: "7A0400000000030C", item: "ae2:item_storage_cell_4k", type: "item" }
+			]
+			subtitle: "Automation"
+			tasks: [
+				{ id: "7A04000000000208", item: "ae2:pattern_encoding_terminal", type: "item" }
+				{ id: "7A04000000000209", item: "ae2:molecular_assembler", type: "item" }
+				{ id: "7A0400000000020A", item: "ae2:pattern_provider", type: "item" }
+			]
+			x: 5.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A04000000000103"]
+			description: [
+				"&8[ RECOVERED FRAGMENT #12 ]&r"
+				""
+				"&7The following document was recovered from an unknown facility. Large portions are corrupted.&r"
+				""
+				"&8\"...the timeline is continuous until the final period...\"&r"
+				"&8\"...after which no entries exist...\"&r"
+				"&8\"...the gap is not damage. the gap is uniform...\"&r"
+				""
+				"&7\"The final records were not lost.\"&r"
+				"&7\"They were deliberately removed.\"&r"
+				""
+				"&8Cause unknown.&r"
+			]
+			hide: true
+			hide_dependency_lines: true
+			icon: "minecraft:knowledge_book"
+			id: "7A04000000000104"
+			rewards: [
+				{ id: "7A0400000000030D", type: "xp", xp: 40 }
+				{ id: "7A0400000000030E", type: "xp_levels", xp_levels: 3 }
+				{ id: "7A0400000000030F", item: "minecraft:writable_book", type: "item" }
+				{ count: 4, id: "7A04000000000310", item: "ae2:matter_ball", type: "item" }
+			]
+			subtitle: "The Missing Years"
+			tasks: [{
+				count: 3
+				id: "7A0400000000020B"
+				item: "oldcivilisation:incident_report"
+				type: "item"
+			}]
+			x: 7.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A04000000000103"]
+			description: [
+				"&8[ SYSTEM ANALYSIS — FABRICATION ]&r"
+				""
+				"&7The system does not just recall. It&r &8makes&r&7. Given a recipe and materials, it fabricates on request. The Crafting Unit is the recovered heart of that process.&r"
+				""
+				"&8Objective: build a Crafting CPU — a Crafting Unit, a 1k Storage, an Accelerator — and a Storage Bus to feed it.&r"
+			]
+			icon: "ae2:1k_crafting_storage"
+			id: "7A04000000000105"
+			rewards: [
+				{ id: "7A04000000000311", type: "xp", xp: 30 }
+				{ count: 2, id: "7A04000000000312", item: "ae2:1k_crafting_storage", type: "item" }
+			]
+			subtitle: "Crafting on Demand"
+			tasks: [
+				{ id: "7A0400000000020C", item: "ae2:crafting_unit", type: "item" }
+				{ id: "7A0400000000020D", item: "ae2:1k_crafting_storage", type: "item" }
+				{ id: "7A0400000000020E", item: "ae2:crafting_accelerator", type: "item" }
+				{ id: "7A0400000000020F", item: "ae2:storage_bus", type: "item" }
+			]
+			x: 5.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A04000000000105"]
+			description: [
+				"&8[ SYSTEM ANALYSIS — ONE MIND ]&r"
+				""
+				"&7The network does not think in places. A point here is a point there. The recovered tunnels carry anything — items, power, even signals — between two ends as if the space between were folded away.&r"
+				""
+				"&8Objective: expand capacity and reach — a 16k cell, a P2P tunnel, a Level Emitter to let the system act on its own.&r"
+			]
+			icon: "ae2:item_storage_cell_16k"
+			id: "7A04000000000106"
+			rewards: [
+				{ id: "7A04000000000313", type: "xp", xp: 30 }
+				{ id: "7A04000000000314", item: "ae2:item_storage_cell_16k", type: "item" }
+			]
+			subtitle: "One Mind, Many Hands"
+			tasks: [
+				{ id: "7A04000000000210", item: "ae2:item_storage_cell_16k", type: "item" }
+				{ id: "7A04000000000211", item: "ae2:me_p2p_tunnel", type: "item" }
+				{ id: "7A04000000000212", item: "ae2:level_emitter", type: "item" }
+			]
+			x: 6.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A04000000000106"]
+			description: [
+				"&8[ SYSTEM ANALYSIS — BEYOND THE NETWORK ]&r"
+				""
+				"&7The last recovered schematics stop describing storage and start describing&r &8space&r&7. A ring that links networks across any distance. A field that stores a room inside a block. This is where their engineering and their&r &8other&r &7research begin to look like the same thing.&r"
+				""
+				"&8Objective: build a Quantum Network Bridge (Ring + Link) and a Spatial IO Port.&r"
+			]
+			icon: "ae2:quantum_ring"
+			id: "7A04000000000107"
+			rewards: [
+				{ id: "7A04000000000315", type: "xp", xp: 40 }
+				{ id: "7A04000000000316", item: "ae2:item_storage_cell_64k", type: "item" }
+				{ id: "7A04000000000317", item: "ae2:matter_cannon", type: "item" }
+			]
+			subtitle: "Beyond the Network"
+			tasks: [
+				{ id: "7A04000000000213", item: "ae2:quantum_ring", type: "item" }
+				{ id: "7A04000000000214", item: "ae2:quantum_link", type: "item" }
+				{ id: "7A04000000000215", item: "ae2:spatial_io_port", type: "item" }
+			]
+			x: 8.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A04000000000102"]
+			description: [
+				"&8[ RECOVERED SYSTEM — IT STILL RUNS ]&r"
+				""
+				"&7Not every machine they left is silent. Some of the recovered terminals still boot. They wait for input. They expect an operator who is not coming.&r"
+				""
+				"&8Objective: build a working computer — a Computer, a Disk Drive, a Monitor, a wireless Modem. See what it still remembers how to do.&r"
+				""
+				"&8On a booted terminal, type&r &farchive&r&8. For the sealed records, leave recovered media in the attached drive.&r"
+			]
+			icon: "computercraft:computer_advanced"
+			id: "7A04000000000108"
+			rewards: [
+				{ id: "7A04000000000318", type: "xp", xp: 30 }
+				{ id: "7A04000000000319", item: "computercraft:computer_advanced", type: "item" }
+				{ count: 4, id: "7A0400000000031A", item: "computercraft:disk", type: "item" }
+			]
+			subtitle: "The Machines That Think"
+			tasks: [
+				{ id: "7A04000000000216", item: "computercraft:computer_normal", type: "item" }
+				{ id: "7A04000000000217", item: "computercraft:disk_drive", type: "item" }
+				{ id: "7A04000000000218", item: "computercraft:monitor_normal", type: "item" }
+				{ id: "7A04000000000219", item: "computercraft:wireless_modem_normal", type: "item" }
+			]
+			x: 2.5d
+			y: -2.0d
+		}
+	]
+	title: "Recovered Data"
+}

@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "description": "Slows the day/night cycle to ~30 minutes per full day"
+  }
+}

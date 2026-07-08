@@ -1,0 +1,1103 @@
+{
+	autofocus_id: "2B70445E6CD99EDB"
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "when_dungeons_arise"
+	group: ""
+	icon: {
+		Count: 1
+		id: "minecraft:golden_sword"
+		tag: {
+			Damage: 0
+		}
+	}
+	id: "231570DE6A7FCD52"
+	images: [{
+		height: 4.0d
+		image: "wda_questline:textures/quests/wda_logo.png"
+		rotation: 0.0d
+		width: 8.0d
+		x: -1.5d
+		y: -5.5d
+	}]
+	order_index: 8
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"Strange structures have begun rising from the land. Mysterious dungeons, fortresses, and towers that pierce the skies. No one knows where they came from, only that they’re teeming with hostile creatures, forgotten treasures, and powerful secrets."
+				""
+				"Your task is to venture forth and uncover the mysteries of these ancient places. Each dungeon holds new dangers, but also the keys to survival: weapons, artifacts, and knowledge that will aid you in the trials ahead."
+				""
+				"Prepare yourself adventurer. &6Exploration&r and courage are the only ways to thrive in this world where the land itself rises against you."
+			]
+			id: "2B70445E6CD99EDB"
+			rewards: [
+				{
+					id: "7FD99A708C86052D"
+					type: "xp"
+					xp: 5
+				}
+				{
+					id: "087CC88DE747A5FC"
+					item: {
+						Count: 1
+						id: "minecraft:stone_sword"
+						tag: {
+							Damage: 0
+							Enchantments: [{
+								id: "minecraft:smite"
+								lvl: 3s
+							}]
+						}
+					}
+					type: "item"
+				}
+			]
+			shape: "diamond"
+			size: 3.0d
+			tasks: [{
+				advancement: "dungeons_arise:wda_root"
+				criterion: ""
+				id: "370B39E72DBEF94E"
+				type: "advancement"
+			}]
+			x: -1.5d
+			y: -1.0d
+		}
+		{
+			description: ["Cresting the waves like a shadow of the past, this cursed vessel is crewed by skeletons that seem impossible to keep down. Every deck hides danger, every hold whispers of lost treasure and every strike you land may be fleeting. Only the bold (or the foolhardy) dare to face its relentless undead crew."]
+			hide_dependency_lines: true
+			id: "14857DBF1DCBF100"
+			rewards: [
+				{
+					id: "3B0CBC79B26DEE87"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "5420B558F928C72A"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find an Undead Pirate Ship"
+			tasks: [{
+				advancement: "dungeons_arise:find_undead_pirate_ship"
+				criterion: ""
+				id: "3C3E2DBE1F5C68F1"
+				type: "advancement"
+			}]
+			x: 2.5d
+			y: -1.5d
+		}
+		{
+			description: ["A sprawling underground stronghold, the Scorched Mines radiate in four cardinal directions from a central dome. Heat and shadows fill the tunnels, and danger lurks at every turn. Brave adventurers who navigate its branching paths may uncover riches, but only if they survive the hazards within."]
+			hide_dependency_lines: true
+			id: "6BFE5D35265080E6"
+			rewards: [
+				{
+					id: "6116703F46D417E7"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "549C34F6FFCE5D4D"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find the Scorched Mines"
+			tasks: [{
+				advancement: "dungeons_arise:find_scorched_mines"
+				criterion: ""
+				id: "4CF084A779395E48"
+				type: "advancement"
+			}]
+			x: 1.5d
+			y: 1.5d
+		}
+		{
+			description: ["Deep within this subterranean city, the heat of molten lava and the hum of industry dominate the air. The Nether’s influence is strong here, fueling forges and animating Forge Sentinels that patrol every corridor. Only those prepared for fire and steel will survive, and claim the treasures forged within."]
+			id: "0B89EB36AC565461"
+			rewards: [
+				{
+					id: "0D6D26CC6DE6A964"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "149BFF2F5A5CDEE8"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Foundry"
+			tasks: [{
+				advancement: "dungeons_arise:find_foundry"
+				criterion: ""
+				id: "69A779F12F35E890"
+				type: "advancement"
+			}]
+			x: 2.5d
+			y: 1.5d
+		}
+		{
+			description: ["In the wilds rests the skeletal form of a great creature. its skeleton stretching skyward like branches of pale bone. Whether a relic of forgotten myth or a beast once hunted to extinction, none can say. Its silent frame endures as a monument to creatures long lost."]
+			hide_dependency_lines: true
+			id: "73D5EE5238C37982"
+			rewards: [
+				{
+					id: "7802AF75E530B01C"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "36708F4170C7CB76"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Ceryneian Hind"
+			tasks: [{
+				advancement: "dungeons_arise:find_ceryneian_hind"
+				criterion: ""
+				id: "486BDCC199790197"
+				type: "advancement"
+			}]
+			x: 4.5d
+			y: -1.5d
+		}
+		{
+			description: ["Half-submerged in the oceans lie the petrified remains of a colossal beast, its skeletal form stretching farther than the eye can follow. Was it a creature of the deep, dragged ashore in ages past—or did it fall from the heavens themselves? No records remain, only questions carved into stone."]
+			id: "21426F5EEC922866"
+			rewards: [
+				{
+					id: "15CEBAEFF468DAAB"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2BFCF9350529EE9A"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Typhon"
+			tasks: [{
+				advancement: "dungeons_arise:find_typhon"
+				criterion: ""
+				id: "5A189369C3178897"
+				type: "advancement"
+			}]
+			x: 3.5d
+			y: -1.5d
+		}
+		{
+			description: ["Nestled among the trees, this lively tavern is usually a haven for villagers looking to unwind. Yet when the ale flows too freely, even the most peaceful patrons turn aggressive, defending their pub with surprising ferocity. Enter carefully or risk being caught in a drunken brawl."]
+			hide_dependency_lines: true
+			id: "0331AC0315EBB66D"
+			rewards: [
+				{
+					id: "462E17605659C551"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "421063868BC25501"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Greenwood Pub"
+			tasks: [{
+				advancement: "dungeons_arise:find_greenwood_pub"
+				criterion: ""
+				id: "4D2D40477EC05FB4"
+				type: "advancement"
+			}]
+			x: 3.5d
+			y: 1.5d
+		}
+		{
+			description: ["Far below the surface lies a twisted network of chambers, where the air is thick with disease and shadow. Once a place of treatment, it now resembles a burial ground for forgotten rulers, its halls echoing with the whispers of those long lost. Only the brave (or the desperate) dare to tread these haunted corridors."]
+			id: "2EFC5DBD8122A0AE"
+			rewards: [
+				{
+					id: "139E2F3D51F47B4A"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "668972F10C3A8DE3"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Plague Asylum"
+			tasks: [{
+				advancement: "dungeons_arise:find_plague_asylum"
+				criterion: ""
+				id: "5DF446F246D1DC36"
+				type: "advancement"
+			}]
+			x: 4.5d
+			y: 1.5d
+		}
+		{
+			description: ["Far beneath the surface lies a labyrinth of rails and tunnels, carved by long-forgotten hands. The air is thick with dust and danger. Creatures lurk in the shadows, and the echoes of minecarts rattle through the dark. Yet for those who endure, veins of treasure and hidden chambers make the descent worthwhile."]
+			hide_dependency_lines: true
+			id: "76DAECF378BA3F19"
+			rewards: [
+				{
+					id: "33068FEF0FFB1911"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "61A32621F26F549B"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Mining System"
+			tasks: [{
+				advancement: "dungeons_arise:find_mining_system"
+				criterion: ""
+				id: "2416EC8365995B78"
+				type: "advancement"
+			}]
+			x: -6.5d
+			y: 0.0d
+		}
+		{
+			description: ["ladder stretches skyward, disappearing into the clouds. At its top floats a strange, floating vessel. What secrets or dangers await above, none can say… except that the view alone is enough to make even the bravest adventurer’s stomach turn."]
+			hide_dependency_lines: true
+			id: "0CE50A7F4F1A0E4D"
+			rewards: [
+				{
+					id: "58E4ADD659F5B0C1"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "623D1287910FE216"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Small Blimp"
+			tasks: [{
+				advancement: "dungeons_arise:find_small_blimp"
+				criterion: ""
+				id: "2D6219A0EDC7F9DD"
+				type: "advancement"
+			}]
+			x: -2.0d
+			y: 1.5d
+		}
+		{
+			description: ["Suspended in the sky, this floating steampunk city glows in hues of orange and green. Strange, gear-driven inhabitants roam its platforms, each dominated by a singular central eye or monocle. Enter with caution, this mechanical hive is as clever as it is imposing, and its secrets are tightly guarded."]
+			id: "6447492FAA873F93"
+			rewards: [
+				{
+					id: "4C3412D52C1A4DBB"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "47BA93BE6DA64253"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Mechanical Nest"
+			tasks: [{
+				advancement: "dungeons_arise:find_mechanical_nest"
+				criterion: ""
+				id: "679C5F8751B9BA19"
+				type: "advancement"
+			}]
+			x: -2.0d
+			y: 2.5d
+		}
+		{
+			dependency_requirement: "one_started"
+			description: ["Driven from their villages, these hardy merchants now wander the wilds, taking shelter beneath simple cyan and brown tents. Though weary from exile, they still offer trade and refuge to travelers brave enough to seek them out. In a world rising with danger, such camps are rare havens of trust."]
+			hide_dependency_lines: true
+			id: "67030CEFEC1CEF37"
+			rewards: [
+				{
+					id: "663936F61FD8BD7D"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "618167E3C75BE899"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Merchant Campsite"
+			tasks: [{
+				advancement: "dungeons_arise:find_merchant_campsite"
+				criterion: ""
+				id: "4B08627F4A1AFF06"
+				type: "advancement"
+			}]
+			x: 1.5d
+			y: -3.0d
+		}
+		{
+			description: ["From a distance, it looks peaceful. Fields of golden wheat swaying beside a proud windmill. But don’t be deceived: the Illagers tend no crops for trade. Behind the rustic facade lies a nest of evil, their blades as sharp as the sickles they carry."]
+			id: "6A0237FADC519965"
+			rewards: [
+				{
+					id: "452B3FC858AB1E86"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "05C7C6EB1EC0452C"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find an Illager Windmill"
+			tasks: [{
+				advancement: "dungeons_arise:find_illager_windmill"
+				criterion: ""
+				id: "3F9AAADCC97C69AD"
+				type: "advancement"
+			}]
+			x: 2.5d
+			y: -3.0d
+		}
+		{
+			description: ["Scattered across the wilds, small bands of Illagers set up camp beneath their distinctive purple tents. Though their supplies are meager and their loot scarce, their presence is a warning, the Illagers’ reach grows wider with every outpost."]
+			id: "436231715C11E3BA"
+			rewards: [
+				{
+					id: "3C8E48631268B5CD"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3998AE5FEDBEFE0C"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find an Illager Campsite"
+			tasks: [{
+				advancement: "dungeons_arise:find_illager_campsite"
+				criterion: ""
+				id: "112E7B734D7E9375"
+				type: "advancement"
+			}]
+			x: 3.5d
+			y: -3.0d
+		}
+		{
+			description: ["Rising like a monument to conquest, this sprawling fortress serves as a bastion of Illager power. Its many levels are patrolled by raiders and spellcasters, their banners declaring dominion over the land. Within its halls lie chambers of wealth, guarded by Evokers whose magic is as deadly as their stares."]
+			id: "5100CFAD43E7D67A"
+			rewards: [
+				{
+					id: "19294733B3650221"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "37BC7870811C161E"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find an Illager Fort"
+			tasks: [{
+				advancement: "dungeons_arise:find_illager_fort"
+				criterion: ""
+				id: "6C0C87A8270363FE"
+				type: "advancement"
+			}]
+			x: 4.5d
+			y: -3.0d
+		}
+		{
+			description: ["Dark magics linger in the depths of these dungeons, woven into items, halls, and even the very air. Power awaits the bold, but so do twisted fates for the careless."]
+			hide_dependency_lines: true
+			id: "4791FC0A2E834D85"
+			rewards: [
+				{
+					id: "3646F07F510EB24F"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "541661114A223C2E"
+					type: "random"
+				}
+			]
+			subtitle: "Find a Bathhouse"
+			tasks: [{
+				advancement: "dungeons_arise:find_bathhouse"
+				criterion: ""
+				id: "26EE8FF09CBD5F8A"
+				type: "advancement"
+			}]
+			x: -4.5d
+			y: 1.5d
+		}
+		{
+			description: ["Time has claimed this once-sacred site, leaving its halls cracked and overgrown. Now, ghostly skeletons and trickster illusioners linger within, guarding little more than shadows of former glory. Though its dangers are real, the temple’s sturdy walls make it a tempting refuge for those seeking a foothold in this hostile world."]
+			hide_dependency_lines: true
+			id: "1F10BC33D22328BD"
+			rewards: [
+				{
+					id: "32CDC6D0DC31D433"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3FD519BF7723ADCA"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find an Abandoned Temple"
+			tasks: [{
+				advancement: "dungeons_arise:find_abandoned_temple"
+				criterion: ""
+				id: "260A6A230E667757"
+				type: "advancement"
+			}]
+			x: 1.5d
+			y: 0.0d
+		}
+		{
+			description: ["Marked by its dark prismarine and yellow terracotta roof, this temple has long since fallen to corruption. Inside, swarms of spider-like creatures creep through its halls, striking with venom and ferocity. To enter is to step into a nest where every shadow crawls."]
+			id: "70327C3AC547B354"
+			rewards: [
+				{
+					id: "68F97E305A50C052"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2246F0EA7C7248DB"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+				{
+					id: "53017AF747D37FE2"
+					item: "minecraft:milk_bucket"
+					type: "item"
+				}
+				{
+					id: "75A7B522886E6DC5"
+					item: {
+						Count: 1
+						id: "minecraft:shield"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					id: "7607C35EF76429BC"
+					item: {
+						Count: 1
+						id: "minecraft:potion"
+						tag: {
+							Potion: "minecraft:strong_healing"
+						}
+					}
+					type: "item"
+				}
+			]
+			subtitle: "Find an Infested Temple"
+			tasks: [{
+				advancement: "dungeons_arise:find_infested_temple"
+				criterion: ""
+				id: "47F1C278368603C0"
+				type: "advancement"
+			}]
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			description: ["Hidden among hills and valleys, the monastery stands as a quiet refuge in a world of rising danger. Here, villagers tend to simple lives of prayer and work, untouched by Illager conquest. Though the halls hold little in the way of treasure, their sturdy walls and peaceful company make this an ideal sanctuary for weary adventurers."]
+			id: "3ECA226F08D5195F"
+			rewards: [
+				{
+					id: "41645375BA6259B7"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "22A9AA3ADAE6EEA0"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Monastery"
+			tasks: [{
+				advancement: "dungeons_arise:find_monasteries"
+				criterion: ""
+				id: "14DE9E9CFEC93BEE"
+				type: "advancement"
+			}]
+			x: 4.5d
+			y: 0.0d
+		}
+		{
+			id: "188AAB5B74C6EAAE"
+			rewards: [{
+				id: "4B897234E9FE03BE"
+				type: "xp"
+				xp: 5
+			}]
+			subtitle: "Discover an Infested Temple explorer map"
+			tasks: [{
+				advancement: "dungeons_arise:find_infested_temple_map"
+				criterion: ""
+				id: "35847DED78F07FD1"
+				type: "advancement"
+			}]
+			x: 3.5d
+			y: 0.0d
+		}
+		{
+			description: ["A riot of color rises from the wilderness, marking the territory of a cunning band of raiders. Their homes are bright and inviting, but enter at your own risk. These defenders strike fast and often. Those who prevail will find spoils and secrets hidden among the lively façades."]
+			hide_dependency_lines: true
+			id: "7052C9A5A804E866"
+			rewards: [
+				{
+					id: "4CF002624EC4EA10"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "1AE275310393BC60"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Bandit Village"
+			tasks: [{
+				advancement: "dungeons_arise:find_bandit_village"
+				criterion: ""
+				id: "046A7A36AAA1581B"
+				type: "advancement"
+			}]
+			x: -6.5d
+			y: 1.5d
+		}
+		{
+			description: ["Bright banners and painted walls lure travelers closer, but inside these towering strongholds, chaos reigns. Each floor brims with bandits and traps, their laughter echoing as waves of foes pour from endless spawners. Conquer the towers, and their riches—and notoriety—are yours."]
+			id: "4E4052F7EAD4FDD6"
+			rewards: [
+				{
+					id: "4870E0C735EFB047"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "3DE76BC9FB5C418F"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find the Bandit Towers"
+			tasks: [{
+				advancement: "dungeons_arise:find_bandit_towers"
+				criterion: ""
+				id: "3385F0267DECF3F5"
+				type: "advancement"
+			}]
+			x: -7.5d
+			y: 1.5d
+		}
+		{
+			description: ["Out on the open seas, the &6Illagers&r have taken to the waves, commandeering massive galleys and swift corsairs. Their sails cast long shadows, and their cannons roar with fury. Only the bravest dare to board, for fortune favors those who seize it."]
+			hide_dependency_lines: true
+			id: "1CEF2A38948010A2"
+			rewards: [
+				{
+					id: "74AFEA612DAEA77B"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "572ED1EA4AA7642B"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find an Illager Corsair or an Illager Galley"
+			tasks: [{
+				advancement: "dungeons_arise:find_illager_corsair_or_illager_galley"
+				criterion: ""
+				id: "13FAA97CD04E729F"
+				type: "advancement"
+			}]
+			x: 1.5d
+			y: -1.5d
+		}
+		{
+			description: ["A quiet spring hidden among the hills, its waters swirl mysteriously in the bottomless well. Travelers speak of subtle blessings for those brave enough to approach. Some even report a modest burst of speed for journeys ahead. Whether magic or rumor, the well offers a curious advantage to explorers."]
+			hide_dependency_lines: true
+			id: "63116691C92FD576"
+			rewards: [
+				{
+					id: "1EC411FAAFCE2051"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "0BA5E78C68A1BE79"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Wishing Well"
+			tasks: [{
+				advancement: "dungeons_arise:find_wishing_well"
+				criterion: ""
+				id: "1112346FCE595D25"
+				type: "advancement"
+			}]
+			x: -4.5d
+			y: 0.0d
+		}
+		{
+			hide_dependency_lines: true
+			id: "2DB4F395EA26DF4B"
+			rewards: [
+				{
+					id: "4FDF1EAB54F02D9B"
+					type: "xp"
+					xp: 5
+				}
+				{
+					id: "7AFBC8A4B8846916"
+					item: {
+						Count: 1
+						id: "minecraft:shield"
+						tag: {
+							Damage: 0
+						}
+					}
+					type: "item"
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2518799CE5E090D8"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Coliseum"
+			tasks: [{
+				advancement: "dungeons_arise:find_coliseum"
+				criterion: ""
+				id: "19F4B8F56029D48B"
+				type: "advancement"
+			}]
+			x: -7.5d
+			y: 0.0d
+		}
+		{
+			hide_dependency_lines: true
+			id: "1C375606107C117F"
+			rewards: [
+				{
+					id: "65D9A05488B29DB8"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "74A1CF999C7351D0"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find Keep Kayra"
+			tasks: [{
+				advancement: "dungeons_arise:find_keep_kayra"
+				criterion: ""
+				id: "10DC2583F7D95F67"
+				type: "advancement"
+			}]
+			x: -5.5d
+			y: 1.5d
+		}
+		{
+			description: ["A monument of grandeur and mystery, the Shiraz Palace sprawls in every direction, its halls twisting and turning beyond comprehension. Its purpose remains unknown, but its size and opulence are undeniable. Travelers beware: without a companion, it’s all too easy to lose your way in this labyrinthine estate."]
+			hide_dependency_lines: true
+			id: "2A0A01BE836BB2AB"
+			rewards: [
+				{
+					id: "6588720BCE9DEDED"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "2BEF98DD37C72991"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find the Shiraz Palace"
+			tasks: [{
+				advancement: "dungeons_arise:find_shiraz_palace"
+				criterion: ""
+				id: "47737CA5646934EA"
+				type: "advancement"
+			}]
+			x: -8.5d
+			y: 0.0d
+		}
+		{
+			description: ["Suspended high in the sky, this arrowhead-shaped airship drifts on a massive aft propeller. Boarding is perilous, but those who succeed will witness its strange and fearsome inhabitants riding boar-like beasts, their eyeless faces obscured by ominous cages. Danger and mystery ride with them across the clouds."]
+			hide_dependency_lines: true
+			id: "041A1C64A8468087"
+			rewards: [
+				{
+					id: "76DD85A6CCA217FC"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "076FF12E473794EE"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Heavenly Rider"
+			tasks: [{
+				advancement: "dungeons_arise:find_heavenly_rider"
+				criterion: ""
+				id: "703864AD00D9A3A5"
+				type: "advancement"
+			}]
+			x: -1.0d
+			y: 1.5d
+		}
+		{
+			description: ["Drifting through the skies like a colossal squid, this otherworldly airship bristles with defenses. Phantom-riding monstrosities circle its hull, while fish-like warriors astride hoglins guard its decks. To face the Conqueror is to battle a skyborne legion. And only the strongest will claim victory."]
+			id: "6858E25E510AE0FA"
+			rewards: [
+				{
+					id: "203E503ADBCB76F2"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "37E533B8750BDB69"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Heavenly Conqueror"
+			tasks: [{
+				advancement: "dungeons_arise:find_heavenly_conqueror"
+				criterion: ""
+				id: "6C5BBBE29BF677E6"
+				type: "advancement"
+			}]
+			x: -1.0d
+			y: 2.5d
+		}
+		{
+			description: ["Looming among the clouds, this massive airship bristles with defenses and hostile crew. Phantom-mounted fiends circle overhead, while fish-like raiders astride hoglins stalk the decks. Boarding it is no small feat. Tthose who triumph will etch their name among the few who dared challenge the skies."]
+			id: "5C12F4CC1F6F6C32"
+			rewards: [
+				{
+					id: "6211147AEED65D7E"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7AE6F1F89EC0A8CD"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Heavenly Challenger"
+			tasks: [{
+				advancement: "dungeons_arise:find_heavenly_challenger"
+				criterion: ""
+				id: "345D162276AB92A3"
+				type: "advancement"
+			}]
+			x: -1.0d
+			y: 3.5d
+		}
+		{
+			description: ["Vast and dreamlike, the Aviary stretches high into wtilight sky, its halls divided into four whimsical quadrants. Each one unfolds as a surreal scene—bright, strange, and perilous in its own way. To wander here feels like stepping beyond reality itself. Is this the journey’s end… or just another beginning?"]
+			id: "2A1B0386B7987DD3"
+			rewards: [
+				{
+					id: "5F42CB6903D2D426"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "4EA95E86AC3D0F5F"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find an Aviary"
+			tasks: [{
+				advancement: "dungeons_arise:find_aviary"
+				criterion: ""
+				id: "655386225D266D6C"
+				type: "advancement"
+			}]
+			x: -1.0d
+			y: 4.5d
+		}
+		{
+			description: ["Tucked away in the tall grass, this lonely house stands weathered and broken, its timbers groaning with age. Easy to overlook, it bears little more than the memory of those who once called it home. Still, even the smallest refuge can hold a story."]
+			id: "53AF2B722A69DCDC"
+			rewards: [
+				{
+					id: "44BD510D09138907"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "234856D465CA0EDA"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Small Prairie House"
+			tasks: [{
+				advancement: "dungeons_arise:find_small_prairie_house"
+				criterion: ""
+				id: "1CD253C5AFF33D7F"
+				type: "advancement"
+			}]
+			x: -4.5d
+			y: -1.5d
+		}
+		{
+			description: ["Rising like jagged thorns from the ground, these massive towers are defended by skeletons entwined with deadly roses. Each level is heavily fortified, and flying rose guards patrol the skies above. Only those who ascend to the top will claim the treasures and secrets hidden within."]
+			id: "4118927D9D079DC8"
+			rewards: [
+				{
+					id: "6A5373B21D8CDC36"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "283CD9EBCE614F81"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Visit the Thornborn Towers"
+			tasks: [{
+				advancement: "dungeons_arise:find_thornborn_towers"
+				criterion: ""
+				id: "2752670CDE3E38D9"
+				type: "advancement"
+			}]
+			x: -6.5d
+			y: -1.5d
+		}
+		{
+			id: "509E9CA83FBC780E"
+			rewards: [
+				{
+					id: "56867E39A44B14B5"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "030CE8F183BEB093"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Fishing Hut"
+			tasks: [{
+				advancement: "dungeons_arise:find_fishing_hut"
+				criterion: ""
+				id: "4727F51E44F70C4D"
+				type: "advancement"
+			}]
+			x: -5.5d
+			y: -1.5d
+		}
+		{
+			description: ["Whispers speak of a &9flying vessel&r that hovers above the world, shimmering with strange energy. Few dare approach, for those who return tell of eerie lights, warped corridors, and guardians not of this realm. Seek it out, if you dare—and uncover the secrets hidden within its metallic shell."]
+			hide_dependency_lines: true
+			id: "44D115281B0BFB75"
+			rewards: [
+				{
+					id: "47F325A7EC68AF62"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "10007F42128A2017"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Giant Mushroom"
+			tasks: [{
+				advancement: "dungeons_arise:find_giant_mushroom"
+				criterion: ""
+				id: "681A721779D01766"
+				type: "advancement"
+			}]
+			x: -4.5d
+			y: -3.0d
+		}
+		{
+			description: ["Sprouting from a cluster of towering fungi, this outpost of miners has carved their livelihood into the surface world. Ruthless and territorial, they will defend their claim with tooth and nail. Whether the giant mushrooms shield them from the sun or serve some darker purpose, none can say. One truth remains certain: the mine runs rich with ore, for those bold enough to claim it."]
+			id: "541BBC35DA4F0B73"
+			rewards: [
+				{
+					id: "6E516C75DA00409D"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "7E2E19C6A85C2E8E"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Mushroom Mine"
+			tasks: [{
+				advancement: "dungeons_arise:find_mushroom_mines"
+				criterion: ""
+				id: "2DB9AC6B74C7F5FE"
+				type: "advancement"
+			}]
+			x: -5.5d
+			y: -3.0d
+		}
+		{
+			description: ["Shaped from the stem and cap of a giant fungus, this whimsical dwelling offers a rare touch of charm in a perilous world. Lightly guarded and easy to claim, the mushroom house makes for a delightful refuge, perfect for any adventurer who’s ever dreamed of calling a mushroom home."]
+			id: "6CB5ACBAAED66871"
+			rewards: [
+				{
+					id: "76D205BEE193F7F6"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "30AA233B9446B9B8"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Find a Mushroom House"
+			tasks: [{
+				advancement: "dungeons_arise:find_mushroom_house"
+				criterion: ""
+				id: "29A30FFC83C5C056"
+				type: "advancement"
+			}]
+			x: -6.5d
+			y: -3.0d
+		}
+		{
+			description: ["Clustered around a towering central “grandmother” mushroom, these villages appear quaint from afar. Yet the villagers within are far more aggressive than their old-world counterparts, hiding a cunning fierceness beneath their colorful caps. Approach with caution as this village may welcome the unwary only to spring its traps."]
+			id: "1CCA31D9352C60E6"
+			rewards: [
+				{
+					id: "2039486A38B0BCC9"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "53195AFD100C006D"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			shape: "circle"
+			subtitle: "Find a mushroom village"
+			tasks: [{
+				advancement: "dungeons_arise:find_mushroom_village"
+				criterion: ""
+				id: "5930795CC7E40B4C"
+				type: "advancement"
+			}]
+			x: -7.5d
+			y: -3.0d
+		}
+		{
+			hide_dependency_lines: true
+			id: "3D1C0F80B74B27D5"
+			rewards: [
+				{
+					id: "1153C3FCAD2127CD"
+					type: "xp"
+					xp: 5
+				}
+				{
+					exclude_from_claim_all: true
+					id: "38D152D13F083EB8"
+					table_id: 2501998888776764148L
+					type: "random"
+				}
+			]
+			subtitle: "Arrive at a Lighthouse"
+			tasks: [{
+				advancement: "dungeons_arise:find_lighthouse"
+				criterion: ""
+				id: "4E48C3A1C4ADCEE9"
+				type: "advancement"
+			}]
+			x: -5.5d
+			y: 0.0d
+		}
+	]
+	title: "When Dungeons Arise"
+}

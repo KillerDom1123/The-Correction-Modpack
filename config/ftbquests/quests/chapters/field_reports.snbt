@@ -1,0 +1,269 @@
+{
+	autofocus_id: "7A05000000000101"
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "field_reports"
+	group: ""
+	icon: "camerapture:camera"
+	id: "7A05000000000000"
+	images: [ ]
+	order_index: 4
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&8[ HORROR PATH — \"SOMETHING SURVIVED.\" ]&r"
+				""
+				"&7This is not a hunt. I am not here to kill anything. I am here to record what is still moving in the places that should be empty.&r"
+				""
+				"&8Objective: go into the dark places — deep caves, old structures, forests that grew back wrong. Take a light. Take a camera. Do not engage.&r"
+			]
+			id: "7A05000000000101"
+			rewards: [
+				{ id: "7A05000000000301", type: "xp", xp: 20 }
+				{ id: "7A05000000000302", item: "camerapture:camera", type: "item" }
+				{ count: 16, id: "7A05000000000303", item: "minecraft:paper", type: "item" }
+				{ id: "7A05000000000304", item: "artifacts:night_vision_goggles", type: "item" }
+				{ count: 32, id: "7A05000000000305", item: "minecraft:torch", type: "item" }
+				{ count: 6, id: "7A05000000000306", item: "farmersdelight:cooked_bacon", type: "item" }
+			]
+			shape: "hexagon"
+			size: 1.5d
+			subtitle: "Into The Dark"
+			tasks: [{
+				id: "7A05000000000201"
+				title: "Venture into deep caves, ancient structures and dense forests"
+				type: "checkmark"
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A05000000000101"]
+			description: [
+				"&8[ METHODOLOGY ]&r"
+				""
+				"&7If I write down what I see, no one believes me. So I photograph it instead. A picture is harder to argue with.&r"
+				""
+				"&7\"The Old Civilisation documented everything.\"&r"
+				"&7\"Perhaps they were trying to understand.\"&r"
+				""
+				"&8Objective: photograph ruins, unusual areas, and anything that should not be happening.&r"
+			]
+			id: "7A05000000000102"
+			rewards: [
+				{ id: "7A05000000000307", type: "xp", xp: 25 }
+				{ id: "7A05000000000308", item: "camerapture:album", type: "item" }
+				{ count: 16, id: "7A05000000000309", item: "minecraft:paper", type: "item" }
+				{ id: "7A0500000000030A", item: "minecraft:spyglass", type: "item" }
+			]
+			subtitle: "Observation"
+			tasks: [
+				{ count: 3, id: "7A05000000000202", item: "camerapture:picture", type: "item" }
+			]
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A05000000000101"]
+			description: [
+				"&8[ FIELD REPORT — CORROBORATED ]&r"
+				""
+				"&7Several expedition notes describe the same phenomenon in the same woods. Independent authors. Identical wording in places.&r"
+				""
+				"&7\"The environment seemed aware.\"&r"
+				""
+				"&8I do not know what that means yet. I only know they all wrote it down before they stopped writing.&r"
+			]
+			id: "7A05000000000103"
+			rewards: [
+				{ id: "7A0500000000030B", type: "xp", xp: 25 }
+				{ id: "7A0500000000030C", item: "comforts:sleeping_bag_red", type: "item" }
+				{ count: 4, id: "7A0500000000030D", item: "farmersdelight:mixed_salad", type: "item" }
+				{ count: 16, id: "7A0500000000030E", item: "minecraft:torch", type: "item" }
+			]
+			subtitle: "The Forest Does Not Forget"
+			tasks: [{
+				id: "7A05000000000203"
+				title: "Reach the Creeping Woods and record what you find"
+				type: "checkmark"
+			}]
+			x: 4.5d
+			y: -1.5d
+		}
+		{
+			dependencies: ["7A05000000000101"]
+			description: [
+				"&8[ RECOVERED WARNING — OLDEST ON RECORD ]&r"
+				""
+				"&7The deeper the site, the older the warning. And the oldest warnings we have all point downward.&r"
+				""
+				"&7\"The oldest warnings concern what exists beneath the surface.\"&r"
+				""
+				"&8Objective: descend. Alex's Caves, the deep dark, anywhere the light has never reached. Be sure something is not descending with you.&r"
+			]
+			id: "7A05000000000104"
+			rewards: [
+				{ id: "7A0500000000030F", type: "xp", xp: 25 }
+				{ id: "7A05000000000310", item: "artifacts:obsidian_skull", type: "item" }
+				{ count: 8, id: "7A05000000000311", item: "supplementaries:rope", type: "item" }
+				{ count: 2, id: "7A05000000000312", item: "farmersdelight:steak_and_potatoes", type: "item" }
+				{ count: 32, id: "7A05000000000313", item: "minecraft:torch", type: "item" }
+			]
+			subtitle: "Below"
+			tasks: [{
+				id: "7A05000000000204"
+				title: "Explore Alex's Caves and the deep underground"
+				type: "checkmark"
+			}]
+			x: 4.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["7A05000000000104"]
+			description: [
+				"&8[ FIELD REPORT — ENTRY 41 ]&r"
+				""
+				"&8[ preceding pages torn out ]&r"
+				""
+				"&7\"Confirmed.\"&r"
+				""
+				"&8[ no further explanation was recorded ]&r"
+			]
+			hide: true
+			hide_dependency_lines: true
+			icon: "minecraft:ender_eye"
+			id: "7A05000000000105"
+			rewards: [
+				{ id: "7A05000000000314", type: "xp", xp: 40 }
+				{ id: "7A05000000000315", item: "artifacts:cross_necklace", type: "item" }
+				{ id: "7A05000000000316", item: "minecraft:writable_book", type: "item" }
+			]
+			subtitle: "Unidentified Contact"
+			tasks: [{
+				id: "7A05000000000205"
+				item: "oldcivilisation:biological_sample"
+				type: "item"
+			}]
+			x: 6.5d
+			y: 1.5d
+		}
+		{
+			dependencies: ["7A05000000000101"]
+			description: [
+				"&8[ FIELD REPORT — ONGOING ]&r"
+				""
+				"&7I stayed out. No claimed ground, no walls that mean anything. Ten nights. By the fourth I was certain I was not being hunted.&r"
+				""
+				"&7I was being observed.&r"
+				""
+				"&7\"Something has noticed the return of civilisation.\"&r"
+			]
+			id: "7A05000000000106"
+			rewards: [
+				{ id: "7A05000000000317", type: "xp", xp: 30 }
+				{ id: "7A05000000000318", item: "artifacts:running_shoes", type: "item" }
+				{ id: "7A05000000000319", item: "comforts:sleeping_bag_red", type: "item" }
+				{ count: 4, id: "7A0500000000031A", item: "farmersdelight:vegetable_soup", type: "item" }
+			]
+			subtitle: "The Watchers"
+			tasks: [{
+				id: "7A05000000000206"
+				title: "Survive 10 nights away from claimed chunks"
+				type: "checkmark"
+			}]
+			x: 2.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A05000000000101"]
+			description: [
+				"&8[ FIELD REPORT — IT WEARS FACES ]&r"
+				""
+				"&7Witnesses describe a thing that is almost right. It reproduces a shape, a voice, a habit — and gets one detail wrong, always. Whatever is left behind after it is dealt with does not stay one shape for long.&r"
+				""
+				"&8Objective: recover a Distorted Replica. However you come by it.&r"
+			]
+			hide_dependency_lines: true
+			icon: "oldcivilisation:distorted_replica"
+			id: "7A05000000000107"
+			optional: true
+			rewards: [
+				{ id: "7A0500000000031B", type: "xp", xp: 30 }
+				{ count: 8, id: "7A0500000000031C", item: "minecraft:paper", type: "item" }
+			]
+			subtitle: "It Wears Faces"
+			tasks: [{ id: "7A05000000000207", item: "oldcivilisation:distorted_replica", type: "item" }]
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A05000000000104"]
+			description: [
+				"&8[ FIELD REPORT — THE ONE BELOW ]&r"
+				""
+				"&7Every deep expedition that recorded it agrees on one thing: you hear it long before you see it, and it comes from further down than the surveys go. What it leaves behind is a recording of a sound that has no source.&r"
+				""
+				"&8Objective: recover a Deep Echo.&r"
+			]
+			hide_dependency_lines: true
+			icon: "oldcivilisation:deep_echo"
+			id: "7A05000000000108"
+			optional: true
+			rewards: [
+				{ id: "7A0500000000031D", type: "xp", xp: 30 }
+				{ count: 16, id: "7A0500000000031E", item: "minecraft:torch", type: "item" }
+			]
+			subtitle: "The One Below"
+			tasks: [{ id: "7A05000000000208", item: "oldcivilisation:deep_echo", type: "item" }]
+			x: 6.5d
+			y: 2.5d
+		}
+		{
+			dependencies: ["7A05000000000106"]
+			description: [
+				"&8[ FIELD REPORT — THE MAN ]&r"
+				""
+				"&7It stands at the edge of the fog and watches. It does not approach while you look. The residue it leaves has no composition our instruments recognise, and it does not disperse.&r"
+				""
+				"&8Objective: recover Fog Residue.&r"
+			]
+			hide_dependency_lines: true
+			icon: "oldcivilisation:fog_residue"
+			id: "7A05000000000109"
+			optional: true
+			rewards: [
+				{ id: "7A0500000000031F", type: "xp", xp: 30 }
+				{ count: 2, id: "7A05000000000320", item: "farmersdelight:vegetable_soup", type: "item" }
+			]
+			subtitle: "The Man"
+			tasks: [{ id: "7A05000000000209", item: "oldcivilisation:fog_residue", type: "item" }]
+			x: 2.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["7A05000000000101"]
+			description: [
+				"&8[ FIELD REPORT — IT WAS NOT THERE BEFORE ]&r"
+				""
+				"&7Do not look away. Every account repeats the same rule, underlined. The object it leaves reads as older each time it is measured, though it has sat untouched on the bench.&r"
+				""
+				"&8Objective: recover Temporal Residue.&r"
+			]
+			hide_dependency_lines: true
+			icon: "oldcivilisation:temporal_residue"
+			id: "7A0500000000010A"
+			optional: true
+			rewards: [
+				{ id: "7A05000000000321", type: "xp", xp: 30 }
+				{ id: "7A05000000000322", item: "minecraft:clock", type: "item" }
+			]
+			subtitle: "It Was Not There Before"
+			tasks: [{ id: "7A0500000000020A", item: "oldcivilisation:temporal_residue", type: "item" }]
+			x: 8.0d
+			y: -1.5d
+		}
+	]
+	title: "Field Reports"
+}

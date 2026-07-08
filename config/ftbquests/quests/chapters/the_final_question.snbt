@@ -1,0 +1,145 @@
+{
+	autofocus_id: "7A07000000000101"
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "the_final_question"
+	group: ""
+	icon: "ad_astra:tier_1_rocket"
+	id: "7A07000000000000"
+	images: [ ]
+	order_index: 7
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			dependencies: ["7A04000000000104", "7A05000000000105"]
+			dependency_requirement: "all_completed"
+			description: [
+				"&8[ ASSEMBLED FROM MULTIPLE FRAGMENTS ]&r"
+				""
+				"&7I have collected enough of the removed records to reconstruct their final months. It does not read like the end of a war.&r"
+				""
+				"&7It reads like preparation.&r"
+				""
+				"&7\"They did not fight.\"&r"
+				"&7\"They prepared.\"&r"
+				""
+				"&8Prepared for what? The next fragments only ever point upward.&r"
+			]
+			id: "7A07000000000101"
+			rewards: [
+				{ id: "7A07000000000301", type: "xp", xp: 40 }
+				{ id: "7A07000000000302", type: "xp_levels", xp_levels: 2 }
+				{ id: "7A07000000000303", item: "minecraft:writable_book", type: "item" }
+				{ count: 8, id: "7A07000000000304", item: "ad_astra:steel_ingot", type: "item" }
+			]
+			shape: "hexagon"
+			size: 1.5d
+			subtitle: "The Departure Records"
+			tasks: [
+				{ id: "7A07000000000201", item: "oldcivilisation:flight_recorder_launch", type: "item" }
+				{ id: "7A07000000000209", item: "oldcivilisation:flight_recorder_transit", type: "item" }
+				{ id: "7A0700000000020A", item: "oldcivilisation:flight_recorder_arrival", type: "item" }
+				{ id: "7A0700000000020B", item: "oldcivilisation:flight_recorder_final", type: "item" }
+			]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A07000000000101"]
+			description: [
+				"&8[ RECONSTRUCTED PROJECT — DESIGNATION: HS-LGTFO ]&r"
+				""
+				"&7The official name is gone. Only this fragment of a designation survives, and it does not read like something a government chose. It reads like something desperate engineers scrawled on the side of the thing.&r"
+				""
+				"&8The purpose was not to conquer. Not to fight. To leave.&r"
+				""
+				"&8Objective: build what they built. A rocket. A suit that survives the outside. Fuel enough to reach it.&r"
+			]
+			icon: "ad_astra:space_suit"
+			id: "7A07000000000102"
+			rewards: [
+				{ id: "7A07000000000305", type: "xp", xp: 40 }
+				{ count: 3, id: "7A07000000000306", item: "ad_astra:fuel_bucket", type: "item" }
+				{ count: 8, id: "7A07000000000307", item: "ad_astra:desh_ingot", type: "item" }
+				{ count: 8, id: "7A07000000000308", item: "ad_astra:steel_ingot", type: "item" }
+			]
+			subtitle: "The Skyward Project"
+			tasks: [
+				{ id: "7A07000000000202", item: "ad_astra:tier_1_rocket", type: "item" }
+				{ id: "7A07000000000203", item: "ad_astra:space_suit", type: "item" }
+				{ id: "7A07000000000204", item: "ad_astra:fuel_bucket", type: "item" }
+			]
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A07000000000102"]
+			description: [
+				"&8[ FOLLOWING THEIR ROUTE ]&r"
+				""
+				"&7The records list where they went, in order. I am retracing it. The Moon. Then Mars. Then the stations they left in orbit, still turning, still empty.&r"
+				""
+				"&8Every site tells the same story the last one did. They were here. They did not stay.&r"
+			]
+			icon: "ad_astra:tier_2_rocket"
+			id: "7A07000000000103"
+			rewards: [
+				{ id: "7A07000000000309", type: "xp", xp: 50 }
+				{ count: 4, id: "7A0700000000030A", item: "ad_astra:cryo_fuel_bucket", type: "item" }
+				{ count: 8, id: "7A0700000000030B", item: "ad_astra:ostrum_ingot", type: "item" }
+				{ count: 4, id: "7A0700000000030C", item: "ad_astra:calorite_ingot", type: "item" }
+			]
+			subtitle: "Following Their Path"
+			tasks: [
+				{ id: "7A07000000000205", dimension: "ad_astra:moon", type: "dimension" }
+				{ id: "7A07000000000206", dimension: "ad_astra:mars", type: "dimension" }
+				{ id: "7A07000000000207", dimension: "ad_astra:earth_orbit", type: "dimension" }
+			]
+			x: 5.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A07000000000103"]
+			description: [
+				"&8[ FINAL ENTRY — RECOVERED AT HS-LGTFO SITE ]&r"
+				""
+				"&7I found what remained of them. The mission was not a failure. That is the part no one prepared me for.&r"
+				""
+				"&8It worked. They escaped.&r"
+				""
+				"&8And it did not matter. There was nowhere untouched. Earth was not the battlefield — it was only the first place they noticed the war.&r"
+				""
+				"&7\"The Old Civilisation was not destroyed.\"&r"
+				"&7\"It was corrected.\"&r"
+				""
+				"&8Humanity's greatest achievement was discovering the universe.&r"
+				"&8Humanity's greatest mistake was assuming the universe wanted to be discovered.&r"
+				""
+				"&8The question was never whether we can escape. It is what follows if we do.&r"
+			]
+			hide: true
+			hide_dependency_lines: true
+			icon: "minecraft:nether_star"
+			id: "7A07000000000104"
+			rewards: [
+				{ id: "7A0700000000030D", type: "xp", xp: 100 }
+				{ id: "7A0700000000030E", type: "xp_levels", xp_levels: 10 }
+				{ id: "7A0700000000030F", item: "minecraft:nether_star", type: "item" }
+				{ count: 8, id: "7A07000000000310", item: "ad_astra:calorite_ingot", type: "item" }
+				{ count: 3, id: "7A07000000000311", item: "minecraft:enchanted_golden_apple", type: "item" }
+			]
+			shape: "diamond"
+			size: 2.0d
+			subtitle: "The Answer"
+			tasks: [{
+				id: "7A07000000000208"
+				item: "oldcivilisation:correction_fragment"
+				type: "item"
+			}]
+			x: 7.5d
+			y: 0.0d
+		}
+	]
+	title: "The Final Question"
+}

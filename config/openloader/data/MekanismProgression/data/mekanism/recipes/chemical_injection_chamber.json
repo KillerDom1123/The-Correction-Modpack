@@ -1,0 +1,1 @@
+{"type":"mekanism:mek_data","key":{"#":{"item":"mekanism:purification_chamber"},"A":{"tag":"mekanism:alloys/atomic"},"C":{"tag":"forge:circuits/elite"},"I":{"tag":"forge:storage_blocks/diamond"}},"pattern":["ACA","I#I","ACA"],"result":{"item":"mekanism:chemical_injection_chamber"}}

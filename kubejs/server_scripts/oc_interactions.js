@@ -23,19 +23,19 @@ function ocStage(id, discoveries) {
 
 // throttled inventory scan: variant stamping + discovery tracking + stateful stage + endgame grant
 PlayerEvents.tick(event => {
-  const player = event.player
+  var player = event.player
   if (!player || player.age % 60 !== 0) return
   try {
-    const pd = player.persistentData
-    let discoveries = pd.getInt('oc_discoveries') | 0
-    let seen = pd.getString('oc_seen') || ''
-    const inv = player.inventory
-    const size = inv.getContainerSize()
+    var pd = player.persistentData
+    var discoveries = pd.getInt('oc_discoveries') | 0
+    var seen = pd.getString('oc_seen') || ''
+    var inv = player.inventory
+    var size = inv.getContainerSize()
 
-    for (let i = 0; i < size; i++) {
-      const st = inv.getItem(i)
+    for (var i = 0; i < size; i++) {
+      var st = inv.getItem(i)
       if (!st || st.isEmpty()) continue
-      const id = st.id
+      var id = st.id
       if (id.indexOf(OC_PREFIX) !== 0) continue
 
       // --- discovery tracking (distinct ids) ---
@@ -49,23 +49,23 @@ PlayerEvents.tick(event => {
         if (/colony_manifest|navigation_fragment|flight_recorder/.test(id)) pd.putBoolean('oc_flag_space', true)
       }
 
-      const nbt = st.nbt
-      const isStateful = (id === 'oldcivilisation:unstable_memory' || id === 'oldcivilisation:signal_device')
+      var nbt = st.nbt
+      var isStateful = (id === 'oldcivilisation:unstable_memory' || id === 'oldcivilisation:signal_device')
 
       if (isStateful) {
-        const stage = ocStage(id, discoveries)
-        const curStage = (nbt && nbt.oc_stage !== undefined && nbt.oc_stage !== null) ? Number(nbt.oc_stage) : -1
+        var stage = ocStage(id, discoveries)
+        var curStage = (nbt && nbt.oc_stage !== undefined && nbt.oc_stage !== null) ? Number(nbt.oc_stage) : -1
         if (curStage !== stage) {
-          const curVar = (nbt && nbt.oc_variant !== undefined && nbt.oc_variant !== null) ? Number(nbt.oc_variant) : 0
-          const ns = Item.of(id, st.count)
+          var curVar = (nbt && nbt.oc_variant !== undefined && nbt.oc_variant !== null) ? Number(nbt.oc_variant) : 0
+          var ns = Item.of(id, st.count)
           ns.nbt = { oc_variant: curVar, oc_stage: stage }
           inv.setItem(i, ns)
         }
       } else if (!nbt || nbt.oc_variant === undefined || nbt.oc_variant === null) {
-        const v = Math.floor(Math.random() * OC_VARIANT_ITEMS_MAX)
-        const ns = Item.of(id, st.count)
-        ns.nbt = { oc_variant: v }
-        inv.setItem(i, ns)
+        var v = Math.floor(Math.random() * OC_VARIANT_ITEMS_MAX)
+        var ns2 = Item.of(id, st.count)
+        ns2.nbt = { oc_variant: v }
+        inv.setItem(i, ns2)
       }
     }
 
@@ -84,10 +84,10 @@ PlayerEvents.tick(event => {
 
 // Signal device — right-click sample, message escalates with discoveries
 ItemEvents.rightClicked('oldcivilisation:signal_device', event => {
-  const p = event.player
+  var p = event.player
   if (!p) return
   try {
-    const d = p.persistentData.getInt('oc_discoveries') | 0
+    var d = p.persistentData.getInt('oc_discoveries') | 0
     if (d < 10) {
       p.tell(Text.of('SIGNAL DETECTED.').gray())
       p.tell(Text.of('SOURCE: UNKNOWN.').gray())
@@ -101,16 +101,16 @@ ItemEvents.rightClicked('oldcivilisation:signal_device', event => {
 
 // Audio log — right-click plays an eerie recording + prints a transcript line
 ItemEvents.rightClicked('oldcivilisation:audio_log', event => {
-  const p = event.player
+  var p = event.player
   if (!p) return
   try {
     p.runCommandSilent('playsound minecraft:entity.elder_guardian.curse master @s ~ ~ ~ 0.8 0.8')
-    const lines = [
+    var lines = [
       '"Day 42. We have confirmed the signal is responding."',
       '"Day 61. It responds faster than we transmit."',
       '"Day 90. It answered a question we had not asked yet."',
     ]
-    const v = (p.persistentData.getInt('oc_discoveries') | 0) % lines.length
+    var v = (p.persistentData.getInt('oc_discoveries') | 0) % lines.length
     p.tell(Text.of('[ playback ] ').darkGray().append(Text.of(lines[v]).gray()))
   } catch (e) { console.error('[OldCiv] audio_log: ' + e) }
 })
@@ -126,9 +126,9 @@ const OC_RESIDUES = {
 }
 EntityEvents.death(event => {
   try {
-    const e = event.entity
+    var e = event.entity
     if (!e || !e.type) return
-    const drop = OC_RESIDUES[e.type]
+    var drop = OC_RESIDUES[e.type]
     if (!drop) return
     if (Math.random() > 0.9) return // rare encounter — evidence is almost, but not quite, certain
     e.server.runCommandSilent(`summon item ${e.x} ${e.y} ${e.z} {Item:{id:"${drop}",Count:1b}}`)

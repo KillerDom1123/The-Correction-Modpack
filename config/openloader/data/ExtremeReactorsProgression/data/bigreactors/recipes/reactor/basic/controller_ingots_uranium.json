@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": { "item": "bigreactors:basic_reactorcasing" },
+    "X": { "item": "minecraft:comparator" },
+    "A": { "tag": "mekanism:alloys/reinforced" },
+    "D": { "tag": "forge:gems/diamond" },
+    "Y": { "tag": "forge:ingots/uranium" },
+    "E": { "tag": "forge:circuits/elite" }
+  },
+  "pattern": [
+    "CXC",
+    "ADY",
+    "CEC"
+  ],
+  "result": {
+    "item": "bigreactors:basic_reactorcontroller"
+  },
+  "show_notification": true
+}

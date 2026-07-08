@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "description": "Extreme Reactors: reactor/turbine controllers gated behind Mekanism tech tiers (basic=mid, reinforced=late)"
+  }
+}

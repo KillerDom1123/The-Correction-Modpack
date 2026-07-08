@@ -1,0 +1,96 @@
+
+#==================================================
+#DOOR KNOCKER MOD CONFIGURATION
+#==================================================
+#20 ticks = 1 second
+#1200 ticks = 1 minute
+#72000 ticks = 1 hour
+#288000 ticks = 4 hours (MAX)
+#==================================================
+[doorknocker]
+
+	#========== TIMING SETTINGS ==========
+	[doorknocker.timing]
+		#=== DAY TIME ===
+		#Minimum delay between attempts during DAY (ticks)
+		#DEFAULT: 24000 (20 minutes)
+		#Range: 20 ~ 288000
+		dayMinTicks = 48000
+		#Maximum delay between attempts during DAY (ticks)
+		#DEFAULT: 48000 (40 minutes)
+		#Range: 20 ~ 288000
+		dayMaxTicks = 96000
+		#=== NIGHT TIME ===
+		#Minimum delay between attempts during NIGHT (ticks)
+		#DEFAULT: 12000 (10 minutes)
+		#Range: 20 ~ 288000
+		nightMinTicks = 24000
+		#Maximum delay between attempts during NIGHT (ticks)
+		#DEFAULT: 24000 (20 minutes)
+		#Range: 20 ~ 288000
+		nightMaxTicks = 48000
+
+	#========== DISTANCE SETTINGS ==========
+	#Controls how far from player doors can be affected
+	[doorknocker.distance]
+		#=== DAY TIME ===
+		#Minimum distance from player to check for doors (DAY)
+		#DEFAULT: 0 blocks (any door including very close)
+		#Range: 0 ~ 128
+		dayMinDistance = 0
+		#Maximum distance from player to check for doors (DAY)
+		#DEFAULT: 32 blocks
+		#Range: 1 ~ 128
+		dayMaxDistance = 32
+		#=== NIGHT TIME ===
+		#Minimum distance from player to check for doors (NIGHT)
+		#DEFAULT: 0 blocks
+		#Range: 0 ~ 128
+		nightMinDistance = 0
+		#Maximum distance from player to check for doors (NIGHT)
+		#DEFAULT: 48 blocks (further range at night = scarier)
+		#Range: 1 ~ 128
+		nightMaxDistance = 48
+
+	#========== CHANCE SETTINGS ==========
+	[doorknocker.chance]
+		#Chance that door/trapdoor will OPEN instead of just knocking
+		#0.0 = never open (only knocks)
+		#0.05 = 5% chance (very rare)
+		#0.1 = 10% chance (rare)
+		#0.3 = 30% chance (often)
+		#1.0 = always open
+		#DEFAULT: 0.1 (10%)
+		#Range: 0.0 ~ 1.0
+		openChance = 0.1
+
+	#========== OTHER SETTINGS ==========
+	[doorknocker.misc]
+		#Require player to have direct line of sight to door
+		#true = only doors player can see (more realistic)
+		#false = can knock through walls (more mysterious and creepy)
+		#DEFAULT: false
+		requireDirectLineOfSight = false
+		#Enable debug logging to console
+		#true = shows all events in console (for testing)
+		#false = quiet mode (for normal play)
+		#DEFAULT: false
+		enableDebugLogging = false
+		#Enable fallback sounds if custom sounds are missing
+		#true = uses Minecraft wood break sound as fallback
+		#false = silent if custom sounds missing
+		#DEFAULT: true
+		enableSoundFallback = true
+		#Sound volume (0.0 = silent, 1.0 = normal, 2.0 = double)
+		#DEFAULT: 1.0
+		#Range: 0.0 ~ 2.0
+		soundVolume = 1.0
+		#Minimum sound pitch variation (0.5 = lower, 1.0 = normal)
+		#DEFAULT: 0.8
+		#Range: 0.5 ~ 1.5
+		soundPitchMin = 0.8
+		#Maximum sound pitch variation (1.0 = normal, 1.5 = higher)
+		#DEFAULT: 1.2
+		#Range: 0.5 ~ 1.5
+		soundPitchMax = 1.2
+

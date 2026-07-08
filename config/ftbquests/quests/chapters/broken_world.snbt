@@ -86,7 +86,7 @@
 				""
 				"&8[ remainder of page illegible ]&r"
 			]
-			hide: true
+			hide_until_deps_complete: true
 			hide_dependency_lines: true
 			icon: "minecraft:clock"
 			id: "7A01000000000103"

@@ -131,7 +131,7 @@
 				""
 				"&8[ no further explanation was recorded ]&r"
 			]
-			hide: true
+			hide_until_deps_complete: true
 			hide_dependency_lines: true
 			icon: "minecraft:ender_eye"
 			id: "7A05000000000105"

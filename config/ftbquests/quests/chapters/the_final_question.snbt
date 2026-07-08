@@ -4,6 +4,7 @@
 	default_quest_shape: ""
 	filename: "the_final_question"
 	group: ""
+	hide_quest_until_deps_complete: true
 	icon: "ad_astra:tier_1_rocket"
 	id: "7A07000000000000"
 	images: [ ]
@@ -118,7 +119,7 @@
 				""
 				"&8The question was never whether we can escape. It is what follows if we do.&r"
 			]
-			hide: true
+			hide_until_deps_complete: true
 			hide_dependency_lines: true
 			icon: "minecraft:nether_star"
 			id: "7A07000000000104"

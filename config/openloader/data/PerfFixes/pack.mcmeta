@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "description": "Performance fixes: disable broken cross-chunk worldgen features"
+  }
+}

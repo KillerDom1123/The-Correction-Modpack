@@ -2,7 +2,9 @@
 // Old Civilisation story items — registration
 // Spec: config/implore.md   Plan: config/implore_implementation_plan.md
 // Namespace 'oldcivilisation' is used directly (KubeJS 6 supports custom namespaces).
-// Textures live in kubejs/assets/oldcivilisation/textures/item/<id>.png (auto item/generated model).
+// Icons are reused from existing items: kubejs/assets/oldcivilisation/models/item/<id>.json
+// simply parents each item to an existing vanilla/Create item model (see that folder).
+// (The old placeholder PNGs in textures/item/ are now unreferenced.)
 // Dynamic tooltips are added client-side (client_scripts/oc_tooltips.js) from NBT { oc_variant / oc_stage }.
 
 StartupEvents.registry('item', event => {

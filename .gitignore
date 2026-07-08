@@ -1,0 +1,69 @@
+# ============================================================
+#  Tracks pack CONFIGURATION and custom content:
+#     config/  kubejs/  defaultconfigs/  config/ftbquests/  *.md docs
+#  Ignores everything binary, generated, per-world, or machine-specific.
+# ============================================================
+
+# ── Mods (large binaries; distribute via a CurseForge/Modrinth manifest, not git) ──
+/mods/
+
+# ── Worlds / saves (huge, per-playthrough; also server world folders) ──
+/saves/
+/world/
+/world_nether/
+/world_the_end/
+/DIM*/
+/backups/
+
+# ── Downloaded binary packs ──
+/resourcepacks/
+/shaderpacks/
+
+# ── Logs, crash reports, profiler & debug output ──
+/logs/
+/crash-reports/
+/spark/
+*.log
+hs_err_pid*.log
+debug.txt
+DUMP.txt
+
+# ── Caches & auto-generated data (regenerate on launch) ──
+/modernfix/
+/local/
+/bendspacks/
+.mixin.out/
+.cache/
+**/cache/
+
+# ── Personal build tools / scans (player-specific) ──
+/blueprints/
+/schematics/
+
+# ── Launcher / instance / player metadata (machine-specific, contains local paths & names) ──
+/minecraftinstance.json
+/manifest.json
+/modlist.html
+/.curseclient
+/usercache.json
+/usernamecache.json
+/patchouli_data.json
+
+# ── Personal client options (keybinds, video, GUI scale, etc.) ──
+# NOTE: the Sound Physics master-volume tweak lives in options.txt and is intentionally NOT tracked.
+/options.txt
+/optionsof.txt
+/optionsshaders.txt
+
+# ── Editing backups created while tuning configs (git history replaces these) ──
+*.bak
+*.bak/
+
+# ── OS / editor cruft ──
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+/.idea/
+/.vscode/

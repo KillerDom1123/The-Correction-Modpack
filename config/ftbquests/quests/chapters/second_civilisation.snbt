@@ -76,6 +76,7 @@
 				""
 				"&8I no longer think that is a coincidence.&r"
 			]
+			hide_until_deps_complete: true
 			icon: "minecraft:beacon"
 			id: "7A06000000000103"
 			rewards: [

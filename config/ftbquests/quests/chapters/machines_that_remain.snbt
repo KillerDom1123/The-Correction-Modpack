@@ -196,7 +196,7 @@
 				""
 				"&8[ cause of abandonment: unknown ]&r"
 			]
-			hide: true
+			hide_until_deps_complete: true
 			hide_dependency_lines: true
 			icon: "mekanismgenerators:fusion_reactor_controller"
 			id: "7A02000000000107"

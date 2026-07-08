@@ -136,6 +136,7 @@
 				""
 				"&8I have not slept since.&r"
 			]
+			hide_until_deps_complete: true
 			icon: "oldcivilisation:correction_fragment"
 			id: "7A08000000000108"
 			optional: true

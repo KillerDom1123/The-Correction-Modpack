@@ -107,7 +107,7 @@
 				""
 				"&8Cause unknown.&r"
 			]
-			hide: true
+			hide_until_deps_complete: true
 			hide_dependency_lines: true
 			icon: "minecraft:knowledge_book"
 			id: "7A04000000000104"

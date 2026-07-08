@@ -1,0 +1,1 @@
+{"type":"minecraft:crafting_shaped","key":{"C":{"item":"mekanism:ultimate_control_circuit"},"F":{"item":"mekanismgenerators:fission_reactor_casing"}},"pattern":[" F ","FCF"," F "],"result":{"count":2,"item":"mekanismgenerators:fission_reactor_port"}}

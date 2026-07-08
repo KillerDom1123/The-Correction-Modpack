@@ -1,0 +1,1 @@
+{"type":"mekanism:mek_data","key":{"C":{"tag":"forge:circuits/elite"},"A":{"tag":"mekanism:alloys/reinforced"},"S":{"tag":"forge:storage_blocks/steel"},"T":{"item":"mekanism:elite_chemical_tank"}},"pattern":["SCS","ATA"," T "],"result":{"item":"mekanism:jetpack"}}

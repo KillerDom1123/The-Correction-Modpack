@@ -1,0 +1,100 @@
+{
+	autofocus_id: "7A06000000000101"
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "second_civilisation"
+	group: ""
+	icon: "minecraft:bell"
+	id: "7A06000000000000"
+	images: [ ]
+	order_index: 6
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&8[ OBSERVATION — PRESENT DAY ]&r"
+				""
+				"&7People are coming back. Not survivors passing through — settlers. Staying. Building the same kinds of walls in the same kinds of places.&r"
+				""
+				"&8I have started to notice how closely we are following a plan none of us were given.&r"
+			]
+			id: "7A06000000000101"
+			rewards: [
+				{ id: "7A06000000000301", type: "xp", xp: 30 }
+				{ count: 8, id: "7A06000000000302", item: "minecraft:emerald", type: "item" }
+				{ count: 2, id: "7A06000000000303", item: "farmersdelight:roast_chicken", type: "item" }
+				{ id: "7A06000000000304", item: "sophisticatedbackpacks:iron_backpack", type: "item" }
+			]
+			shape: "hexagon"
+			size: 1.5d
+			subtitle: "People Return"
+			tasks: [{
+				id: "7A06000000000201"
+				title: "Grow a colony to a population of 20 or more"
+				type: "checkmark"
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			description: [
+				"&8[ OBSERVATION — DEFENCES ]&r"
+				""
+				"&7The first thing a returning settlement builds is not a farm. It is a wall, a door that locks, an eye that watches the approach.&r"
+				""
+				"&8We are afraid of something. We have not agreed on what.&r"
+			]
+			id: "7A06000000000102"
+			rewards: [
+				{ id: "7A06000000000305", type: "xp", xp: 30 }
+				{ id: "7A06000000000306", item: "securitycraft:universal_block_reinforcer_lvl1", type: "item" }
+				{ count: 2, id: "7A06000000000307", item: "securitycraft:security_camera", type: "item" }
+				{ id: "7A06000000000308", item: "securitycraft:keypad", type: "item" }
+				{ count: 8, id: "7A06000000000309", item: "securitycraft:reinforced_iron_block", type: "item" }
+			]
+			subtitle: "Secure The Future"
+			tasks: [{
+				id: "7A06000000000202"
+				title: "Install security cameras, reinforced doors and defences"
+				type: "checkmark"
+			}]
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A06000000000101", "7A06000000000102", "7A02000000000106", "7A04000000000101", "7A03000000000102", "7A05000000000105"]
+			dependency_requirement: "all_completed"
+			description: [
+				"&8[ SUMMARY — ALL DISCIPLINES ]&r"
+				""
+				"&7I have compared the four investigations side by side. Technology. Knowledge. Understanding. Observation.&r"
+				""
+				"&7They do not contradict each other. They fit together, like sections of one report written by four people who never met.&r"
+				""
+				"&8We have rebuilt everything the people before us had. All of it. At the same time.&r"
+				""
+				"&8I no longer think that is a coincidence.&r"
+			]
+			icon: "minecraft:beacon"
+			id: "7A06000000000103"
+			rewards: [
+				{ id: "7A0600000000030A", type: "xp", xp: 60 }
+				{ id: "7A0600000000030B", type: "xp_levels", xp_levels: 5 }
+				{ count: 2, id: "7A0600000000030C", item: "minecraft:enchanted_golden_apple", type: "item" }
+				{ id: "7A0600000000030D", item: "minecraft:netherite_ingot", type: "item" }
+			]
+			shape: "diamond"
+			size: 1.5d
+			subtitle: "Knowledge, Power, Shelter"
+			tasks: [{
+				id: "7A06000000000203"
+				title: "Technology, Knowledge, Understanding, Observation — all four, together"
+				type: "checkmark"
+			}]
+			x: 1.25d
+			y: 2.0d
+		}
+	]
+	title: "The Second Civilisation"
+}

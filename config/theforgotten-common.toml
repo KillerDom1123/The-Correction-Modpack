@@ -1,0 +1,455 @@
+
+[gameplay]
+	#Prevent world deletion when caught by the Hunter
+	safeMode = true
+
+	[gameplay.apparitions]
+		#Enable subtle stalking apparitions
+		enabled = true
+
+	[gameplay.ambient]
+		#Enable subtle ambient misdirection sounds
+		enabled = true
+
+	[gameplay.structures]
+		#Enable small structures/anomalies
+		enabled = true
+
+	[gameplay.stalker]
+		#Enable stalking entities that vanish when spotted
+		enabled = true
+
+	[gameplay.worldSilence]
+		#Enable initial world grace period where the mod remains silent
+		enabled = true
+
+	[gameplay.mining]
+		#Mining speed multiplier in normal dimensions (1.0 = no slowdown)
+		#Range: 0.1 ~ 5.0
+		speedOverworld = 1.0
+		#Mining speed multiplier in the Lure dimension (1.0 = no slowdown)
+		#Range: 0.1 ~ 5.0
+		speedLure = 0.35
+		#Additional multiplier when a player has a Lure mark (1.0 = no slowdown)
+		#Range: 0.1 ~ 5.0
+		speedMarked = 0.85
+
+[events]
+
+	[events.sleep]
+		#Chance (0-1) that attempting to sleep triggers a fright event
+		#Range: 0.0 ~ 1.0
+		frightChance = 0.08
+		#Damage dealt in half-hearts when a sleep fright triggers (default 6 = 3 hearts)
+		#Range: 0.0 ~ 40.0
+		frightDamage = 6.0
+
+		[events.sleep.apparitions]
+			#Enable apparitions appearing during sleep fright events
+			enabled = true
+			#Base chance (0-1) for apparitions to appear during sleep fright at 0 tension
+			#Range: 0.0 ~ 1.0
+			baseChance = 0.2
+			#Tension scaling factor - apparition chance increases by this amount per tension point (0-100)
+			#Range: 0.0 ~ 0.05
+			tensionScale = 0.008
+			#Maximum number of apparitions that can appear during a single sleep fright
+			#Range: 1 ~ 10
+			maxCount = 3
+			#Lifetime in ticks for sleep fright apparitions (default 60 = 3 seconds)
+			#Range: 20 ~ 200
+			lifetimeTicks = 60
+
+[worldSilence]
+	#Ticks to keep the world silent for the 'full' duration
+	#Range: 100 ~ 10000000
+	fullDurationTicks = 3600
+	#Ticks to keep the world silent for the 'half' duration
+	#Range: 100 ~ 10000000
+	halfDurationTicks = 1800
+	#Probability of selecting the 'full' silence duration (0-1)
+	#Range: 0.0 ~ 1.0
+	fullChance = 0.6
+	#Seconds after silence ends to gradually ramp event intensity back to normal
+	#Range: 0 ~ 600
+	rampSeconds = 60
+	#Starting intensity scale right after silence (0-1)
+	#Range: 0.0 ~ 1.0
+	rampStartScale = 0.5
+
+[tension]
+	#Slower tension decay for better balance
+	#Range: 0.0 ~ 10.0
+	deceleratedDecay = 0.02
+	#Minimum tension required to consider small structure placement
+	#Range: 0.0 ~ 100.0
+	minForStructure = 35.0
+	#Seconds the minimum must be sustained before trying a placement
+	#Range: 0 ~ 600
+	minSustainSeconds = 10
+
+	[tension.increase]
+		#Tension per second when underground/low light
+		#Range: 0.0 ~ 10.0
+		underground = 0.08
+		#Tension per second when alone (no players within audience radius)
+		#Range: 0.0 ~ 10.0
+		solitude = 0.06
+		#Tension per second bonus during storms/night/deep caves
+		#Range: 0.0 ~ 10.0
+		stormNight = 0.08
+		#Tension per second increase in darkness
+		#Range: 0.0 ~ 10.0
+		darkness = 0.05
+
+	[tension.decrease]
+		#Tension per second decrease in safe bright areas / villages
+		#Range: 0.0 ~ 10.0
+		safe = 0.2
+
+	[tension.decay]
+		#Baseline tension decay per second (gentle)
+		#Range: 0.0 ~ 10.0
+		perSecond = 0.03
+
+[audience]
+	#Radius within which other players cancel an event (audience gating)
+	#Range: 16 ~ 192
+	radius = 80
+
+[scheduling]
+
+	[scheduling.rollInterval]
+		#Minimum seconds between per-player event rolls
+		#Range: 5 ~ 120
+		min = 20
+		#Maximum seconds between per-player event rolls
+		#Range: 6 ~ 180
+		max = 45
+
+	[scheduling.apparition]
+		#Probability on a per-roll to trigger an apparition (0-1)
+		#Range: 0.0 ~ 1.0
+		spawnChance = 0.03
+		#Probability that a successful apparition roll results in a 'behind' jumpscare (0-1)
+		#Range: 0.0 ~ 1.0
+		behindChance = 0.35
+
+	[scheduling.ambient]
+		#Probability on a per-roll to trigger an ambient sound (0-1)
+		#Range: 0.0 ~ 1.0
+		soundChance = 0.08
+
+	[scheduling.globalEvent]
+		#Cooldown in seconds after serious events before next event can occur
+		#Range: 5 ~ 300
+		cooldown = 25
+
+[audio]
+
+	[audio.ambient]
+		#Minimum seconds between ambient attempts per player to prevent spam
+		#Range: 1 ~ 120
+		minInterval = 4
+		#Maximum queued ambient sounds per player
+		#Range: 4 ~ 256
+		maxPending = 32
+
+		[audio.ambient.distortChance]
+			#Chance that an ambient sound is played with distortion layers in normal dimensions (0-1)
+			#Range: 0.0 ~ 1.0
+			overworld = 0.12
+			#Chance that an ambient sound is played with distortion layers in the lure dimension (0-1)
+			#Range: 0.0 ~ 1.0
+			lure = 0.6
+
+		[audio.ambient.glitchOverlayChance]
+			#Chance to add a quiet glitch overlay on ambient sounds in normal dimensions (0-1)
+			#Range: 0.0 ~ 1.0
+			overworld = 0.05
+			#Chance to add a glitch overlay on ambient sounds in the lure dimension (0-1)
+			#Range: 0.0 ~ 1.0
+			lure = 0.9
+
+	[audio.glitch]
+		#Scales all glitch intensity client-side (0 = off, 1 = default, >1 = stronger)
+		#Range: 0.0 ~ 2.0
+		intensityScale = 1.0
+
+	[audio.transition]
+		#Scales how strongly transition volume ramps back in (0 = muted, 1 = default, 2 = twice as strong)
+		#Range: 0.0 ~ 2.0
+		volumeFadeScale = 1.0
+
+[accessibility]
+	#Reduce/disable camera shake from glitches for accessibility
+	reduceCameraShake = false
+	#Reduce/disable texture glitch effects while keeping audio cues (for photosensitivity)
+	reduceTextureGlitches = false
+	#Reduce/disable screen distortion effects (for motion sickness)
+	reduceScreenDistortion = false
+
+[menu]
+
+	[menu.glitch]
+		#Enable all main menu glitch visuals
+		enable = true
+		#Enable UI jitter/offset during main menu glitches
+		ui = true
+		#Enable scanlines, noise, and screen overlay glitch artifacts
+		overlay = true
+		#Enable the heavier fullscreen distortion pass
+		distort = true
+
+[apparitions]
+
+	[apparitions.lunge]
+		#Enable apparition fake lunges after the player looks at them
+		enabled = true
+		#Base chance (0-1) to lunge after first being looked at
+		#Range: 0.0 ~ 1.0
+		baseChance = 0.1
+		#Max chance (0-1) reached after ramp minutes
+		#Range: 0.0 ~ 1.0
+		maxChance = 0.3
+		#Minutes of world playtime to ramp from baseChance -> maxChance (0 disables ramp)
+		#Range: 0 ~ 1000000
+		rampMinutes = 60
+		#Cooldown in seconds between fake lunges per apparition
+		#Range: 0 ~ 3600
+		cooldown = 60
+		#Delay ticks after look-before-lunge trigger before moving
+		#Range: 0 ~ 200
+		preparation = 6
+		#Duration in ticks of the lunge movement before vanishing
+		#Range: 1 ~ 200
+		duration = 12
+		#Lunge movement speed scalar
+		#Range: 0.0 ~ 10.0
+		speed = 2.5
+		#Minimum distance (blocks) required for a lunge trigger
+		#Range: 0.0 ~ 256.0
+		minDistance = 6.0
+		#Maximum distance (blocks) allowed for a lunge trigger
+		#Range: 0.0 ~ 512.0
+		maxDistance = 32.0
+
+	[apparitions.compass]
+		#Chance (0-1) an apparition drops a compass after the gate is met
+		#Range: 0.0 ~ 1.0
+		dropChance = 0.25
+		#Minimum apparitions seen before compass can drop
+		#Range: 1 ~ 64
+		gateMin = 3
+		#Additional random range added to the min gate (gate = min + rand(range))
+		#Range: 0 ~ 64
+		gateRange = 2
+
+[dialogue]
+	#Enable entity dialogue delivered via signs (player writes, entity replies)
+	enabled = true
+	#Percentage of text to obfuscate in entity responses (0-1, default 0.15 = 15%)
+	#Range: 0.0 ~ 1.0
+	obfuscation = 0.15
+
+	[dialogue.signDelay]
+		#Minimum delay in seconds before sign-written queries are answered
+		#Range: 5 ~ 600
+		min = 55
+		#Maximum delay in seconds before sign-written queries are answered
+		#Range: 5 ~ 1200
+		max = 95
+
+[chat]
+
+	[chat.creepy]
+		#Enable occasional creepy chat messages
+		enabled = true
+		#Chance (0-1) that an eligible creepy chat attempt actually sends
+		#Range: 0.0 ~ 1.0
+		sendChance = 0.3
+
+		[chat.creepy.interval]
+			#Minimum seconds between creepy chat attempts per player
+			#Range: 10 ~ 86400
+			min = 180
+			#Maximum seconds between creepy chat attempts per player
+			#Range: 10 ~ 86400
+			max = 420
+
+[structures]
+	#Maximum candidate location checks per attempt
+	#Range: 10 ~ 200
+	attemptBudget = 90
+
+	[structures.cooldown]
+		#Minimum cooldown seconds between small structures per player
+		#Range: 30 ~ 3600
+		min = 60
+		#Maximum cooldown seconds between small structures per player
+		#Range: 60 ~ 7200
+		max = 180
+
+	[structures.ttl]
+		#Minimum TTL for anomalies before rollback
+		#Range: 5 ~ 3600
+		min = 120
+		#Maximum TTL for anomalies before rollback
+		#Range: 10 ~ 7200
+		max = 600
+
+[lure]
+
+	[lure.entrance]
+		#Make lure entrances effectively permanent (no rollback)
+		permanent = false
+
+		[lure.entrance.ttl]
+			#Minimum TTL for lure entrances before rollback (seconds)
+			#Range: 60 ~ 86400
+			min = 3600
+			#Maximum TTL for lure entrances before rollback (seconds)
+			#Range: 300 ~ 172800
+			max = 14400
+
+[trial]
+	#Enable the corridor Trial (find N buttons to be set free)
+	enabled = true
+	#Number of unique trial buttons required to complete the Trial
+	#Range: 1 ~ 16
+	requiredButtons = 3
+	#Per-chunk chance to spawn a trial button pedestal in the lure dimension (0-1)
+	#Range: 0.0 ~ 1.0
+	buttonChance = 0.08
+
+[mobSpawning]
+
+	[mobSpawning.limiter]
+		#Enable mob spawn limiting (blocks most natural mob spawns)
+		enabled = true
+
+	[mobSpawning.peaceful]
+		#Chance to allow peaceful mob spawns when limiter is active (0-1)
+		#Range: 0.0 ~ 1.0
+		allowChance = 0.08
+
+[multiplay]
+	#When one player changes dimensions, teleport all other players to the same dimension (multiplayer only)
+	groupDimensionTeleport = false
+
+[stalker]
+	#Enable stalking entities that vanish when spotted
+	enabled = true
+	#Base chance (0-1) for stalker spawn per roll
+	#Range: 0.0 ~ 1.0
+	spawnChance = 0.03
+	#Cooldown in seconds between stalker spawn attempts per player
+	#Range: 30 ~ 3600
+	cooldown = 180
+	#Maximum number of stalkers that can exist for a player at once
+	#Range: 1 ~ 5
+	maxConcurrent = 1
+	#Multiplier for stalker render distance based on player's render distance (1.0 = same as player, 2.0 = 2x further)
+	#Range: 0.5 ~ 2.0
+	renderDistanceMultiplier = 1.0
+	#Use simulation distance limit for spawning (128 blocks = 8 chunks)
+	useSimulationDistance = true
+
+	[stalker.distance]
+		#Chance (0-1) for very close spawn (6-12 blocks)
+		#Range: 0.0 ~ 1.0
+		veryCloseChance = 0.15
+		#Chance (0-1) for close spawn (12-24 blocks)
+		#Range: 0.0 ~ 1.0
+		closeChance = 0.35
+		#Chance (0-1) for decently far spawn (32-48 blocks)
+		#Range: 0.0 ~ 1.0
+		decentlyFarChance = 0.35
+		#Chance (0-1) for very far spawn (64-96 blocks)
+		#Range: 0.0 ~ 1.0
+		veryFarChance = 0.25
+
+	[stalker.lifetime]
+		#Lifetime in ticks for very close stalkers
+		#Range: 20 ~ 300
+		veryClose = 60
+		#Lifetime in ticks for close stalkers
+		#Range: 20 ~ 400
+		close = 80
+		#Lifetime in ticks for decently far stalkers
+		#Range: 60 ~ 1200
+		decentlyFar = 200
+		#Lifetime in ticks for very far stalkers
+		#Range: 60 ~ 1200
+		veryFar = 300
+
+	[stalker.detection]
+		#Ticks of being looked at before vanishing
+		#Range: 1 ~ 20
+		stareThreshold = 6
+		#Detection angle in degrees for player looking at stalker
+		#Range: 5.0 ~ 90.0
+		angle = 30.0
+
+	[stalker.vanish]
+		#Vanish delay in ticks for close stalkers (0 = instant)
+		#Range: 0 ~ 20
+		closeDelay = 0
+		#Vanish delay in ticks for far stalkers
+		#Range: 0 ~ 100
+		farDelay = 6
+
+[paranoia]
+	#Enable psychological paranoia events that mess with player perception
+	enabled = true
+
+	[paranoia.environmental]
+		#Base chance (0-1) for environmental changes (doors, levers, chests) when not observed
+		#Range: 0.0 ~ 1.0
+		chance = 0.015
+		#Cooldown in seconds between environmental changes per player
+		#Range: 60 ~ 3600
+		cooldown = 240
+
+	[paranoia.illusion]
+		#Base chance (0-1) for block state illusions (visual-only changes)
+		#Range: 0.0 ~ 1.0
+		chance = 0.025
+
+	[paranoia.structure]
+		#Base chance (0-1) for structures to disappear when approached
+		#Range: 0.0 ~ 1.0
+		vanishChance = 0.15
+
+	[paranoia.observer]
+		#Interval in seconds to check if blocks are being observed by players
+		#Range: 1 ~ 10
+		checkInterval = 3
+		#Distance in blocks for player observation detection
+		#Range: 8 ~ 32
+		distance = 16
+
+	[paranoia.buildup]
+		#Paranoia buildup per event (0-100)
+		#Range: 0.0 ~ 100.0
+		perEvent = 3.0
+
+	[paranoia.decay]
+		#Paranoia decay per second when no events occur
+		#Range: 0.0 ~ 10.0
+		perSecond = 0.4
+
+	[paranoia.underground]
+		#Multiplier for paranoia events when underground
+		#Range: 0.5 ~ 3.0
+		multiplier = 1.4
+
+	[paranoia.alone]
+		#Multiplier for paranoia events when alone
+		#Range: 0.5 ~ 3.0
+		multiplier = 1.2
+
+[debug]
+	#Enable debug logging and test commands
+	enabled = false
+

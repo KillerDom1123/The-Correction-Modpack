@@ -1,0 +1,29 @@
+{
+  "branch": "minecolonies:technology",
+  "costs": [
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:gate_iron",
+      "quantity": 192
+    },
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecolonies:ancienttome",
+      "quantity": 6
+    },
+    {
+      "type": "minecolonies:item_simple",
+      "item": "minecraft:obsidian",
+      "quantity": 96
+    }
+  ],
+  "effects": [
+    {
+      "id": "minecolonies:effects/enhancesgatedurabilityaddition",
+      "level": 2
+    }
+  ],
+  "icon": "minecolonies:gate_iron",
+  "parentResearch": "minecolonies:technology/enhanced_gates1",
+  "researchLevel": 4
+}

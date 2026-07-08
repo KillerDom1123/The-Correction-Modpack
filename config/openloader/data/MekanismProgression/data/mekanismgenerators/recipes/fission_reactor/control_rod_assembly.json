@@ -1,0 +1,1 @@
+{"type":"minecraft:crafting_shaped","key":{"A":{"tag":"mekanism:alloys/reinforced"},"C":{"item":"mekanism:ultimate_control_circuit"},"S":{"tag":"forge:ingots/steel"}},"pattern":["ACA","SAS","SAS"],"result":{"item":"mekanismgenerators:control_rod_assembly"}}

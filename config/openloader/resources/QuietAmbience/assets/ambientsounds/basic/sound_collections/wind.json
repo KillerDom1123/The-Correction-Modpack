@@ -1,0 +1,24 @@
+{
+    "sounds": [
+        {
+            "name": "light-wind",
+            "category": "wind",
+            "files": [
+                "ambientsounds:wind.light-wind",
+                "ambientsounds:wind.light-wind2"
+            ],
+            "transition": 200,
+            "air": {
+                "min": 0.6
+            },
+            "length": {
+                "min": 400,
+                "max": 1200
+            },
+            "pause": {
+                "min": 3000,
+                "max": 7000
+            }
+        }
+    ]
+}

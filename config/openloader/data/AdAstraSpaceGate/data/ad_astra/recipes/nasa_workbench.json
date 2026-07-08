@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "tag": "ad_astra:steel_plates"
+    },
+    "C": {
+      "item": "minecraft:crafting_table"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    },
+    "K": {
+      "tag": "mekanism:alloys/atomic"
+    },
+    "E": {
+      "item": "ae2:controller"
+    },
+    "M": {
+      "item": "minecolonies:scroll_tp"
+    }
+  },
+  "pattern": [
+    "P#K",
+    "ECM",
+    "#T#"
+  ],
+  "result": {
+    "item": "ad_astra:nasa_workbench"
+  },
+  "show_notification": true
+}

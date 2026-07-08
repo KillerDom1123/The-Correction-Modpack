@@ -1,0 +1,31 @@
+{
+    "name": "mesa",
+    "biomes": [
+        "#is_badlands",
+        "mesa",
+        "badlands",
+        "lush desert",
+        "outback",
+        "wasteland",
+        "steppe",
+        "arid highland",
+        "canyon"
+    ],
+    "sounds": [
+        {
+            "name": "wind-mesa",
+            "category": "wind",
+            "files": [
+                "ambientsounds:wind.mesa"
+            ],
+            "length": {
+                "min": 400,
+                "max": 1200
+            },
+            "pause": {
+                "min": 3000,
+                "max": 7000
+            }
+        }
+    ]
+}

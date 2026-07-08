@@ -1,0 +1,180 @@
+{
+	autofocus_id: "7A01000000000101"
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "broken_world"
+	group: ""
+	icon: "minecraft:compass"
+	id: "7A01000000000000"
+	images: [ ]
+	order_index: 0
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&8[ FIELD SURVEY — ENTRY 001 ]&r"
+				""
+				"&7Someone lived here before us. The evidence is not subtle: foundations, tools, walls that were built to a plan. Then everyone left. All at once, as far as I can tell.&r"
+				""
+				"&7There is no sign of a battle. No bodies. No fire. The structures were not destroyed.&r"
+				""
+				"&6\"The world is not destroyed. It is interrupted.\"&r"
+				""
+				"&8Objective: locate one of their abandoned places and stand inside it. See it for yourself before you form an opinion.&r"
+			]
+			icon: "minecraft:cracked_stone_bricks"
+			id: "7A01000000000101"
+			rewards: [
+				{ id: "7A01000000000301", type: "xp", xp: 15 }
+				{ id: "7A01000000000302", item: "sophisticatedbackpacks:backpack", type: "item" }
+				{ id: "7A01000000000303", item: "explorerscompass:explorerscompass", type: "item" }
+				{ id: "7A01000000000304", item: "naturescompass:naturescompass", type: "item" }
+				{ count: 4, id: "7A01000000000305", item: "farmersdelight:hamburger", type: "item" }
+				{ count: 16, id: "7A01000000000306", item: "minecraft:torch", type: "item" }
+			]
+			shape: "hexagon"
+			size: 1.5d
+			subtitle: "A World Left Behind"
+			tasks: [{
+				id: "7A01000000000201"
+				title: "Stand inside a place someone abandoned"
+				type: "checkmark"
+			}]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A01000000000101"]
+			description: [
+				"&8[ FIELD SURVEY — ENTRY 007 ]&r"
+				""
+				"&7I have started keeping a count. Biomes. Structures. Anything underground. The pattern only appears once you have enough entries to compare.&r"
+				""
+				"&6\"The further you travel, the more evidence you find that this was once a connected world.\"&r"
+				""
+				"&8Objective: survey the land. Cover ground. Write down what you find.&r"
+			]
+			id: "7A01000000000102"
+			rewards: [
+				{ id: "7A01000000000307", type: "xp", xp: 25 }
+				{ id: "7A01000000000308", item: "waystones:waystone", type: "item" }
+				{ count: 2, id: "7A01000000000309", item: "waystones:warp_scroll", type: "item" }
+				{ id: "7A0100000000030A", item: "comforts:sleeping_bag_red", type: "item" }
+				{ id: "7A0100000000030B", item: "minecraft:map", type: "item" }
+			]
+			subtitle: "The First Survey"
+			tasks: [
+				{ id: "7A01000000000202", title: "Log 5 different biomes", type: "checkmark" }
+				{ id: "7A01000000000203", title: "Log 3 generated structures", type: "checkmark" }
+				{ id: "7A01000000000204", title: "Log 1 underground location", type: "checkmark" }
+			]
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A01000000000102"]
+			description: [
+				"&8[ RECOVERED NOTE — AUTHOR UNKNOWN ]&r"
+				""
+				"&7This page was found pinned inside a survey tent. The handwriting deteriorates toward the end.&r"
+				""
+				"&7\"Early explorers reported sounds and movements outside their camps.\"&r"
+				"&7\"Most assumed exhaustion.\"&r"
+				""
+				"&8I have decided to test it. Five nights out here. I will sleep as little as I can stand and record what I hear.&r"
+				""
+				"&8[ remainder of page illegible ]&r"
+			]
+			hide: true
+			hide_dependency_lines: true
+			icon: "minecraft:clock"
+			id: "7A01000000000103"
+			rewards: [
+				{ id: "7A0100000000030C", type: "xp", xp: 40 }
+				{ id: "7A0100000000030D", item: "artifacts:night_vision_goggles", type: "item" }
+				{ id: "7A0100000000030E", item: "minecraft:writable_book", type: "item" }
+				{ count: 4, id: "7A0100000000030F", item: "farmersdelight:glow_berry_custard", type: "item" }
+			]
+			subtitle: "The Silent Nights"
+			tasks: [{
+				id: "7A01000000000205"
+				title: "Spend five nights away from spawn. Do not sleep through them."
+				type: "checkmark"
+			}]
+			x: 2.5d
+			y: 2.0d
+		}
+		{
+			description: [
+				"&8[ SURVIVAL NOTE — WARMTH ]&r"
+				""
+				"&7The cold here is not weather. It is a condition of the world. In the earliest records, standing still is simply how people died.&r"
+				""
+				"&8Objective: keep your body temperature up. A waterskin and a way to read the cold will buy you time to learn everything else.&r"
+			]
+			icon: "cold_sweat:waterskin"
+			id: "7A01000000000104"
+			rewards: [
+				{ id: "7A01000000000310", type: "xp", xp: 15 }
+				{ id: "7A01000000000311", item: "minecraft:campfire", type: "item" }
+				{ count: 4, id: "7A01000000000312", item: "farmersdelight:cooked_bacon", type: "item" }
+			]
+			subtitle: "Warmth"
+			tasks: [
+				{ id: "7A01000000000207", item: "cold_sweat:waterskin", type: "item" }
+				{ id: "7A01000000000208", item: "cold_sweat:thermometer", type: "item" }
+			]
+			x: -3.0d
+			y: 0.0d
+		}
+		{
+			description: [
+				"&8[ SURVIVAL NOTE — FOOD ]&r"
+				""
+				"&7Raw scavenging will not sustain a person here for long. The old kitchens I have catalogued were elaborate. Ours will start smaller.&r"
+				""
+				"&8Objective: build a cooking pot and a cutting board. Cook something worth eating.&r"
+			]
+			icon: "farmersdelight:cooking_pot"
+			id: "7A01000000000105"
+			rewards: [
+				{ id: "7A01000000000313", type: "xp", xp: 15 }
+				{ id: "7A01000000000314", item: "farmersdelight:skillet", type: "item" }
+				{ count: 2, id: "7A01000000000315", item: "farmersdelight:vegetable_soup", type: "item" }
+			]
+			subtitle: "Sustenance"
+			tasks: [
+				{ id: "7A01000000000209", item: "farmersdelight:cooking_pot", type: "item" }
+				{ id: "7A0100000000020A", item: "farmersdelight:cutting_board", type: "item" }
+			]
+			x: -3.0d
+			y: 1.5d
+		}
+		{
+			description: [
+				"&8[ SURVIVAL NOTE — SHELTER ]&r"
+				""
+				"&7The first survivors did not build to last. They built to see morning. At the start, that is enough.&r"
+				""
+				"&8Objective: get through a full night behind walls and a door of your own making.&r"
+			]
+			icon: "comforts:sleeping_bag_red"
+			id: "7A01000000000106"
+			rewards: [
+				{ id: "7A01000000000316", type: "xp", xp: 15 }
+				{ id: "7A01000000000317", item: "comforts:sleeping_bag_red", type: "item" }
+				{ count: 8, id: "7A01000000000318", item: "minecraft:torch", type: "item" }
+			]
+			subtitle: "The First Night"
+			tasks: [{
+				id: "7A0100000000020B"
+				title: "Survive your first night behind walls you built"
+				type: "checkmark"
+			}]
+			x: -3.0d
+			y: 3.0d
+		}
+	]
+	title: "The Broken World"
+}

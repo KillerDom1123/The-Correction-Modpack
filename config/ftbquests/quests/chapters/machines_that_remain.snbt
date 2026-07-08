@@ -1,0 +1,387 @@
+{
+	autofocus_id: "7A02000000000101"
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "machines_that_remain"
+	group: ""
+	icon: "create:cogwheel"
+	id: "7A02000000000000"
+	images: [ ]
+	order_index: 1
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&8[ ENGINEERING PATH — \"THE PREVIOUS AGE\" ]&r"
+				""
+				"&7If we understand what they built, we understand what happened. That is the theory, at least.&r"
+				""
+				"&7\"The earliest machines recovered were not weapons.\"&r"
+				"&7\"They were tools.\"&r"
+				""
+				"&8Objective: reconstruct the simplest of their machines from recovered schematics.&r"
+			]
+			id: "7A02000000000101"
+			rewards: [
+				{ id: "7A02000000000301", type: "xp", xp: 20 }
+				{ count: 16, id: "7A02000000000302", item: "create:andesite_alloy", type: "item" }
+				{ count: 8, id: "7A02000000000303", item: "create:cogwheel", type: "item" }
+				{ count: 2, id: "7A02000000000304", item: "create:precision_mechanism", type: "item" }
+			]
+			shape: "hexagon"
+			size: 1.5d
+			subtitle: "Simple Machines"
+			tasks: [
+				{ id: "7A02000000000201", item: "create:water_wheel", type: "item" }
+				{ id: "7A02000000000202", item: "create:mechanical_press", type: "item" }
+				{ id: "7A02000000000203", item: "create:encased_fan", type: "item" }
+				{ id: "7A02000000000204", item: "create:mechanical_mixer", type: "item" }
+			]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A02000000000101"]
+			description: [
+				"&8[ SITE REPORT — RECURRING PATTERN ]&r"
+				""
+				"&7Every facility I catalogue shows the same thing. Nothing was carried by hand. Belts, chutes, arms — the material moved itself.&r"
+				""
+				"&7\"Automation was everywhere.\"&r"
+				"&7\"The Old Civilisation did not work harder.\"&r"
+				"&7\"It made the world work for it.\"&r"
+			]
+			id: "7A02000000000102"
+			rewards: [
+				{ id: "7A02000000000305", type: "xp", xp: 20 }
+				{ count: 4, id: "7A02000000000306", item: "create:brass_casing", type: "item" }
+				{ id: "7A02000000000307", item: "sophisticatedbackpacks:backpack", type: "item" }
+				{ id: "7A02000000000308", item: "sophisticatedbackpacks:pickup_upgrade", type: "item" }
+				{ id: "7A02000000000309", item: "sophisticatedbackpacks:magnet_upgrade", type: "item" }
+			]
+			subtitle: "A Moving World"
+			tasks: [
+				{ id: "7A02000000000205", item: "create:belt_connector", type: "item" }
+				{ id: "7A02000000000206", item: "create:andesite_funnel", type: "item" }
+				{ id: "7A02000000000207", item: "create:chute", type: "item" }
+				{ id: "7A02000000000208", item: "create:mechanical_arm", type: "item" }
+			]
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A02000000000102"]
+			description: [
+				"&8[ SITE REPORT — INDUSTRIAL ZONE ]&r"
+				""
+				"&7These are heavier than the Create-pattern machines. Furnaces the size of houses. Storage for energy I do not fully understand.&r"
+				""
+				"&7\"Industrial facilities remain scattered across the world.\"&r"
+				"&7\"Almost all were abandoned simultaneously.\"&r"
+				""
+				"&8Whatever made them leave, they did not stop to shut anything down.&r"
+			]
+			id: "7A02000000000103"
+			rewards: [
+				{ id: "7A0200000000030A", type: "xp", xp: 30 }
+				{ id: "7A0200000000030B", item: "immersiveengineering:manual", type: "item" }
+				{ id: "7A0200000000030C", item: "immersiveengineering:hammer", type: "item" }
+				{ count: 16, id: "7A0200000000030D", item: "immersiveengineering:ingot_steel", type: "item" }
+				{ count: 8, id: "7A0200000000030E", item: "immersiveengineering:plate_steel", type: "item" }
+			]
+			subtitle: "Industrial Foundations"
+			tasks: [
+				{ id: "7A02000000000209", item: "immersiveengineering:cokebrick", type: "item" }
+				{ id: "7A0200000000020A", item: "immersiveengineering:blastbrick", type: "item" }
+				{ id: "7A0200000000020B", item: "immersiveengineering:dynamo", type: "item" }
+				{ id: "7A0200000000020C", item: "immersiveengineering:capacitor_lv", type: "item" }
+			]
+			x: 5.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A02000000000101"]
+			description: [
+				"&8[ SURVEY NOTE — TRANSIT LINES ]&r"
+				""
+				"&7The rails run everywhere. They connect sites that are days apart on foot. Then, at some point, the network simply stopped being used.&r"
+				""
+				"&7\"The world was connected once.\"&r"
+				"&7\"Something made connection unnecessary.\"&r"
+			]
+			id: "7A02000000000104"
+			rewards: [
+				{ id: "7A0200000000030F", type: "xp", xp: 20 }
+				{ count: 32, id: "7A02000000000310", item: "minecraft:rail", type: "item" }
+				{ count: 8, id: "7A02000000000311", item: "minecraft:powered_rail", type: "item" }
+				{ count: 4, id: "7A02000000000312", item: "create:railway_casing", type: "item" }
+				{ count: 2, id: "7A02000000000313", item: "waystones:warp_scroll", type: "item" }
+			]
+			subtitle: "The Rail Network"
+			tasks: [
+				{ id: "7A0200000000020D", item: "create:railway_casing", type: "item" }
+				{ id: "7A0200000000020E", item: "create:track", type: "item" }
+				{ id: "7A0200000000020F", item: "create:track_station", type: "item" }
+			]
+			x: 2.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A02000000000103"]
+			description: [
+				"&8[ OPEN QUESTION — POWER ]&r"
+				""
+				"&7It does not matter which method you use — rotational, electrical, pressurised. They all lead to the same question, and I cannot answer it.&r"
+				""
+				"&7\"The Old Civilisation mastered energy.\"&r"
+				"&7\"The question is why they needed so much.\"&r"
+				""
+				"&8Objective: get a power source of any discipline running. The method is yours to choose. It always was.&r"
+			]
+			icon: "immersiveengineering:capacitor_lv"
+			id: "7A02000000000105"
+			rewards: [
+				{ id: "7A02000000000314", type: "xp", xp: 25 }
+				{ count: 4, id: "7A02000000000315", item: "create:electron_tube", type: "item" }
+				{ id: "7A02000000000316", item: "mekanism:energy_tablet", type: "item" }
+			]
+			subtitle: "The Power Question"
+			tasks: [{
+				id: "7A02000000000210"
+				title: "Run a working power source (Create / Immersive / Pneumatic — your choice)"
+				type: "checkmark"
+			}]
+			x: 5.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A02000000000105"]
+			description: [
+				"&8[ CROSS-REFERENCE — TROUBLING ]&r"
+				""
+				"&7I built these to modern designs. Then I found the same machines — the exact same layouts — in a facility that predates everything we know.&r"
+				""
+				"&7\"Several abandoned facilities contain machines almost identical to these.\"&r"
+				""
+				"&8We are not inventing. We are repeating.&r"
+			]
+			id: "7A02000000000106"
+			rewards: [
+				{ id: "7A02000000000317", type: "xp", xp: 30 }
+				{ count: 16, id: "7A02000000000318", item: "mekanism:ingot_osmium", type: "item" }
+				{ count: 8, id: "7A02000000000319", item: "mekanism:alloy_infused", type: "item" }
+				{ count: 2, id: "7A0200000000031A", item: "mekanism:energy_tablet", type: "item" }
+			]
+			subtitle: "A Familiar Design"
+			tasks: [
+				{ id: "7A02000000000211", item: "mekanism:enrichment_chamber", type: "item" }
+				{ id: "7A02000000000212", item: "mekanism:metallurgic_infuser", type: "item" }
+				{ id: "7A02000000000213", item: "mekanism:digital_miner", type: "item" }
+			]
+			x: 7.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A02000000000106"]
+			description: [
+				"&8[ RECOVERED DOCUMENT — HEAVILY REDACTED ]&r"
+				""
+				"&7\"Records repeatedly mention a final energy project.\"&r"
+				"&7\"The details are missing.\"&r"
+				""
+				"&8Every reference to it has been deliberately cut from the archive. The redactions are clean. Someone did not want this reconstructed.&r"
+				""
+				"&8I am reconstructing it anyway. I want to see what they were so afraid of.&r"
+				""
+				"&8[ cause of abandonment: unknown ]&r"
+			]
+			hide: true
+			hide_dependency_lines: true
+			icon: "mekanismgenerators:fusion_reactor_controller"
+			id: "7A02000000000107"
+			rewards: [
+				{ id: "7A0200000000031B", type: "xp", xp: 1 }
+				{ id: "7A0200000000031C", item: "minecraft:gunpowder", type: "item" }
+			]
+			subtitle: "The Unacceptable Solution"
+			tasks: [
+				{ id: "7A02000000000214", item: "mekanismgenerators:fusion_reactor_controller", type: "item" }
+			]
+			x: 10.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A02000000000102"]
+			description: [
+				"&8[ SITE REPORT — SECOND GENERATION ]&r"
+				""
+				"&7The simple machines were only the beginning. The next layer of their workshops ran on brass, and on a small, precise clockwork core I keep finding intact.&r"
+				""
+				"&8Objective: reach the brass age — crushing wheels, a mechanical crafter, a deployer. Press your first Precision Mechanism.&r"
+			]
+			id: "7A02000000000108"
+			rewards: [
+				{ id: "7A0200000000031D", type: "xp", xp: 25 }
+				{ count: 4, id: "7A0200000000031E", item: "create:precision_mechanism", type: "item" }
+				{ count: 8, id: "7A0200000000031F", item: "create:brass_ingot", type: "item" }
+			]
+			subtitle: "Brass and Precision"
+			tasks: [
+				{ id: "7A02000000000215", item: "create:crushing_wheel", type: "item" }
+				{ id: "7A02000000000216", item: "create:mechanical_crafter", type: "item" }
+				{ id: "7A02000000000217", item: "create:deployer", type: "item" }
+				{ id: "7A02000000000218", item: "create:brass_ingot", type: "item" }
+			]
+			x: 2.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["7A02000000000108"]
+			description: [
+				"&8[ CROSS-REFERENCE — TWO ENERGIES ]&r"
+				""
+				"&7Their rotational machines fed something else: a current, carried on wire. Where rotation ended, electricity began. The two systems were never separate to them.&r"
+				""
+				"&8Objective: bridge rotation to current — an electric motor, an alternator, an accumulator to hold what you make.&r"
+			]
+			icon: "createaddition:electric_motor"
+			id: "7A02000000000109"
+			rewards: [
+				{ id: "7A02000000000320", type: "xp", xp: 25 }
+				{ count: 2, id: "7A02000000000321", item: "createaddition:capacitor", type: "item" }
+			]
+			subtitle: "Captured Lightning"
+			tasks: [
+				{ id: "7A02000000000219", item: "createaddition:electric_motor", type: "item" }
+				{ id: "7A0200000000021A", item: "createaddition:alternator", type: "item" }
+				{ id: "7A0200000000021B", item: "createaddition:accumulator", type: "item" }
+			]
+			x: 4.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["7A02000000000103"]
+			description: [
+				"&8[ SITE REPORT — HEAVY INDUSTRY ]&r"
+				""
+				"&7The coke ovens were only the furnace of a much larger operation. The presses and crushers that survive are built to a scale one person was never meant to operate alone.&r"
+				""
+				"&8Objective: assemble the Immersive multiblocks — a Metal Press, a Crusher, a Squeezer.&r"
+			]
+			id: "7A0200000000010A"
+			rewards: [
+				{ id: "7A02000000000322", type: "xp", xp: 30 }
+				{ count: 16, id: "7A02000000000323", item: "immersiveengineering:plate_steel", type: "item" }
+			]
+			subtitle: "Refined Extraction"
+			tasks: [
+				{ id: "7A0200000000021C", item: "immersiveengineering:metal_press", type: "item" }
+				{ id: "7A0200000000021D", item: "immersiveengineering:crusher", type: "item" }
+				{ id: "7A0200000000021E", item: "immersiveengineering:squeezer", type: "item" }
+			]
+			x: 6.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A0200000000010A"]
+			description: [
+				"&8[ SURVEY NOTE — THE OIL BENEATH ]&r"
+				""
+				"&7They did not stop at what could be dug. They drilled. There are dry boreholes across the map, capped and abandoned, that reach deeper than any mine.&r"
+				""
+				"&8Objective: raise a Pumpjack over an oil deposit and refine what comes up in a Distillation Tower.&r"
+			]
+			icon: "immersivepetroleum:pumpjack"
+			id: "7A0200000000010B"
+			rewards: [
+				{ id: "7A02000000000324", type: "xp", xp: 30 }
+				{ id: "7A02000000000325", item: "immersivepetroleum:lubricant_bucket", type: "item" }
+				{ id: "7A02000000000326", item: "immersiveengineering:capacitor_hv", type: "item" }
+			]
+			subtitle: "The Oil Beneath"
+			tasks: [
+				{ id: "7A0200000000021F", item: "immersivepetroleum:pumpjack", type: "item" }
+				{ id: "7A02000000000220", item: "immersivepetroleum:distillation_tower", type: "item" }
+			]
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A02000000000105"]
+			description: [
+				"&8[ CROSS-REFERENCE — PRESSURE ]&r"
+				""
+				"&7One recovered facility ran on none of the usual power. It ran on compressed air, pushed through tubing, and on a strange mouldable material they made in quantity.&r"
+				""
+				"&8Objective: pressurise — an Air Compressor, pressure tubing, a gauge, and your first Plastic.&r"
+			]
+			icon: "pneumaticcraft:air_compressor"
+			id: "7A0200000000010C"
+			rewards: [
+				{ id: "7A02000000000327", type: "xp", xp: 25 }
+				{ count: 8, id: "7A02000000000328", item: "pneumaticcraft:plastic", type: "item" }
+			]
+			subtitle: "Pressurised"
+			tasks: [
+				{ id: "7A02000000000221", item: "pneumaticcraft:air_compressor", type: "item" }
+				{ id: "7A02000000000222", item: "pneumaticcraft:pressure_tube", type: "item" }
+				{ id: "7A02000000000223", item: "pneumaticcraft:plastic", type: "item" }
+				{ id: "7A02000000000224", item: "pneumaticcraft:pressure_gauge", type: "item" }
+			]
+			x: 5.0d
+			y: 4.0d
+		}
+		{
+			dependencies: ["7A02000000000106"]
+			description: [
+				"&8[ SITE REPORT — THE PRODUCTION LINE ]&r"
+				""
+				"&7This is where their industry stopped being tools and became a system. Steel-cased machines, wired to a common current, repeating a single task without end.&r"
+				""
+				"&8Objective: build the Mekanism backbone — a steel casing, an energy cube, universal cable, and a Smelting Factory.&r"
+			]
+			icon: "mekanism:basic_smelting_factory"
+			id: "7A0200000000010D"
+			rewards: [
+				{ id: "7A02000000000329", type: "xp", xp: 30 }
+				{ count: 2, id: "7A0200000000032A", item: "mekanism:steel_casing", type: "item" }
+				{ count: 2, id: "7A0200000000032B", item: "mekanism:advanced_control_circuit", type: "item" }
+			]
+			subtitle: "Factory Line"
+			tasks: [
+				{ id: "7A02000000000225", item: "mekanism:steel_casing", type: "item" }
+				{ id: "7A02000000000226", item: "mekanism:basic_energy_cube", type: "item" }
+				{ id: "7A02000000000227", item: "mekanism:basic_universal_cable", type: "item" }
+				{ id: "7A02000000000228", item: "mekanism:basic_smelting_factory", type: "item" }
+			]
+			x: 7.5d
+			y: 4.0d
+		}
+		{
+			dependencies: ["7A0200000000010D"]
+			description: [
+				"&8[ CROSS-REFERENCE — DISTANCE MEANT NOTHING ]&r"
+				""
+				"&7By the end, they had stopped moving materials at all. They moved them&r &8instantly&r&7. A logistics network with no carts, no rails, no distance. And the generators to feed it never stopped burning.&r"
+				""
+				"&8Objective: a Teleporter, a QIO Dashboard, a Gas-Burning Generator. Make distance stop mattering.&r"
+			]
+			icon: "mekanism:qio_dashboard"
+			id: "7A0200000000010E"
+			rewards: [
+				{ id: "7A0200000000032C", type: "xp", xp: 35 }
+				{ id: "7A0200000000032D", item: "mekanism:atomic_disassembler", type: "item" }
+			]
+			subtitle: "Distant Hands"
+			tasks: [
+				{ id: "7A02000000000229", item: "mekanism:teleporter", type: "item" }
+				{ id: "7A0200000000022A", item: "mekanism:qio_dashboard", type: "item" }
+				{ id: "7A0200000000022B", item: "mekanismgenerators:gas_burning_generator", type: "item" }
+			]
+			x: 9.5d
+			y: 4.0d
+		}
+	]
+	title: "The Machines That Remain"
+}

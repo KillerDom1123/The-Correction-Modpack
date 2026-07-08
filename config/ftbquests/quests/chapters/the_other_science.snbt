@@ -1,0 +1,293 @@
+{
+	autofocus_id: "7A03000000000101"
+	default_hide_dependency_lines: false
+	default_quest_shape: ""
+	filename: "the_other_science"
+	group: ""
+	icon: "ars_nouveau:novice_spell_book"
+	id: "7A03000000000000"
+	images: [ ]
+	order_index: 2
+	progression_mode: "flexible"
+	quest_links: [ ]
+	quests: [
+		{
+			description: [
+				"&8[ ARCANE PATH — \"THE FALLEN\" ]&r"
+				""
+				"&7Perhaps the machines were never the cause. Some of the recovered sites have nothing mechanical in them at all — only symbols, and the residue of something that was studied very seriously.&r"
+				""
+				"&7\"The Old Civilisation had multiple methods of discovery.\"&r"
+				""
+				"&8They did not separate science from magic. To them these were only different ways of reading the same reality.&r"
+			]
+			id: "7A03000000000101"
+			rewards: [
+				{ id: "7A03000000000301", type: "xp", xp: 20 }
+				{ count: 12, id: "7A03000000000302", item: "ars_nouveau:source_gem", type: "item" }
+				{ count: 8, id: "7A03000000000303", item: "minecraft:amethyst_shard", type: "item" }
+			]
+			shape: "hexagon"
+			size: 1.5d
+			subtitle: "Old Symbols"
+			tasks: [
+				{ id: "7A03000000000201", item: "ars_nouveau:source_jar", type: "item" }
+				{ id: "7A03000000000202", item: "ars_nouveau:novice_spell_book", type: "item" }
+				{ id: "7A03000000000203", item: "ars_nouveau:imbuement_chamber", type: "item" }
+			]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A03000000000101"]
+			description: [
+				"&8[ RESEARCH LOG — SOURCE STUDIES ]&r"
+				""
+				"&7It behaves like energy, but it responds to intent. I can measure it, store it, spend it. I cannot explain it.&r"
+				""
+				"&7\"Some researchers believed reality was not broken.\"&r"
+				"&7\"Only misunderstood.\"&r"
+			]
+			id: "7A03000000000102"
+			rewards: [
+				{ id: "7A03000000000304", type: "xp", xp: 25 }
+				{ count: 8, id: "7A03000000000305", item: "ars_nouveau:source_gem", type: "item" }
+				{ id: "7A03000000000306", item: "irons_spellbooks:wimpy_spell_book", type: "item" }
+				{ count: 2, id: "7A03000000000307", item: "irons_spellbooks:scroll", type: "item" }
+				{ count: 4, id: "7A03000000000308", item: "irons_spellbooks:arcane_ingot", type: "item" }
+			]
+			subtitle: "A Different Kind of Power"
+			tasks: [
+				{ id: "7A03000000000204", item: "ars_nouveau:enchanting_apparatus", type: "item" }
+				{ id: "7A03000000000205", title: "Generate Source and cast a spell of your own making", type: "checkmark" }
+			]
+			x: 2.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A03000000000102"]
+			description: [
+				"&8[ RECOVERED DOCUMENT — RITUAL STUDIES ]&r"
+				""
+				"&7They did not build a workforce. They asked for one, and something answered.&r"
+				""
+				"&7\"The spirits answered.\"&r"
+				"&7\"The records do not explain why.\"&r"
+				""
+				"&8The transcripts are one-sided. We only ever recorded our half of the conversation.&r"
+			]
+			id: "7A03000000000103"
+			rewards: [
+				{ id: "7A03000000000309", type: "xp", xp: 25 }
+				{ count: 8, id: "7A0300000000030A", item: "occultism:datura", type: "item" }
+				{ count: 2, id: "7A0300000000030B", item: "occultism:otherworld_essence", type: "item" }
+				{ id: "7A0300000000030C", item: "occultism:spirit_attuned_gem", type: "item" }
+			]
+			subtitle: "The Invisible Workforce"
+			tasks: [
+				{ id: "7A03000000000206", item: "occultism:golden_sacrificial_bowl", type: "item" }
+				{ id: "7A03000000000207", item: "occultism:chalk_white", type: "item" }
+			]
+			x: 5.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A03000000000101"]
+			description: [
+				"&8[ FIELD NOTE — FOLK PRACTICE ]&r"
+				""
+				"&7This knowledge survived differently. Not in archives — in habit, in ritual, passed hand to hand by people who never wrote it down.&r"
+				""
+				"&7\"Some knowledge survived because people were afraid to forget it.\"&r"
+			]
+			id: "7A03000000000104"
+			rewards: [
+				{ id: "7A0300000000030D", type: "xp", xp: 25 }
+				{ count: 4, id: "7A0300000000030E", item: "supplementaries:jar", type: "item" }
+				{ count: 8, id: "7A0300000000030F", item: "minecraft:glass_bottle", type: "item" }
+				{ count: 4, id: "7A03000000000310", item: "occultism:datura", type: "item" }
+			]
+			subtitle: "The Old Practices"
+			tasks: [
+				{ id: "7A03000000000208", item: "hexerei:mixing_cauldron", type: "item" }
+				{ id: "7A03000000000209", item: "hexerei:book_of_shadows_altar", type: "item" }
+				{ id: "7A0300000000020A", item: "hexerei:book_of_shadows", type: "item" }
+			]
+			x: 2.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A03000000000103", "7A03000000000104"]
+			dependency_requirement: "one_completed"
+			description: [
+				"&8[ RECOVERED DOCUMENT — SEALED ]&r"
+				""
+				"&7This line of research was closed before the end. Not lost to the disaster — closed on purpose, while there was still someone left to close it.&r"
+				""
+				"&7\"Some discoveries were abandoned before the world ended.\"&r"
+				""
+				"&8They stopped themselves. That is what worries me.&r"
+			]
+			id: "7A03000000000105"
+			rewards: [
+				{ id: "7A03000000000311", type: "xp", xp: 30 }
+				{ count: 4, id: "7A03000000000312", item: "forbidden_arcanus:deorum_ingot", type: "item" }
+				{ count: 8, id: "7A03000000000313", item: "forbidden_arcanus:arcane_crystal", type: "item" }
+				{ id: "7A03000000000314", item: "forbidden_arcanus:xpetrified_orb", type: "item" }
+				{ count: 4, id: "7A03000000000315", item: "forbidden_arcanus:aureal_bottle", type: "item" }
+			]
+			subtitle: "Forbidden"
+			tasks: [
+				{ id: "7A0300000000020B", item: "forbidden_arcanus:arcane_crystal", type: "item" }
+			]
+			x: 5.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A03000000000102"]
+			description: [
+				"&8[ RESEARCH LOG — THE LIVING WORKSHOP ]&r"
+				""
+				"&7They did not tend their magic by hand. They bound small spirits to the work — gathering, growing, generating Source while no one watched.&r"
+				""
+				"&8Objective: build a Ritual Brazier, bind a Drygmy, and set up a Sourcelink to generate Source on its own.&r"
+			]
+			icon: "ars_nouveau:ritual_brazier"
+			id: "7A03000000000106"
+			rewards: [
+				{ id: "7A03000000000316", type: "xp", xp: 30 }
+				{ count: 16, id: "7A03000000000317", item: "ars_nouveau:source_gem", type: "item" }
+			]
+			subtitle: "The Living Workshop"
+			tasks: [
+				{ id: "7A0300000000020C", item: "ars_nouveau:ritual_brazier", type: "item" }
+				{ id: "7A0300000000020D", item: "ars_nouveau:drygmy_charm", type: "item" }
+				{ id: "7A0300000000020E", item: "ars_nouveau:agronomic_sourcelink", type: "item" }
+			]
+			x: 2.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["7A03000000000102"]
+			description: [
+				"&8[ RECOVERED DOCUMENT — SPOKEN MAGIC ]&r"
+				""
+				"&7A different school entirely. They wrote power into scrolls and books and carried it like a weapon. The inscription tools survive; the restraint that was meant to accompany them does not.&r"
+				""
+				"&8Objective: build an Inscription Table and a Scroll Forge. Bind a spell to a scroll.&r"
+			]
+			icon: "irons_spellbooks:inscription_table"
+			id: "7A03000000000107"
+			rewards: [
+				{ id: "7A03000000000318", type: "xp", xp: 30 }
+				{ count: 8, id: "7A03000000000319", item: "irons_spellbooks:arcane_ingot", type: "item" }
+				{ id: "7A0300000000031A", item: "irons_spellbooks:mana_upgrade_orb", type: "item" }
+			]
+			subtitle: "Words of Power"
+			tasks: [
+				{ id: "7A0300000000020F", item: "irons_spellbooks:inscription_table", type: "item" }
+				{ id: "7A03000000000210", item: "irons_spellbooks:scroll_forge", type: "item" }
+				{ id: "7A03000000000211", item: "irons_spellbooks:scroll", type: "item" }
+			]
+			x: 0.0d
+			y: -2.0d
+		}
+		{
+			dependencies: ["7A03000000000103"]
+			description: [
+				"&8[ RECOVERED DOCUMENT — BORROWED HANDS ]&r"
+				""
+				"&7Once the first spirit answered, the rest was industry. They put the summoned to work: mining, hauling, keeping a storehouse that held far more than its walls should allow.&r"
+				""
+				"&8Objective: raise a Storage Controller, a Dimensional Storage Actuator's lamp, and a Satchel to carry the network with you.&r"
+			]
+			icon: "occultism:storage_controller"
+			id: "7A03000000000108"
+			rewards: [
+				{ id: "7A0300000000031B", type: "xp", xp: 30 }
+				{ count: 4, id: "7A0300000000031C", item: "occultism:iesnium_ingot", type: "item" }
+			]
+			subtitle: "Demon Labour"
+			tasks: [
+				{ id: "7A03000000000212", item: "occultism:storage_controller", type: "item" }
+				{ id: "7A03000000000213", item: "occultism:satchel", type: "item" }
+				{ id: "7A03000000000214", item: "occultism:magic_lamp_empty", type: "item" }
+			]
+			x: 6.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A03000000000108"]
+			description: [
+				"&8[ RECOVERED DOCUMENT — THE BOUND SERVANT ]&r"
+				""
+				"&7The deeper texts describe binding a spirit to a person, not a task. A familiar. A companion that was, the notes insist, never truly owned.&r"
+				""
+				"&8Objective: craft a Familiar Ring, a Dimensional Matrix, and a Stable Wormhole. Ask, and see what answers.&r"
+			]
+			icon: "occultism:familiar_ring"
+			id: "7A03000000000109"
+			rewards: [
+				{ id: "7A0300000000031D", type: "xp", xp: 35 }
+				{ count: 2, id: "7A0300000000031E", item: "occultism:spirit_attuned_gem", type: "item" }
+			]
+			subtitle: "The Bound Servant"
+			tasks: [
+				{ id: "7A03000000000215", item: "occultism:familiar_ring", type: "item" }
+				{ id: "7A03000000000216", item: "occultism:dimensional_matrix", type: "item" }
+				{ id: "7A03000000000217", item: "occultism:stable_wormhole", type: "item" }
+			]
+			x: 8.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A03000000000104"]
+			description: [
+				"&8[ FIELD NOTE — THE BROOM AND THE CAULDRON ]&r"
+				""
+				"&7The folk practice had its own tools, humble and effective. A cauldron for brewing, jars of dried herbs, and — the notes are quite serious about this — a broom that flies.&r"
+				""
+				"&8Objective: craft a Willow Broom, a Herb Jar, and a Candle Dipper. Work the old way.&r"
+			]
+			icon: "hexerei:willow_broom"
+			id: "7A0300000000010A"
+			rewards: [
+				{ id: "7A0300000000031F", type: "xp", xp: 30 }
+				{ count: 4, id: "7A03000000000320", item: "hexerei:candle", type: "item" }
+			]
+			subtitle: "The Broom and the Cauldron"
+			tasks: [
+				{ id: "7A03000000000218", item: "hexerei:willow_broom", type: "item" }
+				{ id: "7A03000000000219", item: "hexerei:herb_jar", type: "item" }
+				{ id: "7A0300000000021A", item: "hexerei:candle_dipper", type: "item" }
+			]
+			x: 2.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["7A03000000000105"]
+			description: [
+				"&8[ RECOVERED DOCUMENT — THE FORGE UNBIDDEN ]&r"
+				""
+				"&7The sealed research needed a forge that answers to more than heat. The Hephaestus Forge and its Clibano core turn out metals that should not alloy. This is where&r &8Forbidden&r &7stops being a warning and becomes an instruction.&r"
+				""
+				"&8Objective: build the Hephaestus Forge and a Clibano Core. Refine Deorum.&r"
+			]
+			icon: "forbidden_arcanus:hephaestus_forge"
+			id: "7A0300000000010B"
+			rewards: [
+				{ id: "7A03000000000321", type: "xp", xp: 35 }
+				{ count: 4, id: "7A03000000000322", item: "forbidden_arcanus:deorum_ingot", type: "item" }
+				{ count: 8, id: "7A03000000000323", item: "forbidden_arcanus:arcane_crystal", type: "item" }
+			]
+			subtitle: "The Forge Unbidden"
+			tasks: [
+				{ id: "7A0300000000021B", item: "forbidden_arcanus:hephaestus_forge", type: "item" }
+				{ id: "7A0300000000021C", item: "forbidden_arcanus:clibano_core", type: "item" }
+			]
+			x: 6.5d
+			y: 2.0d
+		}
+	]
+	title: "The Other Science"
+}

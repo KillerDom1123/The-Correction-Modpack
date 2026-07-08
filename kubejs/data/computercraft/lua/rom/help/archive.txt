@@ -1,0 +1,15 @@
+archive
+
+Interface to recovered Old Civilisation storage media.
+
+USAGE
+  archive
+
+Browse recovered records by category: personnel, research,
+incident, evacuation.
+
+Some records are encrypted and require additional recovered
+media inserted into a disk drive attached to this computer.
+
+No record in this archive is complete. This is not a fault of
+the hardware.

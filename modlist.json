@@ -1,0 +1,1904 @@
+{
+  "pack": "The World After The Correction",
+  "minecraft": "1.20.1",
+  "loader": "forge",
+  "counts": {
+    "enabled": 262,
+    "disabled": 5
+  },
+  "categories": {
+    "Core libraries & performance": 54,
+    "Create & addons": 20,
+    "Tech — energy, automation, industry": 20,
+    "Magic": 7,
+    "Colony / civilisation": 8,
+    "Horror & atmosphere": 27,
+    "Mobs & world creatures": 4,
+    "Worldgen & structures": 27,
+    "Food & farming": 7,
+    "Decoration & building": 19,
+    "Storage, QoL & utility": 50,
+    "Security & protection": 3,
+    "Quests, loot, data & guides": 16
+  },
+  "mods": [
+    {
+      "name": "SecurityCraft",
+      "modid": "securitycraft",
+      "version": "1.10.2.1",
+      "file": "[1.20.1] SecurityCraft v1.10.2.1.jar",
+      "category": "Security & protection"
+    },
+    {
+      "name": "Abandoned Watchtowers Refurnished",
+      "modid": "abandoned_watchtower_refurnished",
+      "version": "1.8",
+      "file": "abandoned_watchtower_refurnished-1.8 BETA-forge-1.20.1.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Ad Astra",
+      "modid": "ad_astra",
+      "version": "1.15.20",
+      "file": "ad_astra-forge-1.20.1-1.15.20.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Ad Astra - Extra Additions",
+      "modid": "ad_astra__extra_additions",
+      "version": "1.1.1",
+      "file": "ad_astra_extra_additions-1.20.1-1.1.1.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Ad Astra: More Structures",
+      "modid": "ad_astra_more_structures",
+      "version": "1.0.2",
+      "file": "ad_astra_more_structures-1.20.1-forge.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Ad Astra Extra",
+      "modid": "adastraextra",
+      "version": "1.2.3",
+      "file": "adastraextra-forge-1.20.1-1.2.3.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "AE2WTLib",
+      "modid": "ae2wtlib",
+      "version": "15.3.3-forge",
+      "file": "ae2wtlib-15.3.3-forge.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Alex's Caves",
+      "modid": "alexscaves",
+      "version": "2.0.2",
+      "file": "alexscaves-2.0.2.jar",
+      "category": "Mobs & world creatures"
+    },
+    {
+      "name": "Alex's Mobs",
+      "modid": "alexsmobs",
+      "version": "1.22.9",
+      "file": "alexsmobs-1.22.9.jar",
+      "category": "Mobs & world creatures"
+    },
+    {
+      "name": "AmbientSounds",
+      "modid": "ambientsounds",
+      "version": "6.3.8",
+      "file": "AmbientSounds_FORGE_v6.3.8_mc1.20.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Amendments",
+      "modid": "amendments",
+      "version": "1.20-2.2.5",
+      "file": "amendments-1.20-2.2.5.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Amplified Nether",
+      "modid": "amplified_nether",
+      "version": "1.2.14",
+      "file": "Amplified_Nether_26.1_v1.2.14.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Another Furniture",
+      "modid": "another_furniture",
+      "version": "1.20.1-3.0.4",
+      "file": "another_furniture-forge-1.20.1-3.0.4.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Antlers",
+      "modid": "antlers",
+      "version": "1.0.0",
+      "file": "antlers-1.0.0.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "AppleSkin",
+      "modid": "appleskin",
+      "version": "2.5.1+mc1.20.1",
+      "file": "appleskin-forge-mc1.20.1-2.5.1.jar",
+      "category": "Food & farming"
+    },
+    {
+      "name": "Applied Mekanistics",
+      "modid": "appmek",
+      "version": "1.4.3",
+      "file": "Applied-Mekanistics-1.4.3.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Applied Energistics 2",
+      "modid": "ae2",
+      "version": "15.4.10",
+      "file": "appliedenergistics2-forge-15.4.10.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Architectury",
+      "modid": "architectury",
+      "version": "9.2.14",
+      "file": "architectury-9.2.14-forge.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Ars Nouveau",
+      "modid": "ars_nouveau",
+      "version": "4.12.7",
+      "file": "ars_nouveau-1.20.1-4.12.7-all.jar",
+      "category": "Magic"
+    },
+    {
+      "name": "Artifacts",
+      "modid": "artifacts",
+      "version": "9.5.19",
+      "file": "artifacts-forge-9.5.19.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Ad Astra: Structures Overhaul",
+      "modid": "aso",
+      "version": "0.1.0",
+      "file": "aso-0.1.0.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Athena",
+      "modid": "athena",
+      "version": "3.1.2",
+      "file": "athena-forge-1.20.1-3.1.2.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Balm",
+      "modid": "balm",
+      "version": "7.3.39",
+      "file": "balm-forge-1.20.1-7.3.39-all.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Beautify",
+      "modid": "beautify",
+      "version": "2.0.2",
+      "file": "beautify-2.0.2.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "better create",
+      "modid": "better_create",
+      "version": "1.0.0",
+      "file": "better_create-1.0.0-forge-1.20.1.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Better Compatibility Checker",
+      "modid": "bcc",
+      "version": "4.0.8",
+      "file": "BetterCompatibilityChecker-forge-4.0.8+mc1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "BetterF3",
+      "modid": "betterf3",
+      "version": "7.0.2",
+      "file": "BetterF3-7.0.2-Forge-1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "big lost city",
+      "modid": "big_lost_city",
+      "version": "1.0.1",
+      "file": "big_lost_city-1.0.1-forge-1.20.1.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "UI Library Mod",
+      "modid": "blockui",
+      "version": "1.20.1-1.0.193",
+      "file": "blockui-1.20.1-1.0.193.jar",
+      "category": "Colony / civilisation"
+    },
+    {
+      "name": "Blur (Forge)",
+      "modid": "blur",
+      "version": "3.1.1",
+      "file": "blur-forge-3.1.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Bookshelf",
+      "modid": "bookshelf",
+      "version": "20.2.15",
+      "file": "Bookshelf-Forge-1.20.1-20.2.15.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Borderless Window",
+      "modid": "borderlesswindow",
+      "version": "1.20-1.6.0",
+      "file": "BorderlessWindow-1.20-1.6.0.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Born in Chaos",
+      "modid": "born_in_chaos_v1",
+      "version": "1.7.5",
+      "file": "born_in_chaos_[Forge]1.20.1_1.7.5.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Botarium",
+      "modid": "botarium",
+      "version": "2.3.4",
+      "file": "botarium-forge-1.20.1-2.3.4.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "C4P (ComputerCraft Create Compatibility Patch)",
+      "modid": "c4p",
+      "version": "1.0.0",
+      "file": "c4p-1.0.0.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Caelus API",
+      "modid": "caelus",
+      "version": "3.2.0+1.20.1",
+      "file": "caelus-forge-3.2.0+1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Camerapture",
+      "modid": "camerapture",
+      "version": "1.10.12",
+      "file": "Camerapture-1.10.12+mc1.20.1-forge.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "CANTBREATHE",
+      "modid": "cant_breathe",
+      "version": "1.0.2",
+      "file": "cant_breathe-1.20.1-1.0.2.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Carry On Back",
+      "modid": "carry_on_back",
+      "version": "1.0.0",
+      "file": "carry_on_back-1.0.0-forge-1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Carry On",
+      "modid": "carryon",
+      "version": "2.1.2.7",
+      "file": "carryon-forge-1.20.1-2.1.2.7.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "cave_dweller",
+      "modid": "cave_dweller",
+      "version": "1.6.4",
+      "file": "cave_dweller-1.20.1-1.6.4.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Cave Dust",
+      "modid": "cavedust",
+      "version": "2.0.4",
+      "file": "cavedust-2.0.4-1.20.1-forge.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "CC: Tweaked",
+      "modid": "computercraft",
+      "version": "1.113.1",
+      "file": "cc-tweaked-1.20.1-forge-1.113.1.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Chat Heads",
+      "modid": "chat_heads",
+      "version": "0.15.2",
+      "file": "chat_heads-0.15.2-forge-1.20.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Chipped",
+      "modid": "chipped",
+      "version": "3.0.7",
+      "file": "chipped-forge-1.20.1-3.0.7.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Citadel",
+      "modid": "citadel",
+      "version": "2.6.3",
+      "file": "citadel-2.6.3-1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "clientcrafting mod",
+      "modid": "clientcrafting",
+      "version": "1.20.1-2.1",
+      "file": "clientcrafting-1.20.1-2.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Cloth Config v10 API",
+      "modid": "cloth_config",
+      "version": "11.1.136",
+      "file": "cloth-config-11.1.136-forge.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Clumps",
+      "modid": "clumps",
+      "version": "12.0.0.4",
+      "file": "Clumps-forge-1.20.1-12.0.0.4.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Cluttered",
+      "modid": "cluttered",
+      "version": "3.0.3-1.20.1",
+      "file": "cluttered-[Forge]-3.0.3-1.20.1.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Cold Sweat",
+      "modid": "cold_sweat",
+      "version": "2.4.2",
+      "file": "ColdSweat-2.4.2.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Collective",
+      "modid": "collective",
+      "version": "8.39",
+      "file": "collective-1.20.1-8.39.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Comforts",
+      "modid": "comforts",
+      "version": "6.4.0+1.20.1",
+      "file": "comforts-forge-6.4.0+1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Compressed Creativity",
+      "modid": "compressedcreativity",
+      "version": "1.20.1-0.2.0",
+      "file": "compressedcreativity-1.20.1-0.2.0-all.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Connected Glass",
+      "modid": "connectedglass",
+      "version": "1.1.14",
+      "file": "connectedglass-1.1.14-forge-mc1.20.1.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Controlling",
+      "modid": "controlling",
+      "version": "12.0.2",
+      "file": "Controlling-forge-1.20.1-12.0.2.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "CookingForBlockheads",
+      "modid": "cookingforblockheads",
+      "version": "16.0.15",
+      "file": "cookingforblockheads-forge-1.20.1-16.0.15.jar",
+      "category": "Food & farming"
+    },
+    {
+      "name": "Create: Copycats+",
+      "modid": "copycats",
+      "version": "3.0.7+mc.1.20.1-forge",
+      "file": "copycats-3.0.7+mc.1.20.1-forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Corpse",
+      "modid": "corpse",
+      "version": "1.20.1-1.0.23",
+      "file": "corpse-forge-1.20.1-1.0.23.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "CosmeticArmorReworked",
+      "modid": "cosmeticarmorreworked",
+      "version": "1.20.1-v1a",
+      "file": "cosmeticarmorreworked-1.20.1-v1a.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Crash Assistant",
+      "modid": "crash_assistant",
+      "version": "1.11.10",
+      "file": "CrashAssistant-forge-1.19-1.20.1-1.11.10.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Create",
+      "modid": "create",
+      "version": "6.0.8",
+      "file": "create-1.20.1-6.0.8.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Better Storages",
+      "modid": "create_bs",
+      "version": "1.0b.Release",
+      "file": "Create-Better-Storages-Forge-1.20.1-1.0b.Release.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create Ad Atra Compat",
+      "modid": "create_ad_astra_compat",
+      "version": "1.0.0",
+      "file": "create_ad_astra_compat-forge-1.20.1-1.0.0.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Alex's Caves Compat",
+      "modid": "create_alexscaves_compat",
+      "version": "1.6.1",
+      "file": "create_alexscaves_compat-1.20.1-1.6.1.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Better Motors",
+      "modid": "create_better_motors",
+      "version": "4.0.0",
+      "file": "create_better_motors-4.0.0.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Central Kitchen",
+      "modid": "create_central_kitchen",
+      "version": "1.5.0",
+      "file": "create_central_kitchen-1.20.1-for-create-6.0.8-1.5.0.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Cold Sweat",
+      "modid": "create_cold_sweat",
+      "version": "1.1.2",
+      "file": "create_cold_sweat-1.1.2.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Connected",
+      "modid": "create_connected",
+      "version": "1.2.3-mc1.20.1",
+      "file": "create_connected-1.2.3-mc1.20.1-all.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create Enchantment Industry",
+      "modid": "create_enchantment_industry",
+      "version": "1.4.0-for-create-6.0.8",
+      "file": "create_enchantment_industry-1.4.0-for-create-6.0.8.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create Hypertube",
+      "modid": "create_hypertube",
+      "version": "0.4.0",
+      "file": "create_hypertube-0.4.0-FORGE.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create_waystones_recipes",
+      "modid": "create_waystones_recipes",
+      "version": "1.0.1.b",
+      "file": "create_waystones_recipes-1.0.1.b.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create Crafts & Additions",
+      "modid": "createaddition",
+      "version": "1.20.1-1.3.3",
+      "file": "createaddition-1.20.1-1.3.3.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "CreateBetterFps",
+      "modid": "createbetterfps",
+      "version": "1.1.2",
+      "file": "createbetterfps-1.20.1-1.1.2.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "CreateBiggerStorageToCreate6",
+      "modid": "createbiggerstoragetocreate6",
+      "version": "1.1",
+      "file": "createbiggerstoragetocreate6-1.1.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create Deco",
+      "modid": "createdeco",
+      "version": "2.0.3-1.20.1-forge",
+      "file": "createdeco-2.0.3-1.20.1-forge.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "CreativeCore",
+      "modid": "creativecore",
+      "version": "2.12.39",
+      "file": "CreativeCore_FORGE_v2.12.39_mc1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Creeping Woods",
+      "modid": "creepingwoods",
+      "version": "1.0.0",
+      "file": "CreepingWoods-forge-1.20.1-2.4.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Cristel Lib",
+      "modid": "cristellib",
+      "version": "1.1.6",
+      "file": "cristellib-1.1.6-forge.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Cupboard utilities",
+      "modid": "cupboard",
+      "version": "1.20.1-3.9",
+      "file": "cupboard-1.20.1-3.9.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Curios API",
+      "modid": "curios",
+      "version": "5.14.1+1.20.1",
+      "file": "curios-forge-5.14.1+1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Decorative Blocks",
+      "modid": "decorative_blocks",
+      "version": "4.1.3",
+      "file": "decorative_blocks-forge-1.20.1-4.1.3.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Deeper and Darker",
+      "modid": "deeperdarker",
+      "version": "1.3.3",
+      "file": "deeperdarker-forge-1.20.1-1.3.3.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Deimos",
+      "modid": "deimos",
+      "version": "2.7",
+      "file": "deimos-1.20.1-forge-2.7.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Domum Ornamentum",
+      "modid": "domum_ornamentum",
+      "version": "1.20.1-1.0.296",
+      "file": "domum_ornamentum-1.20.1-1.0.296-universal.jar",
+      "category": "Colony / civilisation"
+    },
+    {
+      "name": "Door Knocker",
+      "modid": "door_knocker",
+      "version": "1.2.0",
+      "file": "door_knocker-1.20.1-1.2.0.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Double Doors",
+      "modid": "doubledoors",
+      "version": "7.2",
+      "file": "doubledoors-1.20.1-7.2.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "MmmMmmMmmMmm",
+      "modid": "dummmmmmy",
+      "version": "1.20-2.0.11",
+      "file": "dummmmmmy-1.20-2.0.12-forge.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "When Dungeons Arise",
+      "modid": "dungeons_arise",
+      "version": "2.1.58-1.20.x",
+      "file": "DungeonsArise-1.20.x-2.1.58-release.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Elytra Slot",
+      "modid": "elytraslot",
+      "version": "6.4.4+1.20.1",
+      "file": "elytraslot-forge-6.4.4+1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Embeddium",
+      "modid": "embeddium",
+      "version": "0.3.31+mc1.20.1",
+      "file": "embeddium-0.3.31+mc1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Rubidium (Embeddium)",
+      "modid": "rubidium",
+      "version": "0.7.1",
+      "file": "embeddium-0.3.31+mc1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "EnchantmentDescriptions",
+      "modid": "enchdesc",
+      "version": "17.1.21",
+      "file": "EnchantmentDescriptions-Forge-1.20.1-17.1.21.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "EntityCulling",
+      "modid": "entityculling",
+      "version": "1.10.5",
+      "file": "entityculling-forge-1.10.5-mc1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Explorer's Compass",
+      "modid": "explorerscompass",
+      "version": "1.20.1-1.4.0-forge",
+      "file": "ExplorersCompass-1.20.1-1.4.0-forge.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "FallingTree",
+      "modid": "fallingtree",
+      "version": "4.3.4",
+      "file": "FallingTree-1.20.1-4.3.4.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Farmer's Delight",
+      "modid": "farmersdelight",
+      "version": "1.20.1-1.3.2",
+      "file": "FarmersDelight-1.20.1-1.3.2.jar",
+      "category": "Food & farming"
+    },
+    {
+      "name": "Farsight mod",
+      "modid": "farsight_view",
+      "version": "1.20.1-5.1",
+      "file": "farsight-1.20.1-5.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Fast Leaf Decay",
+      "modid": "fastleafdecay",
+      "version": "32",
+      "file": "FastLeafDecay-32.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Fast Workbench",
+      "modid": "fastbench",
+      "version": "8.0.4",
+      "file": "FastWorkbench-1.20.1-8.0.4.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Ferrite Core",
+      "modid": "ferritecore",
+      "version": "6.0.1",
+      "file": "ferritecore-6.0.1-forge.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "flib",
+      "modid": "flib",
+      "version": "0.0.16",
+      "file": "flib-1.20.1-0.0.16.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Foes!",
+      "modid": "foes",
+      "version": "0.3",
+      "file": "foes-0.3-forge-1.20.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Forbidden & Arcanus",
+      "modid": "forbidden_arcanus",
+      "version": "1.20.1-2.2.6",
+      "file": "forbidden_arcanus-1.20.1-2.2.6.jar",
+      "category": "Magic"
+    },
+    {
+      "name": "Fragile Torches",
+      "modid": "fragiletorches",
+      "version": "1.0.3",
+      "file": "fragiletorches-1.20.1-1.0.3.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "FramedBlocks",
+      "modid": "framedblocks",
+      "version": "9.4.3",
+      "file": "FramedBlocks-9.4.3.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Framework",
+      "modid": "framework",
+      "version": "0.8.0",
+      "file": "framework-forge-1.20.1-0.8.0.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "From The Fog",
+      "modid": "watching",
+      "version": "1.9.2",
+      "file": "From-The-Fog-1.20-v1.9.2-Forge-Fabric.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "FTB Library",
+      "modid": "ftblibrary",
+      "version": "2001.2.13",
+      "file": "ftb-library-forge-2001.2.13.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "FTB Quests Entity Visualization",
+      "modid": "ftbquestsentityvis",
+      "version": "1.5.0-1.20.1",
+      "file": "ftb-quests-entity-vis-1.5.0-1.20.1.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "FTB Quests",
+      "modid": "ftbquests",
+      "version": "2001.4.22",
+      "file": "ftb-quests-forge-2001.4.22.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "FTB Teams",
+      "modid": "ftbteams",
+      "version": "2001.3.2",
+      "file": "ftb-teams-forge-2001.3.2.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "FTB Ultimine",
+      "modid": "ftbultimine",
+      "version": "2001.1.8",
+      "file": "ftb-ultimine-forge-2001.1.8.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "FTBQuestsOptimizer",
+      "modid": "ftbqoptimizer",
+      "version": "2.1.0-1.20.1",
+      "file": "FTBQuestsOptimizer-forge-2.1.0-1.20.1.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "Fusion",
+      "modid": "fusion",
+      "version": "1.3.5",
+      "file": "fusion-1.3.5-forge-mc1.20.1.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Fzzy Config",
+      "modid": "fzzy_config",
+      "version": "0.7.6+1.20.1+forge",
+      "file": "fzzy_config-0.7.6+1.20.1+forge.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "GeckoLib 4",
+      "modid": "geckolib",
+      "version": "4.8.4",
+      "file": "geckolib-forge-1.20.1-4.8.4.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "GlitchCore",
+      "modid": "glitchcore",
+      "version": "0.0.1.1",
+      "file": "GlitchCore-forge-1.20.1-0.0.1.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Goblin Traders",
+      "modid": "goblintraders",
+      "version": "1.11.5",
+      "file": "goblintraders-forge-1.20.1-1.11.5.jar",
+      "category": "Mobs & world creatures"
+    },
+    {
+      "name": "Guard Villagers",
+      "modid": "guardvillagers",
+      "version": "1.20.1-1.6.18",
+      "file": "guardvillagers-1.20.1-1.6.18.jar",
+      "category": "Mobs & world creatures"
+    },
+    {
+      "name": "GuideME",
+      "modid": "guideme",
+      "version": "20.1.15",
+      "file": "guideme-20.1.15.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Handcrafted",
+      "modid": "handcrafted",
+      "version": "3.0.6",
+      "file": "handcrafted-forge-1.20.1-3.0.6.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Hardcore True Darkness",
+      "modid": "hardcoretruedarkness",
+      "version": "4.0.0",
+      "file": "hardcoretruedarkness-4.0.0.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Hexerei",
+      "modid": "hexerei",
+      "version": "1.20.1-0.4.2.3",
+      "file": "hexerei-0.4.2.3.jar",
+      "category": "Magic"
+    },
+    {
+      "name": "Horror Element Mod",
+      "modid": "horror_element_mod",
+      "version": "1.6.3",
+      "file": "horror_element_mod-1.6.3-forge-1.20.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Iceberg",
+      "modid": "iceberg",
+      "version": "1.1.25",
+      "file": "Iceberg-1.20.1-forge-1.1.25.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Integrated Dungeons and Structures",
+      "modid": "idas",
+      "version": "1.13.0+1.20.1",
+      "file": "idas_forge-1.13.0+1.20.1.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "ImmediatelyFast",
+      "modid": "immediatelyfast",
+      "version": "1.5.5+1.20.4",
+      "file": "ImmediatelyFast-Forge-1.5.5+1.20.4.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Immersive Weathering",
+      "modid": "immersive_weathering",
+      "version": "1.20.1-2.0.5",
+      "file": "immersive_weathering-1.20.1-2.0.5-forge.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Immersive Engineering",
+      "modid": "immersiveengineering",
+      "version": "1.20.1-10.2.0-183",
+      "file": "ImmersiveEngineering-1.20.1-10.2.0-183.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Immersive Petroleum",
+      "modid": "immersivepetroleum",
+      "version": "4.3.0-36",
+      "file": "ImmersivePetroleum-1.20.1-4.3.1-36.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Incendium",
+      "modid": "incendium",
+      "version": "5.3.5",
+      "file": "Incendium_1.20.x_v5.3.5.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Integrated API",
+      "modid": "integrated_api",
+      "version": "1.7.4+1.20.1-forge",
+      "file": "integrated_api-1.7.4+1.20.1-forge.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Create: Interiors",
+      "modid": "interiors",
+      "version": "0.6.0",
+      "file": "interiors-1.20.1-forge-0.6.0.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Iron's Lib",
+      "modid": "irons_lib",
+      "version": "1.20.1-2.1.0",
+      "file": "irons_lib-1.20.1-2.1.0.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Iron's Spells 'n Spellbooks",
+      "modid": "irons_spellbooks",
+      "version": "1.20.1-3.16.2",
+      "file": "irons_spellbooks-1.20.1-3.16.2.jar",
+      "category": "Magic"
+    },
+    {
+      "name": "Jade",
+      "modid": "jade",
+      "version": "11.13.2+forge",
+      "file": "Jade-1.20.1-Forge-11.13.2.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Jade Addons",
+      "modid": "jadeaddons",
+      "version": "5.5.1+forge",
+      "file": "JadeAddons-1.20.1-Forge-5.5.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Just Enough Items",
+      "modid": "jei",
+      "version": "15.20.0.112",
+      "file": "jei-1.20.1-forge-15.20.0.112.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "John Mod Reborn",
+      "modid": "john_mod_reborn",
+      "version": "1.0.4",
+      "file": "John_Mod_Reborn_1.0.4_mc1.20.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "kotlinforforge-4.12.0-all",
+      "modid": "?",
+      "version": "4.12.0",
+      "file": "kotlinforforge-4.12.0-all.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "KubeJS Create",
+      "modid": "kubejs_create",
+      "version": "2001.3.0-build.8",
+      "file": "kubejs-create-forge-2001.3.0-build.8.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "KubeJS",
+      "modid": "kubejs",
+      "version": "2001.6.5-build.26",
+      "file": "kubejs-forge-2001.6.5-build.26.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "Legendary Tooltips",
+      "modid": "legendarytooltips",
+      "version": "1.4.5",
+      "file": "LegendaryTooltips-1.20.1-forge-1.4.5.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "[Let's Do] Candlelight",
+      "modid": "candlelight",
+      "version": "2.0.5",
+      "file": "letsdo-candlelight-forge-2.0.5.jar",
+      "category": "Food & farming"
+    },
+    {
+      "name": "[Let's Do] Farm & Charm",
+      "modid": "farm_and_charm",
+      "version": "1.0.14",
+      "file": "letsdo-farm_and_charm-forge-1.0.14.jar",
+      "category": "Food & farming"
+    },
+    {
+      "name": "lootintegration_townsandtowers mod",
+      "modid": "lootintegration_townsandtowers",
+      "version": "1",
+      "file": "lootintegration_townsandtowers-1.4.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "lootintegration_wda mod",
+      "modid": "lootintegration_wda",
+      "version": "1",
+      "file": "lootintegration_wda-1.8.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "Lootintegrations mod",
+      "modid": "lootintegrations",
+      "version": "1.20.1-4.7",
+      "file": "lootintegrations-1.20.1-4.7.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "lootintegrations_borninchaos mod",
+      "modid": "lootintegrations_borninchaos",
+      "version": "1.0",
+      "file": "lootintegrations_borninchaos-1.0.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "lootintegrations_integrated mod",
+      "modid": "lootintegrations_integrated",
+      "version": "1",
+      "file": "lootintegrations_integrated-1.5.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "LootJS",
+      "modid": "lootjs",
+      "version": "1.20.1-2.13.1",
+      "file": "lootjs-forge-1.20.1-2.13.1.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "Lootr",
+      "modid": "lootr",
+      "version": "0.7.35.94",
+      "file": "lootr-forge-1.20-0.7.35.94.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Lost Architects",
+      "modid": "lost_architects",
+      "version": "1.0.4",
+      "file": "LostArchitects-forge-1.0.4.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Macaw's All-In-One for TFC",
+      "modid": "mcw_tfc_aio",
+      "version": "0.2.30-1.20.1",
+      "file": "mcw_tfc_aio-0.2.30-1.20.1.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Mekanism",
+      "modid": "mekanism",
+      "version": "10.4.16",
+      "file": "Mekanism-1.20.1-10.4.16.80.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Mekanism: Additions",
+      "modid": "mekanismadditions",
+      "version": "10.4.16",
+      "file": "MekanismAdditions-1.20.1-10.4.16.80.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Mekanism: Generators",
+      "modid": "mekanismgenerators",
+      "version": "10.4.16",
+      "file": "MekanismGenerators-1.20.1-10.4.16.80.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Mekanism: Tools",
+      "modid": "mekanismtools",
+      "version": "10.4.16",
+      "file": "MekanismTools-1.20.1-10.4.16.80.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "MineColonies",
+      "modid": "minecolonies",
+      "version": "1.20.1-1.1.1231",
+      "file": "minecolonies-1.20.1-1.1.1231.jar",
+      "category": "Colony / civilisation"
+    },
+    {
+      "name": "Mixin Extras NeoForge on Forge Fix",
+      "modid": "mixinextrasneoonforgefix",
+      "version": "1.0.0",
+      "file": "mixinextrasneoonforgefix-1.0.0.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Mob Dismemberment",
+      "modid": "mobdismemberment",
+      "version": "1.20.1-1.1.0",
+      "file": "MobDismemberment-1.20.1-1.1.0.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Mo' Bends",
+      "modid": "mobends",
+      "version": "5.1.7",
+      "file": "MoBends-forge-1.20.1-5.1.7.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "ModernFix",
+      "modid": "modernfix",
+      "version": "5.27.58+mc1.20.1",
+      "file": "modernfix-forge-5.27.58+mc1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Modonomicon",
+      "modid": "modonomicon",
+      "version": "1.79.3",
+      "file": "modonomicon-1.20.1-forge-1.79.3.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "Moonlight Library",
+      "modid": "moonlight",
+      "version": "1.20-2.16.34",
+      "file": "moonlight-1.20-2.16.34-forge.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "more underground structures",
+      "modid": "more_underground_structures",
+      "version": "7.1.0",
+      "file": "more_undrground_structures_1.20.1_8.1.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "More Overlays Updated",
+      "modid": "moreoverlays",
+      "version": "1.24.1",
+      "file": "moreoverlays-1.24.1-mc1.20.1-forge.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "More Protectables",
+      "modid": "moreprotectables",
+      "version": "1.2.3.10",
+      "file": "moreprotectables-1.20.1-1.2.3.10.jar",
+      "category": "Security & protection"
+    },
+    {
+      "name": "Mouse Tweaks",
+      "modid": "mousetweaks",
+      "version": "2.25.1",
+      "file": "MouseTweaks-forge-mc1.20.1-2.25.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Multi-Piston",
+      "modid": "multipiston",
+      "version": "1.20-1.2.43-RELEASE",
+      "file": "multipiston-1.20-1.2.43-RELEASE.jar",
+      "category": "Colony / civilisation"
+    },
+    {
+      "name": "Nature's Compass",
+      "modid": "naturescompass",
+      "version": "1.20.1-1.12.0-forge",
+      "file": "NaturesCompass-1.20.1-1.12.0-forge.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "No Chat Reports",
+      "modid": "nochatreports",
+      "version": "1.20.1-v2.2.2",
+      "file": "NoChatReports-FORGE-1.20.1-v2.2.2.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "NotEnoughAnimations",
+      "modid": "notenoughanimations",
+      "version": "1.12.4",
+      "file": "notenoughanimations-forge-1.12.4-mc1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Observable",
+      "modid": "observable",
+      "version": "4.4.1",
+      "file": "observable-4.4.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Occultism",
+      "modid": "occultism",
+      "version": "1.158.0",
+      "file": "occultism-1.20.1-1.158.0.jar",
+      "category": "Magic"
+    },
+    {
+      "name": "Occultism KubeJS",
+      "modid": "occultism_kubejs",
+      "version": "1.0.0",
+      "file": "occultism_kubejs-1.20.1-1.0.0.jar",
+      "category": "Magic"
+    },
+    {
+      "name": "Oculus",
+      "modid": "oculus",
+      "version": "1.8.0",
+      "file": "oculus-mc1.20.1-1.8.0.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "OpenLoader",
+      "modid": "openloader",
+      "version": "19.0.5",
+      "file": "OpenLoader-Forge-1.20.1-19.0.5.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "The Pale Hound",
+      "modid": "pale_hound",
+      "version": "1.10.0",
+      "file": "Pale_Hound-1.20.1-1.10.0.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Patchouli",
+      "modid": "patchouli",
+      "version": "1.20.1-85-FORGE",
+      "file": "Patchouli-1.20.1-85-FORGE.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "Phantom Remover",
+      "modid": "phantom_remover",
+      "version": "1.0.1",
+      "file": "phantom_remover-1.0.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Placebo",
+      "modid": "placebo",
+      "version": "8.6.3",
+      "file": "Placebo-1.20.1-8.6.3.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Player Animator",
+      "modid": "playeranimator",
+      "version": "1.0.2-rc1+1.20",
+      "file": "player-animation-lib-forge-1.0.2-rc1+1.20.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "PneumaticCraft: Repressurized",
+      "modid": "pneumaticcraft",
+      "version": "6.0.22+mc1.20.1",
+      "file": "pneumaticcraft-repressurized-6.0.22+mc1.20.1.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "PonderJS",
+      "modid": "ponderjs",
+      "version": "2.1.0",
+      "file": "ponderjs-1.20.1-2.1.0.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Presence Footsteps (Forge)",
+      "modid": "presencefootsteps",
+      "version": "1.20.1-1.9.1-beta.1",
+      "file": "PresenceFootsteps-1.20.1-1.9.1-beta.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Prism",
+      "modid": "prism",
+      "version": "1.0.5",
+      "file": "Prism-1.20.1-forge-1.0.5.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Puzzles Lib",
+      "modid": "puzzleslib",
+      "version": "8.1.33",
+      "file": "PuzzlesLib-v8.1.33-1.20.1-Forge.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Quark",
+      "modid": "quark",
+      "version": "4.0-462",
+      "file": "Quark-4.0-462.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Rake: The Arrival",
+      "modid": "rake_the_arrival",
+      "version": "1.0.0",
+      "file": "RakeArrival-forge-1.20.1-1.7.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Rationcraft",
+      "modid": "rationcraft",
+      "version": "1.3.7",
+      "file": "rationcraft-1.3.7-forge-1.20.1.jar",
+      "category": "Food & farming"
+    },
+    {
+      "name": "Rechiseled",
+      "modid": "rechiseled",
+      "version": "1.2.5",
+      "file": "rechiseled-1.2.5-forge-mc1.20.1.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Rechiseled: Chipped",
+      "modid": "rechiseled_chipped",
+      "version": "1.2",
+      "file": "rechiseled_chipped-2.0-1.20.1.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Rechiseled: Applied Energistics 2",
+      "modid": "rechiseledae",
+      "version": "1.0.1",
+      "file": "rechiseledae-1.0.1-forge-mc1.20.1.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "MrCrayfish's Furniture Mod: Refurbished",
+      "modid": "refurbished_furniture",
+      "version": "1.0.20",
+      "file": "refurbished_furniture-forge-1.20.1-1.0.20.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Repurposed Structures",
+      "modid": "repurposed_structures",
+      "version": "7.1.24+1.20.1-forge",
+      "file": "repurposed_structures-7.1.24+1.20.1-forge.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Resourcefulconfig",
+      "modid": "resourcefulconfig",
+      "version": "2.1.3",
+      "file": "resourcefulconfig-forge-1.20.1-2.1.3.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Resourceful Lib",
+      "modid": "resourcefullib",
+      "version": "2.1.29",
+      "file": "resourcefullib-forge-1.20.1-2.1.29.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Rhino",
+      "modid": "rhino",
+      "version": "2001.2.3-build.10",
+      "file": "rhino-forge-2001.2.3-build.10.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "SC CRT",
+      "modid": "sc_cheiders",
+      "version": "1.0.0",
+      "file": "scfilters-1.0.0.jar",
+      "category": "Security & protection"
+    },
+    {
+      "name": "Searchables",
+      "modid": "searchables",
+      "version": "1.0.3",
+      "file": "Searchables-forge-1.20.1-1.0.3.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Server-Side Horror",
+      "modid": "serversidehorror",
+      "version": "4.2",
+      "file": "serversidehorror-1.20.1-forge-4.2.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Simple Structure Ad Astra 1.20.1",
+      "modid": "pv_adastra_structures",
+      "version": "1.2",
+      "file": "Simple Structure Ad Astra 1.20.1 1.2.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Simple Backups",
+      "modid": "simplebackups",
+      "version": "1.20.1-3.1.18",
+      "file": "SimpleBackups-1.20.1-3.1.18.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Simple Day Length Extender",
+      "modid": "simpledaylengthextender",
+      "version": "1.2.2-Forge-1.20.1",
+      "file": "SimpleDayLengthExtender-1.2.2-Forge-1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Create Slice & Dice",
+      "modid": "sliceanddice",
+      "version": "3.6.0",
+      "file": "sliceanddice-forge-3.6.0.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "SmallColonies",
+      "modid": "smallcolonies",
+      "version": "1.8",
+      "file": "smallcolonies 1.20.1 v1.8.jar",
+      "category": "Colony / civilisation"
+    },
+    {
+      "name": "SmallColonies_ME",
+      "modid": "smallcoloniesme",
+      "version": "1.9",
+      "file": "smallcoloniesme 1.20.1 v1.9.jar",
+      "category": "Colony / civilisation"
+    },
+    {
+      "name": "SmartBrainLib",
+      "modid": "smartbrainlib",
+      "version": "1.15",
+      "file": "SmartBrainLib-forge-1.20.1-1.15.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Sodium Dynamic Lights",
+      "modid": "sodiumdynamiclights",
+      "version": "1.0.9",
+      "file": "sodiumdynamiclights-forge-1.0.10-1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Sodium Options API",
+      "modid": "sodiumoptionsapi",
+      "version": "1.0.10",
+      "file": "sodiumoptionsapi-forge-1.0.10-1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Soldier's Delight",
+      "modid": "soldiersdelight",
+      "version": "1.2",
+      "file": "soldiersdelight-1.2-forge-1.20.1.jar",
+      "category": "Food & farming"
+    },
+    {
+      "name": "Sophisticated Backpacks",
+      "modid": "sophisticatedbackpacks",
+      "version": "3.24.59.1960",
+      "file": "sophisticatedbackpacks-1.20.1-3.24.59.1960.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Sophisticated Core",
+      "modid": "sophisticatedcore",
+      "version": "1.3.65.2126",
+      "file": "sophisticatedcore-1.20.1-1.3.65.2126.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Sound Physics Remastered",
+      "modid": "sound_physics_remastered",
+      "version": "1.20.1-1.5.1",
+      "file": "sound-physics-remastered-forge-1.20.1-1.5.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Sounds of the Forest",
+      "modid": "sounds_of_the_forest",
+      "version": "1.0.2",
+      "file": "sounds_of_the_forest-1.0.2-forge-1.20.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "spark",
+      "modid": "spark",
+      "version": "1.10.53",
+      "file": "spark-1.10.53-forge.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Spooky Campsite",
+      "modid": "spooky_campsite",
+      "version": "1.0.2",
+      "file": "spooky_campsite-1.0.2-forge-1.20.1.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Create: Steam 'n' Rails",
+      "modid": "railways",
+      "version": "1.7.2+forge-mc1.20.1",
+      "file": "Steam_Rails-1.7.2+forge-mc1.20.1.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Storage Drawers",
+      "modid": "storagedrawers",
+      "version": "12.14.3",
+      "file": "StorageDrawers-forge-1.20.1-12.14.3.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Structory",
+      "modid": "structory",
+      "version": "1.3.5",
+      "file": "Structory_1.20.x_v1.3.5.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Structurize",
+      "modid": "structurize",
+      "version": "1.20.1-1.0.816",
+      "file": "structurize-1.20.1-1.0.816.jar",
+      "category": "Colony / civilisation"
+    },
+    {
+      "name": "SuperMartijn642's Config Library",
+      "modid": "supermartijn642configlib",
+      "version": "1.1.8",
+      "file": "supermartijn642configlib-1.1.8-forge-mc1.20.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "SuperMartijn642's Core Lib",
+      "modid": "supermartijn642corelib",
+      "version": "1.1.21",
+      "file": "supermartijn642corelib-1.1.21-forge-mc1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Supplementaries",
+      "modid": "supplementaries",
+      "version": "1.20-3.1.43",
+      "file": "supplementaries-1.20-3.1.43-forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Supplementaries Squared",
+      "modid": "suppsquared",
+      "version": "1.20-1.1.29",
+      "file": "suppsquared-1.20-1.1.29.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "TerraFirmaCraft",
+      "modid": "tfc",
+      "version": "3.2.23",
+      "file": "TerraFirmaCraft-Forge-1.20.1-3.2.23.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Terralith",
+      "modid": "terralith",
+      "version": "2.5.4",
+      "file": "Terralith_1.20.x_v2.5.4.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "TFC : Carry on Storage",
+      "modid": "tfc_knapsacks",
+      "version": "1.0.0",
+      "file": "TFC_CarryOnStorage1.2.0.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "The Man From The Fog",
+      "modid": "man",
+      "version": "1.4",
+      "file": "The-Man-From-The-Fog-1.4-1.20.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "the_obsessed",
+      "modid": "the_obsessed",
+      "version": "1.5",
+      "file": "the_obsessed-1.5c-forge-1.20.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "The Forgotten",
+      "modid": "theforgotten",
+      "version": "2.2.5-1.20.1-forge",
+      "file": "theforgotten-2.2.5-1.20.1-forge.jar",
+      "category": "Magic"
+    },
+    {
+      "name": "themimic_er",
+      "modid": "themimic_er",
+      "version": "1.7.0",
+      "file": "themimic_er-1.20.1-1.7.0.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "The One Who Watches",
+      "modid": "the_one_who_watches",
+      "version": "1.4.4",
+      "file": "TheOneWhoWatches-V1.4.4-1.20.1.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Too Fast",
+      "modid": "toofast",
+      "version": "0.4.3.5",
+      "file": "toofast-1.20-0.4.3.5.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Towns and Towers",
+      "modid": "t_and_t",
+      "version": "1.10.2",
+      "file": "Towns-and-Towers-1.12-Fabric+Forge.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "TownTalk",
+      "modid": "towntalk",
+      "version": "1.1.0",
+      "file": "towntalk-1.20.1-1.1.0.jar",
+      "category": "Colony / civilisation"
+    },
+    {
+      "name": "Valhelsia Core",
+      "modid": "valhelsia_core",
+      "version": "1.1.2",
+      "file": "valhelsia_core-forge-1.20.1-1.1.2.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Visual Workbench",
+      "modid": "visualworkbench",
+      "version": "8.0.1",
+      "file": "VisualWorkbench-v8.0.1-1.20.1-Forge.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "VoidFog",
+      "modid": "voidfog",
+      "version": "1.20.1-2.0.23",
+      "file": "VoidFog-1.20.1-2.0.23.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Voidless Framework",
+      "modid": "voidlessframework",
+      "version": "1.3.4",
+      "file": "voidlessframework-1.3.4-forge-1.20.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Waystone & Create",
+      "modid": "waystoneandcreate",
+      "version": "1.0.0",
+      "file": "waystoneandcreate.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Waystones",
+      "modid": "waystones",
+      "version": "14.1.20",
+      "file": "waystones-forge-1.20.1-14.1.20.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Waystones Teleport Pets",
+      "modid": "w2pets",
+      "version": "1.0",
+      "file": "WaystonesTeleportPets-1.20-1.20.1--1.2.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "When Dungeons Arise Quest Installer",
+      "modid": "wda_questline",
+      "version": "1.1.0",
+      "file": "wda-questline-1.20.1-1.0.0.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "Weeping Angels",
+      "modid": "weeping_angels",
+      "version": "1",
+      "file": "weeping_angels-46.1.5-forge.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Whispering Spirits",
+      "modid": "whispering_spirits",
+      "version": "1.4.0",
+      "file": "WhisperingSpirits-forge-1.20.1-v1.4.0.jar",
+      "category": "Horror & atmosphere"
+    },
+    {
+      "name": "Xaero's Map - Waystones Compability",
+      "modid": "w2w2",
+      "version": "1.1",
+      "file": "xaeros_waystones_compatibility-1.1 - 1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Xaero's World Map",
+      "modid": "xaeroworldmap",
+      "version": "1.42.0",
+      "file": "xaeroworldmap-forge-1.20.1-1.42.0.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Ycurrenci",
+      "modid": "ycurrenci",
+      "version": "2.1.0",
+      "file": "ycurrenci-2.1.0-forge-1.20.1.jar",
+      "category": "Quests, loot, data & guides"
+    },
+    {
+      "name": "YUNG's API",
+      "modid": "yungsapi",
+      "version": "1.20-Forge-4.0.6",
+      "file": "YungsApi-1.20-Forge-4.0.6.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better Caves",
+      "modid": "bettercaves",
+      "version": "1.20.1-Forge-2.0.5",
+      "file": "YungsBetterCaves-1.20.1-Forge-2.0.5.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better Desert Temples",
+      "modid": "betterdeserttemples",
+      "version": "1.20-Forge-3.0.3",
+      "file": "YungsBetterDesertTemples-1.20-Forge-3.0.3.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better Dungeons",
+      "modid": "betterdungeons",
+      "version": "1.20-Forge-4.0.4",
+      "file": "YungsBetterDungeons-1.20-Forge-4.0.4.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better End Island",
+      "modid": "betterendisland",
+      "version": "1.20-Forge-2.0.6",
+      "file": "YungsBetterEndIsland-1.20-Forge-2.0.6.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better Jungle Temples",
+      "modid": "betterjungletemples",
+      "version": "1.20-Forge-2.0.5",
+      "file": "YungsBetterJungleTemples-1.20-Forge-2.0.5.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better Mineshafts",
+      "modid": "bettermineshafts",
+      "version": "1.20-Forge-4.0.4",
+      "file": "YungsBetterMineshafts-1.20-Forge-4.0.4.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better Nether Fortresses",
+      "modid": "betterfortresses",
+      "version": "1.20-Forge-2.0.6",
+      "file": "YungsBetterNetherFortresses-1.20-Forge-2.0.6.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better Ocean Monuments",
+      "modid": "betteroceanmonuments",
+      "version": "1.20-Forge-3.0.4",
+      "file": "YungsBetterOceanMonuments-1.20-Forge-3.0.4.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better Strongholds",
+      "modid": "betterstrongholds",
+      "version": "1.20-Forge-4.0.3",
+      "file": "YungsBetterStrongholds-1.20-Forge-4.0.3.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "YUNG's Better Witch Huts",
+      "modid": "betterwitchhuts",
+      "version": "1.20-Forge-3.0.3",
+      "file": "YungsBetterWitchHuts-1.20-Forge-3.0.3.jar",
+      "category": "Worldgen & structures"
+    },
+    {
+      "name": "Zeta",
+      "modid": "zeta",
+      "version": "1.0-31",
+      "file": "Zeta-1.0-31.jar",
+      "category": "Core libraries & performance"
+    }
+  ],
+  "disabled": [
+    {
+      "name": "Create: Dreams & Desires",
+      "modid": "create_dd",
+      "version": "0.1b.Release-Early-Dev",
+      "file": "Create-DnDesire-1.20.1-0.1b.Release-Early-Dev.jar.disabled",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Dreams and Desires to Create 6",
+      "modid": "ddtocreate6",
+      "version": "1.1.1",
+      "file": "ddtocreate6-1.1.1.jar.disabled",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Design n' Decor",
+      "modid": "design_decor",
+      "version": "0.4.0b",
+      "file": "design_decor-0.4.0b-1.20.1.jar.disabled",
+      "category": "Uncategorised (edit CATEGORY_RULES)"
+    },
+    {
+      "name": "Serene Seasons",
+      "modid": "sereneseasons",
+      "version": "9.1.0.3",
+      "file": "SereneSeasons-forge-1.20.1-9.1.0.3.jar.disabled",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "The Knocker",
+      "modid": "the_knocker",
+      "version": "1.5.2",
+      "file": "the_knocker-1.5.2-forge-1.20.1.jar.disabled",
+      "category": "Uncategorised (edit CATEGORY_RULES)"
+    }
+  ]
+}

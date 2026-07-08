@@ -1,0 +1,5 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": { "type": "forge:any" },
+  "spawners": { "type": "the_one_who_watches:toww_staring", "weight": 2, "minCount": 1, "maxCount": 1 }
+}

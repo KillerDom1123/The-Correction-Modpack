@@ -1,0 +1,10 @@
+{
+  "replace": true,
+  "values": [
+    "minecraft:deep_dark",
+    "minecraft:dark_forest",
+    "minecraft:snowy_taiga",
+    "minecraft:grove",
+    "minecraft:frozen_peaks"
+  ]
+}

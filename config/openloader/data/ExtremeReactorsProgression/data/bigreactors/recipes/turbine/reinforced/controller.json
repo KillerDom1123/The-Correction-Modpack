@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": { "item": "bigreactors:reinforced_turbinecasing" },
+    "X": { "item": "minecraft:comparator" },
+    "A": { "tag": "mekanism:alloys/atomic" },
+    "D": { "tag": "forge:storage_blocks/diamond" },
+    "Y": { "tag": "forge:storage_blocks/cyanite" },
+    "U": { "item": "mekanism:ultimate_control_circuit" }
+  },
+  "pattern": [
+    "CXC",
+    "ADY",
+    "CUC"
+  ],
+  "result": {
+    "item": "bigreactors:reinforced_turbinecontroller"
+  },
+  "show_notification": true
+}

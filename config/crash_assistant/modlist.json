@@ -461,14 +461,6 @@
     "curseForgeHash": 3263436338,
     "modrinthHash": "c1dca582de21cc540f1a84188db40d65d14c8153"
   },
-  "ColdSweat-2.4.2.jar": {
-    "jarName": "ColdSweat-2.4.2.jar",
-    "modId": "cold_sweat",
-    "name": "Cold Sweat",
-    "version": "2.4.2",
-    "curseForgeHash": 261285111,
-    "modrinthHash": "f5e203dbdca07470d29d872348e3233cd698f3a9"
-  },
   "collective-1.20.1-8.39.jar": {
     "jarName": "collective-1.20.1-8.39.jar",
     "modId": "collective",
@@ -604,14 +596,6 @@
     "version": "1.5.0",
     "curseForgeHash": 734898261,
     "modrinthHash": "bb724b37b191f6bcbe1e6bc395742e50352e8dbc"
-  },
-  "create_cold_sweat-1.1.2.jar": {
-    "jarName": "create_cold_sweat-1.1.2.jar",
-    "modId": "create_cold_sweat",
-    "name": "Create: Cold Sweat",
-    "version": "1.1.2",
-    "curseForgeHash": 795212286,
-    "modrinthHash": "4b96ca65a8b0c5bbfc16b5a9532ed931d18c8925"
   },
   "create_connected-1.2.3-mc1.20.1-all.jar": {
     "jarName": "create_connected-1.2.3-mc1.20.1-all.jar",

@@ -6,9 +6,9 @@
 > *They fell because they found something they could not understand."*
 
 <!-- MODLIST:START -->
-> **At a glance** — Minecraft 1.20.1 · Forge · **285 mods** · full list in [modlist.md](modlist.md)
+> **At a glance** — Minecraft 1.20.1 · Forge · **283 mods** · full list in [modlist.md](modlist.md)
 >
-> Core libraries & performance (70) · Create & addons (23) · Tech — energy, automation, industry (22) · Magic (9) · Colony / civilisation (8) · Horror & atmosphere (26) · Mobs & world creatures (4) · Worldgen & structures (27) · Food & farming (7) · Decoration & building (19) · Storage, QoL & utility (51) · Security & protection (3) · Quests, loot, data & guides (16)
+> Core libraries & performance (70) · Create & addons (22) · Tech — energy, automation, industry (22) · Magic (9) · Colony / civilisation (8) · Horror & atmosphere (26) · Mobs & world creatures (4) · Worldgen & structures (27) · Food & farming (7) · Decoration & building (19) · Storage, QoL & utility (50) · Security & protection (3) · Quests, loot, data & guides (16)
 <!-- MODLIST:END -->
 
 ---
@@ -33,7 +33,7 @@ Now you walk their ruins, inheriting their machines, their magic, and their mist
 
 A slow, dangerous, atmosphere-first experience — **not** a kitchen-sink power fantasy. It blends four things and asks you to earn all of them:
 
-- **Survival** against a hostile world — cold, darkness, hunger, and things that watch.
+- **Survival** against a hostile world — darkness, hunger, and things that watch.
 - **Rebuilding civilisation** from fragments.
 - **Earned progression** through technology *and* magic, gated so power feels achieved, not handed out.
 - **Exploration** as the heart of the game — the answers are out there, not in your crafting grid.
@@ -44,7 +44,7 @@ If you enjoy tension, gradual mastery, and a world that tells its story through 
 
 ## Core Features
 
-- **A world that fights back.** Temperature and climate matter (freezing nights, dangerous weather, harsh biomes), darkness is genuinely dark, and shelter, light, and warmth are early priorities.
+- **A world that fights back.** Darkness is genuinely dark, harsh biomes and weather bite, and shelter, light, and food are early priorities.
 - **Rebuild society.** Grow a colony from a handful of survivors into a living settlement — one that needs walls, guards, and lighting to endure the night.
 - **Earn your technology.** A deliberate progression curve — from simple mechanical automation, through industrial power and advanced processing, to digital storage and autocrafting. Each tier is a real project, not a quick recipe.
 - **A parallel path of magic.** Rituals, spirits, glyphs, and arcane research stand alongside the machines as a different way of understanding reality.
@@ -84,7 +84,7 @@ Each path is independently playable. You don't have to follow all of them — bu
 
 No spoilers — just footing:
 
-1. **Survive the first nights.** Prioritise shelter, light, warmth, and food before anything ambitious. The cold and the dark are threats in their own right.
+1. **Survive the first nights.** Prioritise shelter, light, and food before anything ambitious. The dark is a threat in its own right.
 2. **Don't rush the tech tree.** Early machines and a stable base beat sprinting toward late-game gear you can't sustain.
 3. **Leave home.** The pack rewards exploration — ruins and structures are where the world opens up.
 4. **Use the quest book for direction, not obligation.** It points you at the major systems when you're unsure what to do next.
@@ -135,7 +135,7 @@ This repository tracks the pack's **configuration and custom content**, not the 
 - **Tracked:** `config/` (all mod configs, OpenLoader datapacks, FTB Quests), `kubejs/` (custom scripts/items), `defaultconfigs/` (per-world defaults), and the `docs/` markdown.
 - **Not tracked:** `mods/`, `saves/`, caches, logs, and machine-specific files (see `.gitignore`).
 
-The pack is heavily **rebalanced by design** — see **[docs/CONFIG_CHANGES.md](docs/CONFIG_CHANGES.md)** for a full per-mod record of every configuration change and the reasoning behind it (progression gating, horror rarity, climate, colony danger, etc.).
+The pack is heavily **rebalanced by design** — see **[docs/CONFIG_CHANGES.md](docs/CONFIG_CHANGES.md)** for a full per-mod record of every configuration change and the reasoning behind it (progression gating, horror rarity, colony danger, etc.).
 
 Because `mods/` isn't tracked, use **[modlist.md](modlist.md)** as the authoritative record of which mods and versions the configuration targets.
 

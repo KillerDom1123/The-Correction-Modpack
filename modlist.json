@@ -3,12 +3,12 @@
   "minecraft": "1.20.1",
   "loader": "forge",
   "counts": {
-    "enabled": 285,
-    "disabled": 9
+    "enabled": 283,
+    "disabled": 11
   },
   "categories": {
     "Core libraries & performance": 70,
-    "Create & addons": 23,
+    "Create & addons": 22,
     "Tech — energy, automation, industry": 22,
     "Magic": 9,
     "Colony / civilisation": 8,
@@ -17,7 +17,7 @@
     "Worldgen & structures": 27,
     "Food & farming": 7,
     "Decoration & building": 19,
-    "Storage, QoL & utility": 51,
+    "Storage, QoL & utility": 50,
     "Security & protection": 3,
     "Quests, loot, data & guides": 16
   },
@@ -422,13 +422,6 @@
       "category": "Decoration & building"
     },
     {
-      "name": "Cold Sweat",
-      "modid": "cold_sweat",
-      "version": "2.4.2",
-      "file": "ColdSweat-2.4.2.jar",
-      "category": "Storage, QoL & utility"
-    },
-    {
       "name": "Collective",
       "modid": "collective",
       "version": "8.39",
@@ -545,13 +538,6 @@
       "modid": "create_central_kitchen",
       "version": "1.5.0",
       "file": "create_central_kitchen-1.20.1-for-create-6.0.8-1.5.0.jar",
-      "category": "Create & addons"
-    },
-    {
-      "name": "Create: Cold Sweat",
-      "modid": "create_cold_sweat",
-      "version": "1.1.2",
-      "file": "create_cold_sweat-1.1.2.jar",
       "category": "Create & addons"
     },
     {
@@ -2027,6 +2013,13 @@
   ],
   "disabled": [
     {
+      "name": "Cold Sweat",
+      "modid": "cold_sweat",
+      "version": "2.4.2",
+      "file": "ColdSweat-2.4.2.jar.disabled",
+      "category": "Storage, QoL & utility"
+    },
+    {
       "name": "Create: Better Storages",
       "modid": "create_bs",
       "version": "1.0b.Release",
@@ -2038,6 +2031,13 @@
       "modid": "create_dd",
       "version": "0.1b.Release-Early-Dev",
       "file": "Create-DnDesire-1.20.1-0.1b.Release-Early-Dev.jar.disabled",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Cold Sweat",
+      "modid": "create_cold_sweat",
+      "version": "1.1.2",
+      "file": "create_cold_sweat-1.1.2.jar.disabled",
       "category": "Create & addons"
     },
     {

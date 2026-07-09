@@ -74,3 +74,5 @@ desktop.ini
 oculus.properties
 config/spark/
 /config/crash_assistant/
+
+user-prefs.json

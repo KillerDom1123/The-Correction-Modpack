@@ -51,8 +51,10 @@ All per-world (`-server.toml`) changes below have been copied to `defaultconfigs
 
 ---
 
-## Cold Sweat (`config/coldsweat/world.toml`, `entity.toml`) — *global*
-**Goal:** cold is the main threat (nights, rain, mountains); heat only in deserts/lava; **everything in Celsius**.
+## Cold Sweat (`config/coldsweat/…`) — *REMOVED*
+> **⚠️ Cold Sweat was removed from the pack** (jar disabled, along with its `create_cold_sweat` compat addon). Everything below **no longer applies** and is kept only as a historical record. Cold is **no longer a survival threat**; the README's climate framing was updated to match. The leftover `config/coldsweat/` folder is now inert. *(TerraFirmaCraft still provides a world climate/seasons system, but not Cold Sweat-style player hypothermia damage.)*
+
+**Goal (obsolete):** cold is the main threat (nights, rain, mountains); heat only in deserts/lava; **everything in Celsius**.
 
 - **Units:** every stored value converted from °F to **°C** (behavior-preserving — absolute temps via `(F−32)×5⁄9`, offsets/deltas via `×5⁄9`). Display was already Celsius.
 - **Heat only where intended:** non-arid biome **noon** temps capped at **30 °C** (below the ~35 °C heatstroke threshold). Deserts, badlands, and Terralith arid/volcanic biomes kept hot.
@@ -378,6 +380,7 @@ Ambient "something's at the door" event. Made **rarer** so it stays unsettling r
 | Rake: The Arrival | `rake_spawn_trigger`, `rake_stalking`, `rake_following` | 8 | **2** (~4× rarer) | forest / taiga (kept) |
 | The One Who Watches | `toww_stalking`, `toww_staring` | 20 | **2** (~10× rarer) | any |
 | Wendigo | `antlers:wendigo` | 20 | **2** (~10× rarer) | any |
+| Whispering Spirits | `whispering_spirits:whispering_spirit` | 20 | **2** (~10× rarer) | any | *(added 2026-07-09 — also a top server-tick cost; see the Spark-profile section)* |
 | Pale Hound | *(code-weighted — no biome-modifier file)* | all "spooky" biomes | biome tag **replaced** with a tight remote set | deep_dark, dark_forest, snowy_taiga, grove, frozen_peaks |
 
 The three data-driven mobs are done by overriding the mods' own `forge/biome_modifier/*.json` at the same path (clean replacement, no duplication). Pale Hound's weight isn't config-exposed, so it's rarified by restricting its spawn-biome tag to a few remote cold/dark biomes; if it still feels too common, a `remove_spawns` + `add_spawns` biome modifier is the follow-up (carries a modifier-ordering caveat).
@@ -452,11 +455,74 @@ Mahou's balance lives entirely in a **server** config (`mahoutsukai-server.toml`
 
 *Scope:* worldgen is baked in at chunk generation, so this only affects **newly generated** chunks — already-explored terrain (and any catacombs already placed) is unchanged, but exploring new terrain will no longer trigger the stall. *Revert:* delete `config/openloader/data/PerfFixes/`.
 
+### Follow-up (2026-07-09) — extended to the `creepy_1`–`creepy_4` features
+The catacomb fix was **incomplete**: post-fix logs (2026-07-09 sessions) still recorded the same `Detected setBlock in a far chunk` cascade, now from `more_underground_structures:creepy_1_feature` (12×) and `creepy_4_feature` (9×) during exploration. These are the same oversized-building class as catacomb — multi-chunk structures injected via `forge:add_features` at the `underground_structures` step. Added `forge:none` overrides for **`creepy_1`, `creepy_2`, `creepy_3`, `creepy_4`** (only 1 & 4 were observed in logs; 2 & 3 disabled proactively as the same structure family). Ore veins/blobs, spikes, fossils, and the small chest-dungeon features remain untouched. *Monitor:* if new far-chunk errors name other MUS features (e.g. the `big*` hideouts, tombs, shrines, gateways, wells), disable those the same way.
+
+> **Note — this is not the whole lag story.** The worldgen cascade explains the *exploration* spikes. The **worst** stalls in the 2026-07-09 logs were *progressive* (7 s → 65 s over ~6 min) and coincide with `Saving oversized chunk [-4, 66] (1.4–1.6 MB) to saves/Bruh/entities/…` — a runaway **entity accumulation** at Bruh chunk **[-4, 66]** (block ~x=-64, z=1056). That is a separate, likely-dominant cause and is **not** addressed by this datapack. See the entity-accumulation note below.
+
+---
+
+## Performance — entity accumulation at `Bruh [-4, 66]` (*diagnosis — no fix applied yet*)
+
+**Symptom:** the largest server-tick stalls on 2026-07-09 grew progressively (up to **1314 ticks / 65 s behind**) and coincided with repeated `Saving oversized chunk [-4, 66] (1.48 MB → 1.64 MB) to saves/Bruh/entities/c.-4.66.mcc`. A 1.6 MB **entity** chunk = thousands of entities piled in one spot (block ~x=-64…-49, z=1056…1071 in the **Bruh** world). Every entity ticks every tick, so the pile drags the whole server thread.
+
+**Likely source:** consistent with the earlier anti-lag Spark census (lootr_minecart + tnt_minecart + skeletons) — most probably a loaded **When Dungeons Arise** dungeon (or other mob-dense structure) at that location, spawning faster than mobs despawn.
+
+**Why the existing safety net doesn't catch it:** `kubejs/server_scripts/anti_lag_items.js` only runs `kill @e[type=item]` — it clears **loose items only**. A pile of **mobs/minecarts** is untouched by it.
+
+**Safety net added (`anti_lag_mobs.js` + `AntiLagEntities` datapack):** a companion to `anti_lag_items.js` that culls **runaway hostile mobs** (the item script only handles `@e[type=item]`; a pile of mobs sailed past it). Same warn-then-clear, throttled, threshold-gated design.
+- **Whitelist-only:** culls only entity types in the `#antilag:cullable_hostiles` tag (common vanilla hostiles: zombie/husk/drowned/zombie_villager, skeleton/stray, spider/cave_spider, creeper, silverfish, endermite, witch, phantom, slime). Everything else — pets, villagers, animals, **minecarts (incl. Lootr/TNT dungeon loot)**, item frames, armor stands, paintings, boats, bosses, and all modded/horror mobs — is untouched by omission.
+- **Persistence-protected:** `nbt=!{PersistenceRequired:1b}` spares name-tagged mobs, geared mobs, spawner-persistent mobs, and raid mobs.
+- **Threshold:** `MOB_THRESHOLD = 200` cullable hostiles per dimension (well above normal, since the pack suppresses natural hostile spawns), 10 s warning, ~15 s check interval.
+- *Tunable:* edit the knobs at the top of `kubejs/server_scripts/anti_lag_mobs.js`; extend the whitelist by editing `config/openloader/data/AntiLagEntities/data/antilag/tags/entity_types/cullable_hostiles.json`. *Revert:* delete the script + the `AntiLagEntities` datapack.
+
+**Still worth doing (targeted, needs in-game):** visit Bruh **~x=-64, z=1056** to see what's accumulating (dungeon? spawner? mob crowd? loot minecarts?). If it's a spawner, light/remove it; if it's structural loot minecarts, the cull won't (and shouldn't) touch them — relocate or accept. The safety net caps *mobs*, not structural entities.
+
+---
+
+## Performance — Spark server-thread profile (2026-07-09, https://spark.lucko.me/aYH6AP5pvl)
+
+A server-thread Spark profile was captured and parsed (224 s of samples). Ranked by self-time:
+
+| Rank | Frame | Self-time | Notes |
+|---|---|---|---|
+| 1 (mods) | `whisperingspirits…PlayerLookAtSpiritProcedure.onPlayerTick` | ~10.7 s (**~4.8%**) | **#1 mod cost.** Runs every tick per player, scanning nearby spirit entities. |
+| — | `net.minecraft.server.commands.TeleportCommand` (+lambda) | ~8.7 s (**~3.9%**) | Heavy programmatic teleports — almost certainly Whispering Spirits repositioning its spirit entities each tick. |
+| — | vanilla `MinecraftServer` / `BlockableEventLoop` / `Level` / `ServerChunkCache` / `Entity` | ~40%+ combined | Engine baseline + idle/wait for a 285-mod pack; not a single fixable hog. Entity ticking ≈3.7%. |
+
+Other MCreator horror procedures were **minor** in this sample (`net.theobsessed` ~0.1%, John mod / Weeping Angels negligible) — Whispering Spirits is the outlier.
+
+**Root cause of the WS cost:** it spawned at **weight 20 in `forge:any` biome** — vs. the pack's documented horror-mob benchmark of **weight 2** (Weeping Angels, Rake, TOWW, Wendigo). So ~10× too many spirit entities existed everywhere, and its per-tick look-detection + teleport procedure processed all of them. WS ships **no config file** (only a spawn biome-modifier), so it can't be tuned directly.
+
+**Fix (`HorrorSpawnRarity` datapack):** override `whispering_spirits:whispering_spirit_biome_modifier` to **weight 20 → 2**, mirroring the exact pattern/precedent used for Rake/TOWW/Wendigo (see the horror-spawns table above). ~10× fewer spirits ⇒ proportionally cheaper per-tick procedure and far fewer teleports — the single biggest systematic tick win available without removing a mod. Worldgen-independent; takes effect on next world load. *Tunable:* raise the weight for more spirits / heavier tick cost. *If still too heavy:* WS would have to be removed, as it has no other lever.
+
+> **Relationship to the entity-pile note above:** these are distinct. The Spark aggregate shows the *systematic* per-tick drain (Whispering Spirits). The oversized-entity-chunk stalls are *episodic* spikes at one location. Both are now addressed — WS rarified here, runaway mobs capped by `anti_lag_mobs.js`.
+
 ---
 
 ## KubeJS — Old Civilisation script bugfix (`oc_interactions.js`)
 
 `logs/latest.log` showed **167** repeated errors from `oc_interactions.js` — `InternalError: TypeError: redeclaration of var pd` (tick handler, ×125) and `… var e` (residue-drop death handler, ×42). KubeJS's Rhino engine mis-hoists `const`/`let` declared inside a `try` block in a repeatedly-invoked callback, so **the entire OldCiv discovery / stateful-item / endgame-grant / horror-residue system silently never ran.** Fixed by switching the in-callback declarations from `const`/`let` to `var` (the Rhino-safe idiom) in all four runtime handlers (`PlayerEvents.tick`, `EntityEvents.death`, both `ItemEvents.rightClicked`). Module-level `const`s (which load once and were fine) left as-is.
+
+**Verified fixed (2026-07-09):** the current session's log shows **0** `redeclaration of var` errors, so the interaction/variant/residue system now runs.
+
+---
+
+## KubeJS — Old Civilisation loot coverage (`oc_loot.js`) — *modded-structure gap*
+
+**Report:** "custom lore items don't seem to spawn in loot chests." Traced end-to-end:
+- **Not a code bug.** Items register fine; `oc_interactions.js` is fixed (above); and `oc_loot.js`'s LootJS chain (`addLootTableModifier(...).randomChance(...).addLoot(...)`) *is* valid for LootJS **2.13.1** — the returned `LootActionsBuilderJS` implements the `LootConditionsContainer` + `LootActionsContainer` interfaces, so `randomChance`/`addLoot` are inherited default methods. (The script's own try/catch never logged a failure, confirming no runtime error.)
+- **Root cause = coverage gap.** `oc_loot.js` originally injected only into **vanilla** `minecraft:chests/*` tables (+ `ad_astra_more_structures` space chests + `born_in_chaos_v1`/`foes` mob drops). But this pack's headline structures ship their **own** loot tables, which were never targeted: **When Dungeons Arise** (168 tables, `dungeons_arise:chests/*`), **YUNG's Better Strongholds / Desert & Jungle Temples / Ocean Monuments / Witch Huts** (own `better*:chests/*`), **More Underground Structures** (`more_underground_structures:chests/*`), **Lost Architects** (`lost_architects:chests/*`). Only YUNG's Better **Dungeons** & **Mineshafts** were covered — they reuse the vanilla `simple_dungeon`/`abandoned_mineshaft` tables. Combined with the intentionally-low per-item chances, players exploring the pack's real content saw effectively nothing.
+
+**Fix:** extended `oc_loot.js` with LootJS regex modifiers routing each modded structure family to fitting item categories, at **slightly lower chances than the vanilla equivalents** (horror-pack "rare finds"):
+- **When Dungeons Arise** — routed by structure theme: undead/plague/infested → horror (biological_sample, impossible_bone, corrupted_map, distorted memory); settlements/homes/camps → personal (data chip, photo, currency, handbook); keeps/towers/forts → military-personal + technical (id_badge, incident_report, currency); foundry/mechanical/mines → technical (incident_report, audio_log, containment_label, signal_device); monastery/heavenly/mythic → arcane (arcane_notes, distorted memory, bound_thought, unstable_memory).
+- **YUNG's Better Strongholds** → magic + technical; **Desert/Jungle Temples** → ancient/magic; **Ocean Monuments** → ocean; **Witch Huts** → magic/horror.
+- **More Underground Structures** → underground-dungeon (personal, technical, faded memory, biological_sample).
+- **Lost Architects** → artificer's workshop = technical/arcane; brawler's guild = personal/library.
+
+**Deliberately skipped:** YUNG's Better **Nether Fortresses** (`betterfortresses`) — TFC disables nether portals in this pack (`enableNetherPortals=false`), so they're unreachable. YUNG's Dungeons/Mineshafts already covered via vanilla tables.
+
+*Scope:* server script, takes effect on world load / `/reload`. All 17 referenced item IDs verified to have models; script passes `node --check`. *Tunable:* the per-line `randomChance` values in `oc_loot.js`. *Note:* loot is baked when a chest is first rolled, so this affects **newly generated / not-yet-opened** chests, not ones already looted. (Lootr is compatible — LootJS modifies the table itself, which Lootr then rolls per-player.)
 
 ---
 
@@ -470,6 +536,45 @@ TFC's HUD overhaul is on by default and replaced the vanilla health/hunger bars 
 | `enableHungerBar` | true | **false** (vanilla hunger) |
 
 **Kept `enableThirstBar = true`** — that bar is the readout for TFC's thirst *mechanic*, so hiding it would leave thirst draining with no gauge. `healthDisplayStyle` is now moot (health bar is vanilla). Client-side display only — no gameplay/balance effect, and per-client (ships in the tracked config for everyone on this instance).
+
+---
+
+## TerraFirmaCraft — collapses & landslides (`tfc-server.toml`) — *per-world → defaultconfigs*
+**Goal:** stop TFC's block-gravity mechanics from tearing apart world-gen **floating structures** (e.g. skyships), where breaking a single block cascades the build apart.
+
+TFC has no concept of "intended build" — it applies geology physics to any qualifying block. Two mechanics live in `[mechanics.collapses]`; both were fully disabled via their `enable*` gates (chance/radius values left as-is, since the toggles gate the behaviour entirely):
+
+| Setting | Before | After | What it does |
+|---|---|---|---|
+| `enableBlockLandslides` | true | **false** | Gravity blocks (TFC dirt/gravel/sand/cobble) fall on block update — **the skyship culprit** |
+| `enableBlockCollapsing` | true | **false** | Raw-rock collapses when mining unsupported stone |
+| `enableExplosionCollapsing` | true | **false** | Explosions trigger immediate raw-rock collapses |
+| `enableChiselsStartCollapses` | true | **false** | Chiselling raw rock can start a collapse |
+
+**Why:** the landslide toggle is the direct fix for floating structures (breaking a block no longer slides the rest away); the three collapse toggles are disabled alongside it so mining/explosions/chisels can't drop rock on builds or players either. Removes TFC's signature mining hazard — acceptable trade to keep structure integrity. As a side benefit, this also removes collapse/landslide item-spam, one of the loose-item sources flagged in the *anti-lag* pass above.
+
+**Scope/apply:** edited in both existing worlds (`saves/New World/…`, `saves/Bruh/…`) and copied to `defaultconfigs/tfc-server.toml` for every new world. Backups: `tfc-server.toml.bak` beside each world file. *Revert:* restore the `.bak`, or set the four toggles back to `true`; delete `defaultconfigs/tfc-server.toml` (or flip its toggles) for new worlds. *Tunable:* re-enable collapses alone (keep landslides off) if you want the mining hazard back without the structure damage.
+
+---
+
+## TerraFirmaCraft — item size & weight (`TFCLightItems` datapack + `TFCNoSizeTooltip` resource pack) — *global*
+**Goal:** neutralize TFC's item Size/Weight system — every item stacks to 64, no storage/overburden restrictions, and no Size/Weight tooltip clutter.
+
+**Not config-toggleable.** There is no flag for this in any `tfc-*.toml`. The system is code- and data-driven (`net.dries007.tfc.common.capabilities.size.ItemSizeManager`): an item's size/weight comes from a data definition (`data/tfc/tfc/item_sizes/*.json`) if one matches, else from hardcoded defaults (`ARMOR_SIZE`/`TOOL_SIZE`/`BLOCK_SIZE`/`DEFAULT_SIZE`). Weight → max-stack mapping is baked into the `Weight` enum (`very_light`=64 … `very_heavy`=4) and can't be redefined by data. The tooltip line (`addTooltipInfo`) is added unconditionally — no toggle removes it.
+
+**`TFCLightItems` datapack** (`config/openloader/data/`): overrides all **56** built-in `item_sizes/*.json` at the same path, keeping each original `ingredient` but forcing `size: tiny`, `weight: very_light`. Effect: every TFC-defined item (ingots, ore, food, tools, blocks, vessels…) stacks to **64** and is small enough to bypass vessel/storage size gates and the Overburdened effect. (Armor/tools are already stack-1, so their stack is unchanged; the override removes their *storage* restriction where a data def covered them.)
+
+**`TFCNoSizeTooltip` resource pack** (`config/openloader/resources/`): blanks the 12 `tfc.enum.size.*` / `tfc.enum.weight.*` lang keys to `""`, so the Size/Weight **wording** disappears from the tooltip on **every** item — including code-default items like armor that the datapack can't reach.
+
+**Why:** this is the closest achievable to "disable it" without patching the jar. The datapack kills the *mechanic* (small stacks, storage limits, overburden); the resource pack kills the *display text*.
+
+**Caveats / limits:**
+- The tooltip **line** is hardcoded, so blanking the lang may leave a thin empty line — the *text* is gone but the line itself can't be fully removed by a resource pack.
+- Blanking those enum keys also empties the words wherever else they appear (e.g. the TFC field guide's size/weight references).
+- Code-default items (armor, and any modded item not matched by a data def) keep their underlying code-assigned size for *storage* purposes — only their tooltip text is blanked. Fully neutralizing their storage behaviour would need explicit tag overrides in `TFCLightItems`.
+- A true, complete removal (line and all) would require a mixin/jar patch — out of scope for the config/datapack methodology.
+
+**Scope/apply:** global (all worlds); active on next world load (datapack) / game restart (resource pack). English-only lang blanking (`en_us`); add other `*_us`/locale files if needed. *Revert:* delete `config/openloader/data/TFCLightItems/` and `config/openloader/resources/TFCNoSizeTooltip/`.
 
 ---
 
@@ -552,11 +657,11 @@ The regenerated `modlist.md`/`modlist.json`/README also picked up previously-unt
 ---
 
 ## Appendix A — OpenLoader packs created
-`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`.
-`config/openloader/resources/`: `QuietAmbience`.
+`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`, `TFCLightItems`, `AntiLagEntities`.
+`config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`.
 
 ## Appendix B — Known crash (NOT caused by these config changes)
-Startup crash traced to a **Mixin injection failure**: TerraFirmaCraft's `BiomeMixin` (`shouldFreezeWithClimate` redirect) fails because **Serene Seasons** (and Cold Sweat's freezing mixin) rewrite the same vanilla biome freeze/precipitation methods. This is a **mod-vs-mod incompatibility** at class-load, before any config/datapack is read — data edits cannot cause or fix it. **Recommended fix:** disable one of the conflicting climate mods (most likely **TerraFirmaCraft** vs **Serene Seasons**). Not yet applied — awaiting your decision.
+Startup crash traced to a **Mixin injection failure**: TerraFirmaCraft's `BiomeMixin` (`shouldFreezeWithClimate` redirect) fails because **Serene Seasons** (and Cold Sweat's freezing mixin) rewrite the same vanilla biome freeze/precipitation methods. This is a **mod-vs-mod incompatibility** at class-load, before any config/datapack is read — data edits cannot cause or fix it. **Recommended fix:** disable one of the conflicting climate mods (most likely **TerraFirmaCraft** vs **Serene Seasons**). **Update:** both **Serene Seasons** and **Cold Sweat** are now disabled/removed, so this specific freeze-mixin conflict should be resolved — TerraFirmaCraft is the only remaining climate mixin on those methods.
 
 ## Appendix C — Reverting
 - Config-file edits: `*.bak` backups sit next to the originals (e.g. `alexsmobs.toml.bak`, `create-server.toml.bak`, `coldsweat/world.toml.bak`, `serversidehorror.json.bak`, `man_config.toml.bak`, `ars_nouveau.bak/`, `alexscaves_biome_generation.bak/`, `extremereactors/common.toml.bak`, `bloodmagic-common.toml.bak`).

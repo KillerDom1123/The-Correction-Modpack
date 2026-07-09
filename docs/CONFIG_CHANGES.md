@@ -535,7 +535,41 @@ TFC's HUD overhaul is on by default and replaced the vanilla health/hunger bars 
 | `enableHealthBar` | true | **false** (vanilla hearts) |
 | `enableHungerBar` | true | **false** (vanilla hunger) |
 
-**Kept `enableThirstBar = true`** — that bar is the readout for TFC's thirst *mechanic*, so hiding it would leave thirst draining with no gauge. `healthDisplayStyle` is now moot (health bar is vanilla). Client-side display only — no gameplay/balance effect, and per-client (ships in the tracked config for everyone on this instance).
+**~~Kept `enableThirstBar = true`~~ → now `false` (2026-07-09).** The thirst bar was originally kept because it was the readout for TFC's thirst *mechanic*. Since thirst has now been **disabled** (see next section), the static bar was hidden too. `healthDisplayStyle` is moot (health bar is vanilla). Client-side display only.
+
+---
+
+## TerraFirmaCraft — disable thirst + lessen hunger (`tfc-server.toml` + `tfc-client.toml`) — *per-world → defaultconfigs (+ client)*
+**Goal:** remove the thirst survival layer entirely and make hunger drain more slowly.
+
+| Setting | File | Before | After | Effect |
+|---|---|---|---|---|
+| `thirstModifier1` | `tfc-server.toml` `[mechanics.player]` | 5.0 | **0.0** | Thirst never drains (`0 = None` per TFC) — no dehydration, ever |
+| `enableThirstOverheating` | `tfc-server.toml` | true | **false** | Belt-and-suspenders: no extra thirst loss in heat (moot at modifier 0) |
+| `enableThirstBar` | `tfc-client.toml` | true | **false** | Hides the now-static thirst bar from the HUD |
+| `passiveExhaustionMultiplier` | `tfc-server.toml` | 1.0 | **0.5** | Hunger accrues at **half** rate (~1 hunger bar per 5 days instead of 2.5) |
+
+**Why:** requested — thirst removed as a mechanic (`thirstModifier1 = 0` is TFC's documented off switch; the bar is hidden since it would just sit full), and hunger pressure roughly halved rather than removed (set `passiveExhaustionMultiplier` to `0` to disable hunger entirely, or higher toward 1.0 for more pressure).
+
+**Scope/apply:** thirst/hunger are per-world server config — edited in the current world (`saves/Bazinga/…`) and `defaultconfigs/tfc-server.toml` for new worlds; the bar toggle is global client config. Backups: `tfc-server.toml.bak` (both), `tfc-client.toml.bak`. Active on next world load (server) / game restart (client HUD). *Revert:* restore the `.bak`s or reset the four values.
+
+---
+
+## TerraFirmaCraft — food hunger by type (`TFCFoodHunger` datapack) — *global*
+**Goal:** undo TFC's flat "every food restores 4 hunger (2 shanks)" — scale hunger by food type so cooking real meals is worthwhile, while keeping TFC's nutrition-category system intact.
+
+**Mechanism (not a config lever):** TFC sets hunger per-food in `data/tfc/tfc/food_items/*.json` (`"hunger": 4` on every one — 170 defs). There's no global multiplier, so this is a datapack overriding those defs at the same path (same technique as `TFCLightItems`/`PerfFixes`). **Only the `hunger` field is changed** — `saturation`, `decay_modifier`, and the `protein`/`grain`/`vegetables`/`fruit`/`dairy` nutrition values (which drive max-health) are preserved exactly.
+
+| Food tier | Detection | Hunger | 
+|---|---|---|
+| Cooked meats/fish + prepared meals (soup, stew, salad, sandwich) | `cooked_*` or meal keyword | **8** |
+| Bread | `*bread*` (not dough/flour) | **6** |
+| Raw meat/fish, raw fruit/veg | has `protein` / `fruit` / `vegetables` | **5** |
+| Grain / flour / dough (processing intermediates) | grain keywords | **4** (TFC default — left unchanged) |
+
+**Result:** 146 overrides written (57 → 8, 6 → 6, 83 → 5); the 24 grain/flour/dough intermediates keep the default 4 (no file needed). Cooking a meat or making a meal now restores 4× a raw grain and 2× a raw ingredient, preserving the "cook real food" incentive.
+
+**Scope/apply:** global datapack, active on world load / `/reload`; all 146 files validated. *Note:* food data is applied live (not baked into worldgen), so it affects all food immediately. *Tunable:* re-run with different tier values, or edit individual `food_items/*.json` in the pack. *Revert:* delete `config/openloader/data/TFCFoodHunger/`.
 
 ---
 
@@ -657,7 +691,7 @@ The regenerated `modlist.md`/`modlist.json`/README also picked up previously-unt
 ---
 
 ## Appendix A — OpenLoader packs created
-`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`, `TFCLightItems`, `AntiLagEntities`.
+`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`.
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`.
 
 ## Appendix B — Known crash (NOT caused by these config changes)

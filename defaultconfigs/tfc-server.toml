@@ -714,15 +714,15 @@ familiarityDecayLimit = 0.3
 		# Exhaustion is the hidden stat which controls when you get hungry. In vanilla it is incremented by running and jumping for example. In TFC, exhaustion is added just by existing.
 		# 1.0 = A full hunger bar's worth of exhaustion every 2.5 days. Set to zero to disable completely.
 		#Range: 0.0 ~ 100.0
-		passiveExhaustionMultiplier = 1.0
+		passiveExhaustionMultiplier = 0.5
 		#
 		# A multiplier for how quickly the player gets thirsty.
 		# The player loses thirst in sync with when they lose hunger. This represents how much thirst they lose. 0 = None, 100 = the entire thirst bar.
 		#Range: 0.0 ~ 100.0
-		thirstModifier1 = 5.0
+		thirstModifier1 = 0.0
 		#
 		# Enables the player losing more thirst in hotter environments.
-		enableThirstOverheating = true
+		enableThirstOverheating = false
 		#
 		# How much thirst the player gains from drinking in the rain (standing outside in the rain and looking up) per tick.
 		#Range: 0.0 ~ 100.0

@@ -17,7 +17,7 @@
 	enableHealthBar = false
 	#
 	# Adds a TFC thirst bar over the hotbar.
-	enableThirstBar = true
+	enableThirstBar = false
 	#
 	# Allows the vanilla XP bar to render.
 	enableExperienceBar = true

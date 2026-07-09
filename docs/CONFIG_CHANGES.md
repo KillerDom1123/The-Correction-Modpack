@@ -276,7 +276,39 @@ Verified chests are already **one-time per player** (`refresh_all=false`, no ref
 - Sighting/ambient event chances made ~1.5× more frequent (chance ÷ ~1.5): `herobrine_starer`, `starer`, `fake_steps`, `fake_mining`, `scary_sound`, `random_signs`, `fake_joiner`, `random_fake_joiner`, `heads_from_list`, `random_heads`.
 - **Unchanged:** jumpscare, torch-breaking, traps, arson, lightning, spawn/join events (the aggressive/attack side).
 
-**Why:** the *From The Fog* mod itself has no config (hardcoded), so this mod provides the tunable distance-sighting horror. More staring/footsteps/sounds without ramping up direct attacks.
+**Why:** provides a tunable distance-sighting horror layer alongside the entity-based stalkers. More staring/footsteps/sounds without ramping up direct attacks.
+
+> **Correction:** an earlier note here called *From The Fog* "hardcoded, no config." That's wrong — From The Fog (`watching`) is configured via **in-game datapack functions/commands** (`data/watching/functions/config/…`), not a `.toml`, and has an `autoConfig` that ramps intensity up over in-game days. See the handoff note below.
+
+### Tuning pass — trim the meme/aggressive events, keep the subtle ones
+The event mix leaned too gimmicky (Herobrine, fake player joins, sign spam). Rebalanced toward quiet, ambiguous dread. Reminder: `_chance` is ~"1 in N per tick", so **higher = rarer**.
+
+| Event | Change | Why |
+|---|---|---|
+| `herobrine_starer_enable` | true → **false** | No Herobrine — off-theme meme horror |
+| `jumpscare_enable` | true → **false** | The Herobrine jumpscare — off-theme |
+| `fake_joiner_enable` | true → **false** | No fake "player joined" messages |
+| `random_fake_joiner_enable` | true → **false** | Same — the second fake-joiner variant |
+| `random_lightning_enable` | true → **false** | No lightning from a clear sky |
+| `long_night_enable` | true → **false** | No artificially extended nights |
+| `random_signs_enable` | true → **false** | No auto-placed message signs |
+| `joining_in_dungeon_enable` | true → **false** | No fake joins while in dungeons |
+| `break_torches_chance` | 720000 → **2000000** | Torch-breaking now *pretty rare* |
+| `replace_torches_chance` | 720000 → **2000000** | Kept in step with break_torches (torch-tampering as a whole is pretty rare) |
+| `fake_mining_chance` | 325000 → **2000000** | Distant fake-mining noises now *pretty rare* |
+| `fake_steps_chance` | 325000 → **325000 (kept)** | Footsteps stay rare **but not too rare** — now the most present ambient cue |
+| `starer_chance` | 273000 → **8000000** | The (non-Herobrine) starer made *incredibly rare* — a once-in-a-playthrough dread moment |
+
+Left enabled at prior values: `scary_sound`, `heads_from_list`, `random_heads` (subtle, on-theme). `burn_down_house` and `joining_on_bedrock` were already off.
+
+### Mod swap — From The Fog removed; Server-Side Horror is the sole events layer
+*From The Fog* (`watching`) was removed from the pack; Server-Side Horror now provides the entire "something is interfering" layer. (A brief prior pass had disabled SSH's `break_torches`/`replace_torches`/`fake_mining` to avoid duplicating From The Fog — that was reverted, since there's no longer anything to duplicate.)
+
+**Final SSH enabled set:** `break_torches` + `replace_torches` + `fake_mining` (all *pretty rare*, `chance` 2000000), `fake_steps` (rare-but-present, 325000), `starer` (*incredibly rare*, 8000000), `scary_sound`, `heads_from_list`, `random_heads` (+ `traps`/`setting_up_new_traps`/`old_villages`, untouched).
+
+**Kept disabled** (per author preference — off-theme or disliked): `herobrine_starer`, `jumpscare`, `fake_joiner`, `random_fake_joiner`, `long_night`, `random_lightning`, `random_signs`, `joining_in_dungeon` (+ `burn_down_house`, `joining_on_bedrock`, `removing_leaves`, already off).
+
+**Removal note:** From The Fog is not tracked in git (`mods/` is excluded), so removing the jar is the whole job. It stored state only in world scoreboards (`ftf.*` objectives) and used vanilla blocks, so leftover data is harmless — no missing-block or chunk damage on load. Any spawned Herobrine entity is dropped as an unknown entity when the world loads without the mod.
 
 ---
 
@@ -425,6 +457,19 @@ Mahou's balance lives entirely in a **server** config (`mahoutsukai-server.toml`
 ## KubeJS — Old Civilisation script bugfix (`oc_interactions.js`)
 
 `logs/latest.log` showed **167** repeated errors from `oc_interactions.js` — `InternalError: TypeError: redeclaration of var pd` (tick handler, ×125) and `… var e` (residue-drop death handler, ×42). KubeJS's Rhino engine mis-hoists `const`/`let` declared inside a `try` block in a repeatedly-invoked callback, so **the entire OldCiv discovery / stateful-item / endgame-grant / horror-residue system silently never ran.** Fixed by switching the in-callback declarations from `const`/`let` to `var` (the Rhino-safe idiom) in all four runtime handlers (`PlayerEvents.tick`, `EntityEvents.death`, both `ItemEvents.rightClicked`). Module-level `const`s (which load once and were fine) left as-is.
+
+---
+
+## TerraFirmaCraft — HUD (`config/tfc-client.toml`) — *client display only*
+
+TFC's HUD overhaul is on by default and replaced the vanilla health/hunger bars (continuous TFC bars, health shown as `750 / 1000`), which also shifted the armour row. Reverted the two that map onto vanilla stats:
+
+| Setting | Before | After |
+|---|---|---|
+| `enableHealthBar` | true | **false** (vanilla hearts) |
+| `enableHungerBar` | true | **false** (vanilla hunger) |
+
+**Kept `enableThirstBar = true`** — that bar is the readout for TFC's thirst *mechanic*, so hiding it would leave thirst draining with no gauge. `healthDisplayStyle` is now moot (health bar is vanilla). Client-side display only — no gameplay/balance effect, and per-client (ships in the tracked config for everyone on this instance).
 
 ---
 

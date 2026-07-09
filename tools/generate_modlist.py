@@ -48,6 +48,10 @@ CATEGORY_RULES = [
         "bookshelf", "caelus", "collective", "framework", "fzzy_config", "iceberg",
         "placebo", "prism", "puzzleslib", "bcc", "sodiumoptionsapi", "deimos", "aso", "c4p",
         "kotlin", "fastbench", "mixinextras", "mixinsquared",
+        "canary", "aiimprovements", "ai-improvements", "betterchunkloading",
+        "chunksending", "chunky", "connectivity", "coroutil", "dataanchor",
+        "dimthread", "fastasyncworldsave", "limitedchunks", "mobtimizations",
+        "recipeessentials", "smoothchunk", "structureessentials",
     ]),
     ("Create & addons", ["create", "ponder", "compressedcreativity", "waystoneandcreate", "sliceanddice"]),
     ("Tech — energy, automation, industry", [
@@ -55,9 +59,10 @@ CATEGORY_RULES = [
         "immersivepetroleum", "pneumaticcraft", "cc-tweaked", "cctweaked",
         "computercraft", "ad_astra", "adastra", "structure ad astra", "steam_rails",
         "railways", "terrafirmacraft", "tfc", "appmek",
+        "bigreactors", "extremereactors", "zerocore",
     ]),
     ("Magic", ["ars_nouveau", "occultism", "hexerei", "forbidden_arcanus",
-               "irons_spellbooks", "theforgotten"]),
+               "irons_spellbooks", "theforgotten", "bloodmagic", "mahoutsukai"]),
     ("Colony / civilisation", ["minecolonies", "structurize", "blockui", "domum",
                                "multipiston", "smallcolonies", "towntalk"]),
     ("Horror & atmosphere", [

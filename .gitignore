@@ -72,3 +72,5 @@ desktop.ini
 /simplebackups
 
 oculus.properties
+config/spark/
+/config/crash_assistant/

@@ -247,7 +247,7 @@
 
 [dialogue]
 	#Enable entity dialogue delivered via signs (player writes, entity replies)
-	enabled = true
+	enabled = false
 	#Percentage of text to obfuscate in entity responses (0-1, default 0.15 = 15%)
 	#Range: 0.0 ~ 1.0
 	obfuscation = 0.15
@@ -267,15 +267,15 @@
 		enabled = true
 		#Chance (0-1) that an eligible creepy chat attempt actually sends
 		#Range: 0.0 ~ 1.0
-		sendChance = 0.3
+		sendChance = 0.02
 
 		[chat.creepy.interval]
 			#Minimum seconds between creepy chat attempts per player
 			#Range: 10 ~ 86400
-			min = 180
+			min = 1800
 			#Maximum seconds between creepy chat attempts per player
 			#Range: 10 ~ 86400
-			max = 420
+			max = 3600
 
 [structures]
 	#Maximum candidate location checks per attempt
@@ -331,7 +331,7 @@
 	[mobSpawning.peaceful]
 		#Chance to allow peaceful mob spawns when limiter is active (0-1)
 		#Range: 0.0 ~ 1.0
-		allowChance = 0.08
+		allowChance = 0.35
 
 [multiplay]
 	#When one player changes dimensions, teleport all other players to the same dimension (multiplayer only)

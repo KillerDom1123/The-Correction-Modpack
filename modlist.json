@@ -3,21 +3,21 @@
   "minecraft": "1.20.1",
   "loader": "forge",
   "counts": {
-    "enabled": 262,
-    "disabled": 5
+    "enabled": 285,
+    "disabled": 9
   },
   "categories": {
-    "Core libraries & performance": 54,
-    "Create & addons": 20,
-    "Tech — energy, automation, industry": 20,
-    "Magic": 7,
+    "Core libraries & performance": 70,
+    "Create & addons": 23,
+    "Tech — energy, automation, industry": 22,
+    "Magic": 9,
     "Colony / civilisation": 8,
-    "Horror & atmosphere": 27,
+    "Horror & atmosphere": 26,
     "Mobs & world creatures": 4,
     "Worldgen & structures": 27,
     "Food & farming": 7,
     "Decoration & building": 19,
-    "Storage, QoL & utility": 50,
+    "Storage, QoL & utility": 51,
     "Security & protection": 3,
     "Quests, loot, data & guides": 16
   },
@@ -70,6 +70,13 @@
       "version": "15.3.3-forge",
       "file": "ae2wtlib-15.3.3-forge.jar",
       "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "AI-Improvements",
+      "modid": "aiimprovements",
+      "version": "0.5.2",
+      "file": "AI-Improvements-1.20-0.5.2.jar",
+      "category": "Core libraries & performance"
     },
     {
       "name": "Alex's Caves",
@@ -198,6 +205,13 @@
       "category": "Create & addons"
     },
     {
+      "name": "betterchunkloading mod",
+      "modid": "betterchunkloading",
+      "version": "1.20.1-5.4",
+      "file": "betterchunkloading-1.20.1-5.4.jar",
+      "category": "Core libraries & performance"
+    },
+    {
       "name": "Better Compatibility Checker",
       "modid": "bcc",
       "version": "4.0.8",
@@ -224,6 +238,13 @@
       "version": "1.20.1-1.0.193",
       "file": "blockui-1.20.1-1.0.193.jar",
       "category": "Colony / civilisation"
+    },
+    {
+      "name": "Blood Magic",
+      "modid": "bloodmagic",
+      "version": "3.3.7-49",
+      "file": "bloodmagic-1.20.1-3.3.7-49.jar",
+      "category": "Magic"
     },
     {
       "name": "Blur (Forge)",
@@ -282,6 +303,13 @@
       "category": "Storage, QoL & utility"
     },
     {
+      "name": "Canary",
+      "modid": "canary",
+      "version": "0.3.3",
+      "file": "canary-mc1.20.1-0.3.3.jar",
+      "category": "Core libraries & performance"
+    },
+    {
       "name": "CANTBREATHE",
       "modid": "cant_breathe",
       "version": "1.0.2",
@@ -336,6 +364,27 @@
       "version": "3.0.7",
       "file": "chipped-forge-1.20.1-3.0.7.jar",
       "category": "Decoration & building"
+    },
+    {
+      "name": "chunksending mod",
+      "modid": "chunksending",
+      "version": "1.20.1-2.8",
+      "file": "chunksending-1.20.1-2.8.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Chunky",
+      "modid": "chunky",
+      "version": "1.3.146",
+      "file": "Chunky-1.3.146.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "Chunky x Farmer's Delight",
+      "modid": "chunky_x_farmers_delight",
+      "version": "1.0.0",
+      "file": "chunky_x_farmers_delight-1.0.0-forge-1.20.1.jar",
+      "category": "Core libraries & performance"
     },
     {
       "name": "Citadel",
@@ -408,6 +457,13 @@
       "category": "Decoration & building"
     },
     {
+      "name": "Connectivity Mod",
+      "modid": "connectivity",
+      "version": "1.20.1-7.6",
+      "file": "connectivity-1.20.1-7.6.jar",
+      "category": "Core libraries & performance"
+    },
+    {
       "name": "Controlling",
       "modid": "controlling",
       "version": "12.0.2",
@@ -427,6 +483,13 @@
       "version": "3.0.7+mc.1.20.1-forge",
       "file": "copycats-3.0.7+mc.1.20.1-forge.jar",
       "category": "Decoration & building"
+    },
+    {
+      "name": "CoroUtil",
+      "modid": "coroutil",
+      "version": "1.20.1-1.3.7",
+      "file": "coroutil-forge-1.20.1-1.3.7.jar",
+      "category": "Core libraries & performance"
     },
     {
       "name": "Corpse",
@@ -454,13 +517,6 @@
       "modid": "create",
       "version": "6.0.8",
       "file": "create-1.20.1-6.0.8.jar",
-      "category": "Create & addons"
-    },
-    {
-      "name": "Create: Better Storages",
-      "modid": "create_bs",
-      "version": "1.0b.Release",
-      "file": "Create-Better-Storages-Forge-1.20.1-1.0b.Release.jar",
       "category": "Create & addons"
     },
     {
@@ -506,6 +562,13 @@
       "category": "Create & addons"
     },
     {
+      "name": "Create: Deep Dark",
+      "modid": "create_deep_dark",
+      "version": "1.7.0",
+      "file": "create_deep_dark-1.7.0-forge-1.20.1.jar",
+      "category": "Create & addons"
+    },
+    {
       "name": "Create Enchantment Industry",
       "modid": "create_enchantment_industry",
       "version": "1.4.0-for-create-6.0.8",
@@ -541,17 +604,17 @@
       "category": "Core libraries & performance"
     },
     {
-      "name": "CreateBiggerStorageToCreate6",
-      "modid": "createbiggerstoragetocreate6",
-      "version": "1.1",
-      "file": "createbiggerstoragetocreate6-1.1.jar",
-      "category": "Create & addons"
-    },
-    {
       "name": "Create Deco",
       "modid": "createdeco",
       "version": "2.0.3-1.20.1-forge",
       "file": "createdeco-2.0.3-1.20.1-forge.jar",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Transmission",
+      "modid": "createtransmission",
+      "version": "1.2.1+forge-create6-1.20.1",
+      "file": "createtransmission-1.2.1+forge-create6-1.20.1.jar",
       "category": "Create & addons"
     },
     {
@@ -590,6 +653,13 @@
       "category": "Core libraries & performance"
     },
     {
+      "name": "Data Anchor",
+      "modid": "dataanchor",
+      "version": "1.0.0.20",
+      "file": "Data_Anchor-forge-1.20.1-1.0.0.20.jar",
+      "category": "Core libraries & performance"
+    },
+    {
       "name": "Decorative Blocks",
       "modid": "decorative_blocks",
       "version": "4.1.3",
@@ -608,6 +678,13 @@
       "modid": "deimos",
       "version": "2.7",
       "file": "deimos-1.20.1-forge-2.7.jar",
+      "category": "Core libraries & performance"
+    },
+    {
+      "name": "DimThreads",
+      "modid": "dimthread",
+      "version": "1.2.1",
+      "file": "dimthread-FORGE-mc1.20.1-v1.2.1.jar",
       "category": "Core libraries & performance"
     },
     {
@@ -688,6 +765,20 @@
       "category": "Storage, QoL & utility"
     },
     {
+      "name": "Extreme Reactors",
+      "modid": "bigreactors",
+      "version": "1.20.1-2.0.97",
+      "file": "ExtremeReactors2-1.20.1-2.0.97.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Extreme Reactors Create Compat",
+      "modid": "er2create",
+      "version": "1.20.1-1.0.4",
+      "file": "ExtremeReactors2-CreateCompat-1.20.1-1.0.4.jar",
+      "category": "Create & addons"
+    },
+    {
       "name": "FallingTree",
       "modid": "fallingtree",
       "version": "4.3.4",
@@ -707,6 +798,13 @@
       "version": "1.20.1-5.1",
       "file": "farsight-1.20.1-5.1.jar",
       "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "fastasyncworldsave mod",
+      "modid": "fastasyncworldsave",
+      "version": "1.20.1-2.6",
+      "file": "fastasyncworldsave-1.20.1-2.6.jar",
+      "category": "Core libraries & performance"
     },
     {
       "name": "Fast Leaf Decay",
@@ -770,13 +868,6 @@
       "version": "0.8.0",
       "file": "framework-forge-1.20.1-0.8.0.jar",
       "category": "Core libraries & performance"
-    },
-    {
-      "name": "From The Fog",
-      "modid": "watching",
-      "version": "1.9.2",
-      "file": "From-The-Fog-1.20-v1.9.2-Forge-Fabric.jar",
-      "category": "Horror & atmosphere"
     },
     {
       "name": "FTB Library",
@@ -1045,6 +1136,13 @@
       "category": "Food & farming"
     },
     {
+      "name": "Limited Chunkloading",
+      "modid": "limitedchunks",
+      "version": "1.8",
+      "file": "limitedchunks-1.20.1-4.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
       "name": "lootintegration_townsandtowers mod",
       "modid": "lootintegration_townsandtowers",
       "version": "1",
@@ -1099,6 +1197,13 @@
       "version": "1.0.4",
       "file": "LostArchitects-forge-1.0.4.jar",
       "category": "Worldgen & structures"
+    },
+    {
+      "name": "Mahou Tsukai",
+      "modid": "mahoutsukai",
+      "version": "1.20.1-v1.34.81",
+      "file": "mahoutsukai-1.20.1-v1.34.81.jar",
+      "category": "Magic"
     },
     {
       "name": "Macaw's All-In-One for TFC",
@@ -1162,6 +1267,13 @@
       "version": "5.1.7",
       "file": "MoBends-forge-1.20.1-5.1.7.jar",
       "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Mobtimizations",
+      "modid": "mobtimizations",
+      "version": "1.20.1-1.0.1",
+      "file": "mobtimizations-forge-1.20.1-1.0.1.jar",
+      "category": "Core libraries & performance"
     },
     {
       "name": "ModernFix",
@@ -1388,6 +1500,13 @@
       "category": "Decoration & building"
     },
     {
+      "name": "recipeessentials mod",
+      "modid": "recipeessentials",
+      "version": "1.20.1-4.0",
+      "file": "recipeessentials-1.20.1-4.0.jar",
+      "category": "Core libraries & performance"
+    },
+    {
       "name": "MrCrayfish's Furniture Mod: Refurbished",
       "modid": "refurbished_furniture",
       "version": "1.0.20",
@@ -1493,6 +1612,13 @@
       "category": "Core libraries & performance"
     },
     {
+      "name": "Smoothchunk mod",
+      "modid": "smoothchunk",
+      "version": "1.20.1-4.1",
+      "file": "smoothchunk-1.20.1-4.1.jar",
+      "category": "Core libraries & performance"
+    },
+    {
       "name": "Sodium Dynamic Lights",
       "modid": "sodiumdynamiclights",
       "version": "1.0.9",
@@ -1521,11 +1647,32 @@
       "category": "Storage, QoL & utility"
     },
     {
+      "name": "Sophisticated Backpacks Create Integration",
+      "modid": "sophisticatedbackpackscreateintegration",
+      "version": "0.1.8.116",
+      "file": "sophisticatedbackpackscreateintegration-1.20.1-0.1.8.116.jar",
+      "category": "Create & addons"
+    },
+    {
       "name": "Sophisticated Core",
       "modid": "sophisticatedcore",
       "version": "1.3.65.2126",
       "file": "sophisticatedcore-1.20.1-1.3.65.2126.jar",
       "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Sophisticated Storage",
+      "modid": "sophisticatedstorage",
+      "version": "1.4.66.1939",
+      "file": "sophisticatedstorage-1.20.1-1.4.66.1939.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Sophisticated Storage Create Integration",
+      "modid": "sophisticatedstoragecreateintegration",
+      "version": "0.1.21.176",
+      "file": "sophisticatedstoragecreateintegration-1.20.1-0.1.21.176.jar",
+      "category": "Create & addons"
     },
     {
       "name": "Sound Physics Remastered",
@@ -1575,6 +1722,13 @@
       "version": "1.3.5",
       "file": "Structory_1.20.x_v1.3.5.jar",
       "category": "Worldgen & structures"
+    },
+    {
+      "name": "Structure Essentials mod",
+      "modid": "structureessentials",
+      "version": "1.20.1-5.0",
+      "file": "structureessentials-1.20.1-5.0.jar",
+      "category": "Core libraries & performance"
     },
     {
       "name": "Structurize",
@@ -1857,6 +2011,13 @@
       "category": "Worldgen & structures"
     },
     {
+      "name": "Zero CORE 2",
+      "modid": "zerocore",
+      "version": "1.20.1-2.1.48",
+      "file": "ZeroCore2-1.20.1-2.1.48.jar",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
       "name": "Zeta",
       "modid": "zeta",
       "version": "1.0-31",
@@ -1866,10 +2027,31 @@
   ],
   "disabled": [
     {
+      "name": "Create: Better Storages",
+      "modid": "create_bs",
+      "version": "1.0b.Release",
+      "file": "Create-Better-Storages-Forge-1.20.1-1.0b.Release.jar.disabled",
+      "category": "Create & addons"
+    },
+    {
       "name": "Create: Dreams & Desires",
       "modid": "create_dd",
       "version": "0.1b.Release-Early-Dev",
       "file": "Create-DnDesire-1.20.1-0.1b.Release-Early-Dev.jar.disabled",
+      "category": "Create & addons"
+    },
+    {
+      "name": "CreateBiggerStorageToCreate6",
+      "modid": "createbiggerstoragetocreate6",
+      "version": "1.1",
+      "file": "createbiggerstoragetocreate6-1.1.jar.disabled",
+      "category": "Create & addons"
+    },
+    {
+      "name": "Create: Numismatics",
+      "modid": "numismatics",
+      "version": "1.0.15integration+forge-mc1.20.1-local",
+      "file": "CreateNumismatics-1.0.15integration+forge-mc1.20.1.jar.disabled",
       "category": "Create & addons"
     },
     {
@@ -1885,6 +2067,13 @@
       "version": "0.4.0b",
       "file": "design_decor-0.4.0b-1.20.1.jar.disabled",
       "category": "Uncategorised (edit CATEGORY_RULES)"
+    },
+    {
+      "name": "From The Fog",
+      "modid": "watching",
+      "version": "1.9.2",
+      "file": "From-The-Fog-1.20-v1.9.2-Forge-Fabric.jar.disabled",
+      "category": "Horror & atmosphere"
     },
     {
       "name": "Serene Seasons",

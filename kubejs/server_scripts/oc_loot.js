@@ -82,6 +82,11 @@ LootJS.modifiers(event => {
   add(T_ANCIENT.concat(T_MANSION, T_LIBRARY, ['ad_astra_more_structures:chests/rare_moon', 'ad_astra_more_structures:chests/rare_mars']), 0.02, 'oldcivilisation:unstable_memory')
   add(T_ANCIENT.concat(['ad_astra_more_structures:chests/rare_other', 'ad_astra_more_structures:chests/rare_venus']), 0.02, 'oldcivilisation:signal_device')
 
+  // ---- Sanity: clarity consumables (relief items — see oc_sanity.js). Modest, so relief is earned. ----
+  // Sedative Ampoule: medical/industrial caches. Familiar Photograph: homes/personal loot.
+  add(T_DUNGEON.concat(T_STRONGHOLD, T_ANCIENT, T_OUTPOST), 0.05, Item.of('oldcivilisation:sedative_ampoule', 2))
+  add(T_VILLAGE_HOUSES.concat(T_MANSION, ['minecraft:chests/simple_dungeon']), 0.04, 'oldcivilisation:familiar_photograph')
+
   // ---- Horror mob drops: born_in_chaos (53 tables) + foes (11 tables) via regex ----
   // #7 rebalance: these are COMMON swarm mobs. Keep evidence rare so horror is not a farm.
   // The marquee horrors get their own guaranteed unique residues via EntityEvents.death

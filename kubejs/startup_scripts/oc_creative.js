@@ -20,6 +20,8 @@ const OC_ITEMS = [
   'hs_lgtfo_mission_data',
   // anomalous + endgame
   'unstable_memory', 'signal_device', 'correction_fragment',
+  // sanity: clarity consumables
+  'sedative_ampoule', 'familiar_photograph',
 ].map(id => 'oldcivilisation:' + id)
 
 // 1) register the tab (display name + icon)

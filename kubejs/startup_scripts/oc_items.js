@@ -62,4 +62,8 @@ StartupEvents.registry('item', event => {
 
   // ---- Endgame ----
   oc('correction_fragment', 'The Correction Fragment', { rarity: 'epic', glow: true, stack: 1 })
+
+  // ---- Sanity: clarity consumables (see server_scripts/oc_sanity.js, docs/sanity_mechanic.md §10) ----
+  oc('sedative_ampoule', 'Sedative Ampoule', { rarity: 'uncommon', stack: 8 })
+  oc('familiar_photograph', 'Familiar Photograph', { rarity: 'uncommon', stack: 1 })
 })

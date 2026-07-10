@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "description": "Gives non-TFC (modded) foods a TFC food definition so they restore hunger. Paired with foodDecayModifier=0 so they don't rot and stack normally."
+  }
+}

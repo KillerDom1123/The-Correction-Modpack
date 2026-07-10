@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "description": "Restores the vanilla 2x2 planks -> crafting table recipe (TFC disables it and gates it behind a saw + workbench)"
+  }
+}

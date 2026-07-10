@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "rake_the_arrival:rake_stalking",
+    "rake_the_arrival:rake_following",
+    "rake_the_arrival:rake_spawn_trigger",
+    "the_one_who_watches:toww_staring",
+    "the_one_who_watches:toww_stalking",
+    "whispering_spirits:whispering_spirit",
+    "antlers:wendigo",
+    "weeping_angels:weeping_angel",
+    "themimic_er:mimicer",
+    "cave_dweller:cave_dweller",
+    { "id": "man:manfromthefog", "required": false },
+    { "id": "man:managgresive", "required": false },
+    { "id": "pale_hound:pale_hound", "required": false }
+  ]
+}

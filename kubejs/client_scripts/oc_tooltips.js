@@ -199,3 +199,12 @@ ItemEvents.tooltip(tt => {
   tt.add('ae2:inscriber', rec('The pattern was already here. We only pressed it again.'))
   tt.add('ae2:drive', rec('Recovered storage protocol. It remembers formats we never wrote.'))
 })
+
+// Sanity clarity consumables — static tooltips (no NBT variant; see oc_sanity.js)
+ItemEvents.tooltip(tt => {
+  const q = s => Text.of(s).darkGray().italic(true)
+  tt.add('oldcivilisation:sedative_ampoule', q('Field-issue. Dulls what the mind insists on noticing.'))
+  tt.add('oldcivilisation:sedative_ampoule', q('Right-click to use.'))
+  tt.add('oldcivilisation:familiar_photograph', q('A face you are sure you knew.'))
+  tt.add('oldcivilisation:familiar_photograph', q('Right-click to look. It steadies you.'))
+})

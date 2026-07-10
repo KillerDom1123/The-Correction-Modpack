@@ -7,6 +7,9 @@
 
 const OC_PREFIX = 'oldcivilisation:'
 const OC_VARIANT_ITEMS_MAX = 12   // upper bound of random variant index; tooltip wraps by pool length
+// Clarity consumables (sanity mechanic) are functional items, not lore evidence: skip them from
+// discovery tracking AND variant stamping so a stackable consumable never gets per-item random NBT.
+const OC_NON_LORE = { 'oldcivilisation:sedative_ampoule': true, 'oldcivilisation:familiar_photograph': true }
 
 function ocStage(id, discoveries) {
   if (id === 'oldcivilisation:unstable_memory') {
@@ -37,6 +40,7 @@ PlayerEvents.tick(event => {
       if (!st || st.isEmpty()) continue
       var id = st.id
       if (id.indexOf(OC_PREFIX) !== 0) continue
+      if (OC_NON_LORE[id]) continue   // clarity consumables: not lore, no stamping/tracking
 
       // --- discovery tracking (distinct ids) ---
       if (seen.indexOf('[' + id + ']') < 0) {

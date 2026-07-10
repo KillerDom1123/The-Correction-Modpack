@@ -1386,14 +1386,6 @@
     "curseForgeHash": 4184786264,
     "modrinthHash": "5449e79d7ec48b06b0c1e32733963b8f3a0d22e8"
   },
-  "MobDismemberment-1.20.1-1.1.0.jar": {
-    "jarName": "MobDismemberment-1.20.1-1.1.0.jar",
-    "modId": "mobdismemberment",
-    "name": "Mob Dismemberment",
-    "version": "1.20.1-1.1.0",
-    "curseForgeHash": 486949118,
-    "modrinthHash": "4f12bbb534f862d01c129106ee3d33942159554f"
-  },
   "MoBends-forge-1.20.1-5.1.7.jar": {
     "jarName": "MoBends-forge-1.20.1-5.1.7.jar",
     "modId": "mobends",
@@ -1489,6 +1481,14 @@
     "version": "1.20.1-v2.2.2",
     "curseForgeHash": 393521612,
     "modrinthHash": "069396e689ae887d065c8d61b7945e685fbcc65b"
+  },
+  "NoChatRestrictions-Forge-MC1.20.1-v1.0.0.jar": {
+    "jarName": "NoChatRestrictions-Forge-MC1.20.1-v1.0.0.jar",
+    "modId": "nochatrestrictions",
+    "name": "No Chat Restrictions",
+    "version": "1.20.1-v1.0.0",
+    "curseForgeHash": 3655747404,
+    "modrinthHash": "a189c024b78b1057f7bab8a64c327ed27a6d186d"
   },
   "notenoughanimations-forge-1.12.4-mc1.20.1.jar": {
     "jarName": "notenoughanimations-forge-1.12.4-mc1.20.1.jar",
@@ -2009,14 +2009,6 @@
     "version": "1.5",
     "curseForgeHash": 1784747611,
     "modrinthHash": "36f84f89231d30571d010f3cc68c0ac8dcb9fbb2"
-  },
-  "theforgotten-2.2.5-1.20.1-forge.jar": {
-    "jarName": "theforgotten-2.2.5-1.20.1-forge.jar",
-    "modId": "theforgotten",
-    "name": "The Forgotten",
-    "version": "2.2.5-1.20.1-forge",
-    "curseForgeHash": 2265011116,
-    "modrinthHash": "1b93b91ce04a76c3cf5b94b8e8c5a0f0ac872bbd"
   },
   "themimic_er-1.20.1-1.7.0.jar": {
     "jarName": "themimic_er-1.20.1-1.7.0.jar",

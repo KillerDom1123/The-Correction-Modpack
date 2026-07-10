@@ -573,6 +573,19 @@ TFC's HUD overhaul is on by default and replaced the vanilla health/hunger bars 
 
 ---
 
+## TerraFirmaCraft — modded-food edibility + food decay off (`TFCModdedFood` datapack + `tfc-server.toml`) — *global (+ per-world → defaultconfigs)*
+**Goal:** make non-TFC (modded) foods actually restore hunger, and stop food rotting / not stacking.
+
+**Root cause (decompiled):** TFC swaps the player's food data for `TFCFoodData`, whose `eat()` calls `FoodCapability.get(stack)` and **returns early if the item has no TFC food definition**. So every modded/undefined food (Rationcraft cans, Farmer's Delight, Soldier's Delight, Candlelight, Farm & Charm, …) restores **zero** hunger. Hardcoded — no config toggle; the only fix is to give those items a TFC food definition.
+
+**`TFCModdedFood` datapack:** one food def (`data/tfc/tfc/food_items/modded_catchall.json`) matching a custom aggregate tag `#tfcmoddedfood:nourishing` → `hunger 4, saturation 1.0`. That tag unions `#forge:foods` plus the Rationcraft/Voidless food tags (`#rationcraft:cans`, `#rationcraft:milk`, all `#voidcans:*`, `#voidless_mre:*`). TFC's own foods are **not** in `#forge:foods`, so their tuned defs aren't shadowed (`getDefinition` would otherwise return whichever matches first).
+
+**`foodDecayModifier` 1.0 → 0.0** — set in **all four** `tfc-server.toml` (instance + server `defaultconfigs/`, plus the live worlds `saves/Bazinga/serverconfig/` and server `world/serverconfig/`). Disables food decay entirely; per TFC's own note this also makes food **lose creation dates → stack freely** (fixes the "food won't stack" complaint). Required so the catch-all defs don't turn modded food into rotting, freshness-split TFC food. **Irreversible for existing food** — creation dates are dropped and can't be restored.
+
+**Why:** consistent with the pack's TFC-survival trims (thirst off, hunger halved, item sizes neutralized). Modded food now nourishes and stacks; nothing rots. *Tunable:* values in `modded_catchall.json` (add TFC nutrients if you want modded food to build max-health nutrition, not just fill hunger). *Coverage caveat:* the **opened**-can variants (`open_*`/`h_open_*`, reached only via the can-opener recipe) aren't tagged, so they're uncovered — but with Rationcraft's `Edible Cans = true` you eat sealed cans directly, which are covered. Add them to `nourishing.json` if you use the opener path. *Apply:* world load / `/reload`. *Revert:* delete `config/openloader/data/TFCModdedFood/` (decay dates already lost regardless).
+
+---
+
 ## TerraFirmaCraft — collapses & landslides (`tfc-server.toml`) — *per-world → defaultconfigs*
 **Goal:** stop TFC's block-gravity mechanics from tearing apart world-gen **floating structures** (e.g. skyships), where breaking a single block cascades the build apart.
 
@@ -598,6 +611,8 @@ TFC has no concept of "intended build" — it applies geology physics to any qua
 
 **`TFCLightItems` datapack** (`config/openloader/data/`): overrides all **56** built-in `item_sizes/*.json` at the same path, keeping each original `ingredient` but forcing `size: tiny`, `weight: very_light`. Effect: every TFC-defined item (ingots, ore, food, tools, blocks, vessels…) stacks to **64** and is small enough to bypass vessel/storage size gates and the Overburdened effect. (Armor/tools are already stack-1, so their stack is unchanged; the override removes their *storage* restriction where a data def covered them.)
 
+**Added defs — `planks` + `lumber` (2026-07-10).** TFC ships **no** `item_sizes` def for planks or lumber, so both fell through to the code default weight **LIGHT = stack 32** (the "some woods only stack to 32" report). Added two *new* defs at the same path forcing `size: tiny, weight: very_light` → stack **64**: `planks.json` (`#minecraft:planks`, which includes all `tfc:wood/planks/*`) and `lumber.json` (`tfc:lumber`). Logs/bark/stripped were already covered via `logs.json` (`#minecraft:logs`, weight → 64). This is exactly the "explicit tag override" escape hatch flagged in the caveats below. Datapack now ships **56 built-in overrides + 2 added defs**.
+
 **`TFCNoSizeTooltip` resource pack** (`config/openloader/resources/`): blanks the 12 `tfc.enum.size.*` / `tfc.enum.weight.*` lang keys to `""`, so the Size/Weight **wording** disappears from the tooltip on **every** item — including code-default items like armor that the datapack can't reach.
 
 **Why:** this is the closest achievable to "disable it" without patching the jar. The datapack kills the *mechanic* (small stacks, storage limits, overburden); the resource pack kills the *display text*.
@@ -609,6 +624,17 @@ TFC has no concept of "intended build" — it applies geology physics to any qua
 - A true, complete removal (line and all) would require a mixin/jar patch — out of scope for the config/datapack methodology.
 
 **Scope/apply:** global (all worlds); active on next world load (datapack) / game restart (resource pack). English-only lang blanking (`en_us`); add other `*_us`/locale files if needed. *Revert:* delete `config/openloader/data/TFCLightItems/` and `config/openloader/resources/TFCNoSizeTooltip/`.
+
+---
+
+## TerraFirmaCraft — restore vanilla crafting table (`TFCVanillaCraftingTable` datapack) — *global*
+**Goal:** craft a crafting table the vanilla way (4 planks in a 2×2), reverting TFC's early-game gate.
+
+TFC **disables** the vanilla recipe — it ships `data/minecraft/recipes/crafting_table.json` as `{"conditions":[{"type":"forge:false"}]}` (a permanently-false Forge condition) — and replaces it with `data/tfc/recipes/crafting/vanilla/crafting_table.json`, a `tfc:damage_inputs_shapeless_crafting` requiring a **saw** (`#tfc:saws`) **+ an existing workbench** (`#tfc:workbenches`). That's a chicken-and-egg gate on your first table.
+
+**Fix (`TFCVanillaCraftingTable` datapack):** overrides `data/minecraft/recipes/crafting_table.json` at the same path with the stock vanilla shaped recipe (`##`/`##` of `#minecraft:planks` → `minecraft:crafting_table`). OpenLoader datapacks load over mod-jar data (same mechanism as `TFCFoodHunger` / `TFCLightItems` overriding TFC's own data), so the vanilla recipe wins. TFC's saw+workbench recipe is **left in place** as an additional path (both now craft a table); add an override deleting `data/tfc/recipes/crafting/vanilla/crafting_table.json` if you want vanilla-only.
+
+**Scope/apply:** global datapack; active on world load / `/reload`. JSON validated. *Revert:* delete `config/openloader/data/TFCVanillaCraftingTable/`.
 
 ---
 
@@ -690,8 +716,27 @@ The regenerated `modlist.md`/`modlist.json`/README also picked up previously-unt
 
 ---
 
+## KubeJS — Sanity mechanic (`kubejs/server_scripts/oc_sanity.js` + `OldCivSanity` datapack)
+**Full design & technical spec: `docs/sanity_mechanic.md`.** A hidden, per-player sanity value (0–100, baseline 100, in `persistentData`) that makes the world *respond to the player's exposure to it* — the lore's premise as a mechanic. **Invisible** (no bar/number; deliberately consistent with the reverted-to-vanilla HUD), **suppression-only**, and **spawns nothing**.
+
+**Drains** (per 2 s, throttled tick): darkness (light < 4), depth (overworld Y < 0, scaling to −40), horror-mob within 16 blocks, and self-feedback from its own events. **Restores:** firelight (light ≥ 10), daylight + open sky, sleep (fast), and two **clarity consumables** — `sedative_ampoule` (flat restore, consumed) and `familiar_photograph` (smaller, cooldown'd) — registered through the existing Old Civilisation item/tooltip/loot pipeline.
+
+Two consequence channels, both keyed off four bands (Calm/Unease/Dread/Breakdown, with hysteresis):
+- **Channel A — ambient events:** sounds / hidden `nausea`+`darkness` / positional cues, more frequent and intense as sanity falls; zero at full. A single diegetic italic line prints on descent into a worse band (the only way an invisible stat announces itself).
+- **Channel B — natural-spawn suppression:** `EntityEvents.checkSpawn` cancels tagged horror spawns with probability `(sanity/100)^gamma`. **Full sanity ≈ 0 % horror; zero sanity = the pack's tuned base rate, untouched.** It can only *reduce* below the authored base rate, never exceed it — so it cannot undo the pack's rarity work. Reaches the **biome-weighted** horrors (`HorrorSpawnRarity` set: Rake, TOWW, Wendigo, Whispering Spirits, Pale Hound; Weeping Angels); the **timer-summoned** ones (Mimic, Cave Dweller, Man From The Fog) bypass `checkSpawn` by design and keep their tuned cadence.
+
+**Suppression / proximity target list:** `config/openloader/data/OldCivSanity/…/entity_types/horror_mobs.json` (modded ids use `required:false`). **All tunable** via one `CONFIG` object at the top of `oc_sanity.js` (`spawn.enabled=false` keeps ambient-only; `spawn.gamma` sets how hard high sanity holds horror back; `debug=true` enables gated/sampled tracing).
+
+**Command:** `/sanity` (self) and `/sanity <player>` (op-gated, permission 2) print `sanity NN.N/100 [Band]` — the intended in-game way to check a level.
+
+**Logging (docs §15):** `[OldCiv/Sanity]` prefix; load-time confirmation of channels + config; **log-once** failure suppression (the direct antidote to the 167×-error pattern) with **graceful per-accessor degradation** (a broken `getLight`/`isSleeping`/`checkSpawn` disables only its own sub-feature and logs one WARN). Marked `[verify live]` in the spec: `player.block.getLight()`, `isSleeping()`, `EntityEvents.checkSpawn` cancelability, `PlayerEvents.respawned`, and the `commandRegistry` arg API — each degrades safely if the accessor differs on this build.
+
+**Scope/apply:** server + client + startup scripts (active on world load / `/reload`, restart for the client tooltip); datapack global. All 6 touched JS files pass `node --check`; all new JSON validated. *Revert:* delete `oc_sanity.js`, the two clarity items from `oc_items.js`/`oc_creative.js`/`oc_tooltips.js`/`oc_loot.js`, the `OC_NON_LORE` guard in `oc_interactions.js`, the two model JSONs, and `config/openloader/data/OldCivSanity/`. Leftover `oc_sanity*` persistentData keys are inert.
+
+---
+
 ## Appendix A — OpenLoader packs created
-`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`.
+`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`, `TFCModdedFood`.
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`.
 
 ## Appendix B — Known crash (NOT caused by these config changes)

@@ -2130,6 +2130,14 @@
     "curseForgeHash": 962704917,
     "modrinthHash": "6807911d5f2f8389a6a2f208a52a18c64b574f03"
   },
+  "xaerominimap-forge-1.20.1-26.2.0.jar": {
+    "jarName": "xaerominimap-forge-1.20.1-26.2.0.jar",
+    "modId": "xaerominimap",
+    "name": "Xaero\u0027s Minimap",
+    "version": "26.2.0",
+    "curseForgeHash": 761487974,
+    "modrinthHash": "f8368d4a9240c02ed7355cdead43e31ec0f3c1f4"
+  },
   "xaeros_waystones_compatibility-1.1 - 1.20.1.jar": {
     "jarName": "xaeros_waystones_compatibility-1.1 - 1.20.1.jar",
     "modId": "w2w2",

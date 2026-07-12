@@ -30,7 +30,7 @@ const CONFIG = {
   spawn:   { enabled: true, gamma: 1.0, naturalOnly: true, noPlayerSanity: 0 },
   bandLines: true,
   affectPeaceful: true,
-  debug: false,
+  debug: true,   // DIAG: temporarily ON for troubleshooting — set back to false once confirmed
 }
 
 // Horror entity ids — used for the proximity drain AND Channel B suppression.
@@ -61,6 +61,7 @@ const COOLDOWNS = { 1: CONFIG.cooldown.unease, 2: CONFIG.cooldown.dread, 3: CONF
 const LOG = '[OldCiv/Sanity] '
 var oc_sn_warned = {}          // site -> count; first logs, rest suppressed (anti-167x-spam)
 var oc_sn_sampleCtr = 0        // hot-path debug sampler
+var oc_sn_hb = 0               // DIAG heartbeat counter (real ticks, independent of player.age)
 function warnOnce(site, e) {
   if (oc_sn_warned[site]) { oc_sn_warned[site]++; return }
   oc_sn_warned[site] = 1
@@ -181,17 +182,38 @@ function fireEvent(p, band) {
 // ============================================================================
 PlayerEvents.tick(event => {
   var player = event.player
-  if (!player || player.age % CONFIG.interval !== 0) return
+  if (!player) return
+
+  // --- DIAG heartbeat (temporary): fires every ~3s INDEPENDENTLY of the age throttle, so we can
+  //     see whether the throttle ever passes and what game-mode the player is in. A creative or
+  //     spectator player is skipped entirely below — this line reveals that. Rate-limited by a
+  //     real-tick counter (oc_sn_hb), NOT by player.age, so it prints even if the throttle never does.
+  if (CONFIG.debug) {
+    oc_sn_hb++
+    if (oc_sn_hb % 60 === 0) {
+      try {
+        console.info(LOG + 'DIAG hb ' + player.username + ': age=' + player.age + ' (' + (typeof player.age) +
+          ') age%' + CONFIG.interval + '=' + (player.age % CONFIG.interval) +
+          ' throttlePass=' + (player.age % CONFIG.interval === 0) +
+          ' creative=' + player.isCreative() + ' spectator=' + player.isSpectator())
+      } catch (ed) { console.warn(LOG + 'DIAG hb err: ' + ed) }
+    }
+  }
+
+  if (player.age % CONFIG.interval !== 0) return
   try {
-    if (player.isCreative() || player.isSpectator()) return
+    if (player.isCreative() || player.isSpectator()) { dlog('skip ' + player.username + ': creative/spectator'); return }
     var pd = player.persistentData
     ensureInit(pd)
     var sanity = pd.getDouble('oc_sanity')
     var delta = 0
+    var light = -1
+    var hc = 0
+    var ow = isOverworld(player)
+    var y = player.y
 
     // light: darkness drains, firelight restores
     if (oc_sn_lightOk) {
-      var light = -1
       try { light = readLight(player) } catch (e) { oc_sn_lightOk = false; warnOnce('getLight', e) }
       if (light >= 0) {
         if (light < CONFIG.light.darkBelow) delta -= CONFIG.drain.dark
@@ -201,13 +223,10 @@ PlayerEvents.tick(event => {
 
     // depth (overworld only), scaling from deepStartY down to deepFullY
     try {
-      if (isOverworld(player)) {
-        var y = player.y
-        if (y < CONFIG.drain.deepStartY) {
-          var span = (CONFIG.drain.deepStartY - CONFIG.drain.deepFullY)
-          var t = span > 0 ? clamp((CONFIG.drain.deepStartY - y) / span, 0, 1) : 1
-          delta -= (CONFIG.drain.deepMin + (CONFIG.drain.deepMax - CONFIG.drain.deepMin) * t)
-        }
+      if (ow && y < CONFIG.drain.deepStartY) {
+        var span = (CONFIG.drain.deepStartY - CONFIG.drain.deepFullY)
+        var t = span > 0 ? clamp((CONFIG.drain.deepStartY - y) / span, 0, 1) : 1
+        delta -= (CONFIG.drain.deepMin + (CONFIG.drain.deepMax - CONFIG.drain.deepMin) * t)
       }
     } catch (e) { warnOnce('depth', e) }
 
@@ -224,10 +243,21 @@ PlayerEvents.tick(event => {
     }
 
     // horror proximity spike
-    try { if (countHorrorsNear(player, CONFIG.drain.horrorRadius) > 0) delta -= CONFIG.drain.horror }
+    try { hc = countHorrorsNear(player, CONFIG.drain.horrorRadius); if (hc > 0) delta -= CONFIG.drain.horror }
     catch (e) { warnOnce('proximity', e) }
 
-    if (delta !== 0) { sanity = clamp(sanity + delta, 0, 100); pd.putDouble('oc_sanity', sanity) }
+    // --- DIAG per-evaluation breakdown (temporary): every drain/restore input + the resulting delta.
+    if (CONFIG.debug) {
+      console.info(LOG + 'DIAG eval ' + player.username + ': sanity=' + round1(sanity) +
+        ' light=' + light + ' y=' + round1(y) + ' overworld=' + ow + ' horrors=' + hc +
+        ' dayOk=' + oc_sn_dayOk + ' sleepOk=' + oc_sn_sleepOk +
+        ' => delta=' + round2(delta) + ' newSanity=' + round1(clamp(sanity + delta, 0, 100)))
+    }
+
+    if (delta !== 0) {
+      sanity = clamp(sanity + delta, 0, 100); pd.putDouble('oc_sanity', sanity)
+      if (CONFIG.debug) console.info(LOG + 'DIAG write ' + player.username + ': stored back=' + round1(pd.getDouble('oc_sanity')))
+    }
 
     // band transitions (diegetic descent whisper only)
     var prevBand = pd.getInt('oc_sanity_band')

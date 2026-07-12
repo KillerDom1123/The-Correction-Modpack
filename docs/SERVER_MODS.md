@@ -1,14 +1,17 @@
 # Server Mod List — Spooky Dookie
 
 **Server:** `Servers/spookydookie`
-**Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10
-**Active mods:** 277 · **Disabled:** 11
+**Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10 · **Runtime:** Java 17 (pinned in `run.bat`/`run.sh`)
+**Active mods:** 261 · **Disabled:** 0
 **Generated:** 2026-07-12
 
 > The jar filename (including its version) is the authoritative record. The category
 > groupings below are a best-effort organization for readability — a few mods could
-> reasonably sit in more than one section. Client-only mods bundled with the pack (e.g.
-> minimap) are intentionally **not** installed here; see notes where relevant.
+> reasonably sit in more than one section.
+>
+> This server set is derived from the client instance (283 mods) **minus 22 client-only
+> mods** that are either server-incompatible or add nothing server-side — see
+> [Client-only mods excluded](#client-only-mods-excluded-from-the-server) at the bottom.
 
 ---
 
@@ -55,7 +58,6 @@ Framework/dependency mods that add no content on their own.
 - resourcefullib-forge-1.20.1-2.1.29.jar
 - Searchables-forge-1.20.1-1.0.3.jar
 - SmartBrainLib-forge-1.20.1-1.15.jar
-- sodiumoptionsapi-forge-1.0.10-1.20.1.jar
 - structurize-1.20.1-1.0.816.jar
 - supermartijn642configlib-1.1.8-forge-mc1.20.jar
 - supermartijn642corelib-1.1.21-forge-mc1.20.1.jar
@@ -78,13 +80,11 @@ Framework/dependency mods that add no content on their own.
 - connectivity-1.20.1-7.6.jar
 - Data_Anchor-forge-1.20.1-1.0.0.20.jar
 - dimthread-FORGE-mc1.20.1-v1.2.1.jar
-- embeddium-0.3.31+mc1.20.1.jar
 - entityculling-forge-1.10.5-mc1.20.1.jar
 - fastasyncworldsave-1.20.1-2.6.jar
 - FastWorkbench-1.20.1-8.0.4.jar
 - ferritecore-6.0.1-forge.jar
 - FTBQuestsOptimizer-forge-2.1.0-1.20.1.jar
-- ImmediatelyFast-Forge-1.5.5+1.20.4.jar
 - limitedchunks-1.20.1-4.1.jar
 - mobtimizations-forge-1.20.1-1.0.1.jar
 - modernfix-forge-5.27.58+mc1.20.1.jar
@@ -294,9 +294,7 @@ The pack's spooky core — horror entities, hostile creatures, and dread-buildin
 - farsight-1.20.1-5.1.jar
 - Jade-1.20.1-Forge-11.13.2.jar
 - JadeAddons-1.20.1-Forge-5.5.1.jar
-- jei-1.20.1-forge-15.20.0.112.jar
 - EnchantmentDescriptions-Forge-1.20.1-17.1.21.jar
-- moreoverlays-1.24.1-mc1.20.1-forge.jar
 - comforts-forge-6.4.0+1.20.1.jar
 - corpse-forge-1.20.1-1.0.23.jar
 - doubledoors-1.20.1-7.2.jar
@@ -306,29 +304,15 @@ The pack's spooky core — horror entities, hostile creatures, and dread-buildin
 - clientcrafting-1.20.1-2.1.jar
 - VisualWorkbench-v8.0.1-1.20.1-Forge.jar
 - SimpleDayLengthExtender-1.2.2-Forge-1.20.1.jar
-- Controlling-forge-1.20.1-12.0.2.jar
-- MouseTweaks-forge-mc1.20.1-2.25.1.jar
-- BetterF3-7.0.2-Forge-1.20.1.jar
-- BorderlessWindow-1.20-1.6.0.jar
-- chat_heads-0.15.2-forge-1.20.jar
 - Camerapture-1.10.12+mc1.20.1-forge.jar
 - NoChatReports-FORGE-1.20.1-v2.2.2.jar
 - NoChatRestrictions-Forge-MC1.20.1-v1.0.0.jar
 - ycurrenci-2.1.0-forge-1.20.1.jar
 - toofast-1.20-0.4.3.5.jar
 
-## Animation & Cosmetic
-
-- MoBends-forge-1.20.1-5.1.7.jar
-- notenoughanimations-forge-1.12.4-mc1.20.1.jar
-
 ## Sound & Ambience
 
-- AmbientSounds_FORGE_v6.3.8_mc1.20.1.jar
 - sounds_of_the_forest-1.0.2-forge-1.20.1.jar
-- sound-physics-remastered-forge-1.20.1-1.5.1.jar
-- PresenceFootsteps-1.20.1-1.9.1-beta.1.jar
-- sodiumdynamiclights-forge-1.0.10-1.20.1.jar
 
 ## Security & Protection
 
@@ -347,18 +331,62 @@ The pack's spooky core — horror entities, hostile creatures, and dread-buildin
 
 ---
 
-## Disabled Mods (present but not loaded)
-These jars carry a `.disabled` suffix and are ignored by Forge. Left in place rather than
-deleted so they can be re-enabled by removing the suffix.
+## Client-only mods excluded from the server
+Present in the **client instance** but deliberately **not** copied to the server. All set
+`IGNORE_SERVER_VERSION`, so clients keep them locally and are **not** rejected for the
+server lacking them.
+
+**Rendering / shaders / visual FX — hard-crash a dedicated server:**
+- embeddium-0.3.31+mc1.20.1.jar
+- oculus-mc1.20.1-1.8.0.jar
+- sodiumdynamiclights-forge-1.0.10-1.20.1.jar
+- sodiumoptionsapi-forge-1.0.10-1.20.1.jar
+- ImmediatelyFast-Forge-1.5.5+1.20.4.jar
+- cavedust-2.0.4-1.20.1-forge.jar — confirmed crash 2026-07-12 (loads `client.gui.screens.Screen`)
+- VoidFog-1.20.1-2.0.23.jar — confirmed crash 2026-07-12 (loads `client.renderer.FogRenderer`)
+
+**Client HUD / GUI / input — no server function:**
+- BetterF3-7.0.2-Forge-1.20.1.jar
+- BorderlessWindow-1.20-1.6.0.jar
+- blur-forge-3.1.1.jar
+- Controlling-forge-1.20.1-12.0.2.jar
+- MouseTweaks-forge-mc1.20.1-2.25.1.jar
+- LegendaryTooltips-1.20.1-forge-1.4.5.jar
+- moreoverlays-1.24.1-mc1.20.1-forge.jar
+- chat_heads-0.15.2-forge-1.20.jar
+
+**Client animation / audio:**
+- MoBends-forge-1.20.1-5.1.7.jar
+- notenoughanimations-forge-1.12.4-mc1.20.1.jar
+- AmbientSounds_FORGE_v6.3.8_mc1.20.1.jar
+- sound-physics-remastered-forge-1.20.1-1.5.1.jar
+- PresenceFootsteps-1.20.1-1.9.1-beta.1.jar
+
+**Client-only utilities:**
+- jei-1.20.1-forge-15.20.0.112.jar (recipe viewer)
+- xaerominimap-forge-1.20.1-26.2.0.jar (minimap; world-map server component is kept)
+
+> **Kept despite being client-leaning** (harmless idling on a server, and dropping them
+> risked a dependency or client-rejection): `Camerapture`, `farsight`,
+> `sounds_of_the_forest`, `clientcrafting`, plus client-side libs
+> (`athena`, `fusion`, `Iceberg`, `Prism`, `CreativeCore`). These loaded cleanly on the
+> 2026-07-12 boot. (`cavedust` and `VoidFog` were also kept initially but crashed the
+> server and have since been moved to the excluded list above.)
+
+## Disabled mods
+The **server** currently has no disabled jars. For reference, the **client instance**
+keeps these disabled (`.jar.disabled`) — not loaded on either side:
 
 - ColdSweat-2.4.2.jar.disabled
 - create_cold_sweat-1.1.2.jar.disabled
 - SereneSeasons-forge-1.20.1-9.1.0.3.jar.disabled
 - From-The-Fog-1.20-v1.9.2-Forge-Fabric.jar.disabled
 - the_knocker-1.5.2-forge-1.20.1.jar.disabled
+- theforgotten-2.2.5-1.20.1-forge.jar.disabled
+- MobDismemberment-1.20.1-1.1.0.jar.disabled
+- design_decor-0.4.0b-1.20.1.jar.disabled
 - Create-Better-Storages-Forge-1.20.1-1.0b.Release.jar.disabled
 - Create-DnDesire-1.20.1-0.1b.Release-Early-Dev.jar.disabled
 - CreateNumismatics-1.0.15integration+forge-mc1.20.1.jar.disabled
 - createbiggerstoragetocreate6-1.1.jar.disabled
 - ddtocreate6-1.1.1.jar.disabled
-- design_decor-0.4.0b-1.20.1.jar.disabled

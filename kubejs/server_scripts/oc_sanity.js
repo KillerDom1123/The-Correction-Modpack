@@ -129,7 +129,7 @@ function isOverworld(player) {
   catch (e) { try { return ('' + player.level.dimensionKey).indexOf('overworld') >= 0 } catch (e2) { return true } }
 }
 function isDaylightSafe(player) {
-  if (!player.block.canSeeSky()) return false
+  if (!player.block.canSeeSky) return false // KubeJS exposes getCanSeeSky() as a boolean property, not a method
   var t = Number(player.server.overworld().getDayTime()) % 24000
   return t < 12000
 }
@@ -259,17 +259,10 @@ PlayerEvents.tick(event => {
 // Channel B — natural-spawn suppression via checkSpawn (docs §8.2) [verify live]
 // ============================================================================
 function spawnReason(event) {
-  try { if (event.spawnType) return '' + event.spawnType } catch (e) {}
-  try { if (typeof event.getSpawnType === 'function') return '' + event.getSpawnType() } catch (e) {}
-  try { if (typeof event.getSpawnReason === 'function') return '' + event.getSpawnReason() } catch (e) {}
+  // CheckLivingEntitySpawnEventJS exposes the MobSpawnType as `type` (field) / getType()
+  try { if (event.type) return '' + event.type } catch (e) {}
+  try { if (typeof event.getType === 'function') return '' + event.getType() } catch (e) {}
   return null
-}
-function denySpawn(event) {
-  try { event.setResult('deny'); return true } catch (e) {}
-  try { event.setResult('DENY'); return true } catch (e) {}
-  try { event.cancel(); return true } catch (e) {}
-  try { event.setCanceled(true); return true } catch (e) { warnOnce('denySpawn', e) }
-  return false
 }
 function nearestSanity(ent) {
   try {
@@ -290,6 +283,10 @@ function nearestSanity(ent) {
 if (CONFIG.spawn.enabled) {
   try {
     EntityEvents.checkSpawn(event => {
+      // Decide inside try/catch, but call event.cancel() OUTSIDE it: in KubeJS cancel()
+      // works by throwing EventExit, which must propagate to the event system to deny the
+      // spawn. Wrapping it in try/catch (as before) swallowed the exit and the deny was lost.
+      var doDeny = false
       try {
         var ent = event.entity
         if (!ent) return
@@ -302,10 +299,11 @@ if (CONFIG.spawn.enabled) {
         var s = nearestSanity(ent)
         var cancelChance = Math.pow(clamp(s, 0, 100) / 100, CONFIG.spawn.gamma)
         if (Math.random() < cancelChance) {
-          denySpawn(event)
+          doDeny = true
           dlogSampled('suppress ' + id + ' sanity=' + round1(s) + ' cancel=' + round2(cancelChance))
         }
-      } catch (e) { warnOnce('checkSpawn-body', e) }
+      } catch (e) { warnOnce('checkSpawn-body', e); return }
+      if (doDeny) event.cancel() // EventExit propagates -> spawn denied
     })
     oc_sn_channelB = true
   } catch (e) { oc_sn_channelB = false; warnOnce('checkSpawn-register', e) }

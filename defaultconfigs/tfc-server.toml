@@ -714,7 +714,7 @@ familiarityDecayLimit = 0.3
 		# Exhaustion is the hidden stat which controls when you get hungry. In vanilla it is incremented by running and jumping for example. In TFC, exhaustion is added just by existing.
 		# 1.0 = A full hunger bar's worth of exhaustion every 2.5 days. Set to zero to disable completely.
 		#Range: 0.0 ~ 100.0
-		passiveExhaustionMultiplier = 0.5
+		passiveExhaustionMultiplier = 0.0
 		#
 		# A multiplier for how quickly the player gets thirsty.
 		# The player loses thirst in sync with when they lose hunger. This represents how much thirst they lose. 0 = None, 100 = the entire thirst bar.
@@ -731,7 +731,7 @@ familiarityDecayLimit = 0.3
 		# A multiplier for how quickly the player regenerates health, under TFC's passive regeneration.
 		# By default, the player regenerates 0.2 HP/second, or 0.6 HP/second when above 80% hunger and thirst, where 1 HP = 1/50 of a heart.
 		#Range: 0.0 ~ 100.0
-		naturalRegenerationModifier = 1.0
+		naturalRegenerationModifier = 3.0
 		#
 		# How much total hunger consumed is required to completely refresh the player's nutrition.
 		# Player nutrition in TFC is calculated based on nutrition of the last few foods eaten - this is how many foods are used to calculate nutrition. By default, all TFC foods restore 4 hunger.
@@ -757,17 +757,17 @@ familiarityDecayLimit = 0.3
 		#
 		# A multiplier for the minimum health that the player will obtain, based on their nutrition
 		#Range: 0.001 ~ 1000.0
-		nutritionMinimumHealthModifier = 0.2
+		nutritionMinimumHealthModifier = 1.0
 		#
 		# A multiplier for the default health that the player will have (this is at a average nutrition of 40%, aka the starting nutrition.
 		# Nutrition above this value will linearly scale to the maximum multiplier.
 		# Nutrition below this value will linearly scale to the minimum multiplier.
 		#Range: 0.001 ~ 1000.0
-		nutritionDefaultHealthModifier = 0.85
+		nutritionDefaultHealthModifier = 1.0
 		#
 		# A multiplier for the maximum health that the player will obtain, based on their nutrition
 		#Range: 0.001 ~ 1000.0
-		nutritionMaximumHealthModifier = 3.0
+		nutritionMaximumHealthModifier = 1.0
 
 	[mechanics.foodTraits]
 		#

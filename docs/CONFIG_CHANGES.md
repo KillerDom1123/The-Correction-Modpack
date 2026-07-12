@@ -735,8 +735,27 @@ Two consequence channels, both keyed off four bands (Calm/Unease/Dread/Breakdown
 
 ---
 
+## TerraFirmaCraft — hunger back to (essentially) vanilla (2026-07-12) — *kubejs + tfc-server.toml, both sides*
+**Goal:** foods from any mod restore their **vanilla** hunger/saturation; hunger drains like vanilla; flat 20 max health. Requested after modded foods restored nothing.
+
+**Root cause of "food does nothing" (server log, 20:16):** `TagLoader ERROR — Couldn't load tag tfcmoddedfood:nourishing as it is missing following references: #forge:foods`. No mod in the pack defines `#forge:foods`, and in 1.20.1 one missing required reference voids the **whole tag** → the `TFCModdedFood` catchall matched zero items → TFC's `TFCFoodData.eat()` (which returns early for items without a TFC food def) restored nothing for every non-TFC food. The shim was broken since creation.
+
+| What | Where | Old | New | Why |
+|---|---|---|---|---|
+| `TFCModdedFood` pack | `config/openloader/data/` | active (broken) | **retired** → `data-disabled/` | Dead tag; superseded below |
+| Per-item food defs | `kubejs/server_scripts/tfc_vanilla_food.js` | — | **new** | Generates a TFC food def for **every edible item** in the registry (skips `tfc:` + the 2 minecraft items TFC defines): `hunger = getNutrition()`, `saturation = nutrition × satModifier × 2`. TFC applies defs as `delegate.eat(hunger, sat/(2×hunger))` (verified in 3.2.23 bytecode) → **exact vanilla restore values**, no tags to break |
+| `passiveExhaustionMultiplier` | `tfc-server.toml` | 0.5 | **0.0** | Vanilla has no passive hunger drain — drain now comes from activity only |
+| `naturalRegenerationModifier` | `tfc-server.toml` | 1.0 | **3.0** | TFC regen (0.2 HP/s base, 3× when hunger>80%) → 0.6–1.8 HP/s ≈ vanilla pace. (TFC forces `naturalRegeneration=false` and replaces regen; this is the lever) |
+| `nutritionMin/Default/MaxHealthModifier` | `tfc-server.toml` | 0.2 / 0.85 / 3.0 | **1.0 / 1.0 / 1.0** | Flat vanilla 20 max HP — nutrition no longer scales health (generated defs carry 0 nutrients, so this also prevents nutrition-decay health loss) |
+
+**Known residual (hardcoded, no config):** TFC's `TFCFoodData.addExhaustion()` scales all vanilla activity exhaustion by **0.4×** — hunger drains from activity at ~40% vanilla rate. To add pressure back, raise `passiveExhaustionMultiplier` (e.g. 0.5–1.0).
+
+**Kept:** `TFCFoodHunger` tier pack (TFC's own foods at 5/6/8 hunger — vanilla-scaled), `thirstModifier1 = 0` (no thirst), `foodDecayModifier = 0` (no rot — vanilla has none).
+
+**Scope/apply:** TOML edited in instance `defaultconfigs` + both `saves/*/serverconfig` + server `defaultconfigs` (server had no world at edit time — next world seeds from defaults). Script synced instance ↔ server. Active on next boot; `/reload` refreshes the generated defs on a running server (TOML needs world load). *Revert:* move `TFCModdedFood` back from `data-disabled/`, delete the kubejs script, restore the five TOML values.
+
 ## Appendix A — OpenLoader packs created
-`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`, `TFCModdedFood`.
+`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`.
 
 ## Appendix B — Known crash (NOT caused by these config changes)

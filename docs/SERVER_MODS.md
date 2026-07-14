@@ -2,14 +2,14 @@
 
 **Server:** `Servers/spookydookie`
 **Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10 · **Runtime:** Java 17 (pinned in `run.bat`/`run.sh`)
-**Active mods:** 261 · **Disabled:** 0
-**Generated:** 2026-07-12
+**Active mods:** 264 · **Disabled:** 0
+**Generated:** 2026-07-12 (updated same day via `scripts/sync_server_mods.py`)
 
 > The jar filename (including its version) is the authoritative record. The category
 > groupings below are a best-effort organization for readability — a few mods could
 > reasonably sit in more than one section.
 >
-> This server set is derived from the client instance (283 mods) **minus 22 client-only
+> This server set is derived from the client instance (286 mods) **minus 22 client-only
 > mods** that are either server-incompatible or add nothing server-side — see
 > [Client-only mods excluded](#client-only-mods-excluded-from-the-server) at the bottom.
 
@@ -251,6 +251,9 @@ The pack's spooky core — horror entities, hostile creatures, and dread-buildin
 - minecolonies-1.20.1-1.1.1231.jar
 - smallcolonies 1.20.1 v1.8.jar
 - smallcoloniesme 1.20.1 v1.9.jar
+- cozyapartments 1.20.1 v1.2.jar
+- forge-lunara-colonies-1.20.1.14.jar
+- sword_and_kingdom_schematic-1.7.jar
 - towntalk-1.20.1-1.1.0.jar
 
 ## Storage & Inventory

@@ -19,41 +19,43 @@ The new world (`saves/New World (2)`, created 19:51) is **fine on the server sid
 | Spawn chunk `[-15, 19]` is `minecraft:full`, 24 sections, grass/dirt/stone/ores, Terralith cave biomes | `region/r.-1.0.mca` (parsed) |
 | 1018 generated chunks in that region file after a 4-minute session | `region/r.-1.0.mca` |
 | Player stood at y = 71 for 30 s with sky light 15 (not falling) | `oc_sanity.js` DIAG lines in `logs/latest.log` |
-| **Xaero's World Map wrote ~800 KB of map cache for this world at 19:56** | `xaero/world-map/New World (2)/null/cache_1/*.xwmc.outdated` |
+| Xaero's World Map wrote ~800 KB of map cache for this world at 19:56 | `xaero/world-map/New World (2)/null/cache_1/*.xwmc.outdated` — **not evidence of delivery**: in singleplayer Xaero reads the save's region files directly |
 
-The last line is decisive: Xaero's map writer only runs on chunks the **client** has received and
-decoded. Chunks reached the client; the world simply isn't being *drawn*. So Chunk Sending 4.1,
-Farsight 5.8, Smooth Chunk and the worldgen stack are not the cause.
+**Resolved 2026-11-01 (evening), by in-game bisection with F3.** F3 showed the client holding **0
+loaded chunks** while the integrated server had thousands and climbing, i.e. chunk packets were never
+reaching the client. The cause was **Chunk Sending 2.8 → 4.1**: with its debug logging on, its
+per-tick line claimed "Sent: 15 packets" every tick, yet its own queue only grew (426 → 1487 in 76 s,
+roughly the generation rate) and the client logged zero "Ignoring chunk" drops — the server-side
+queue never drained. The 4.1 rewrite moved the send path onto the player tick, which in this pack
+runs on DimThreads' `dimthread_server_overworld` thread. Rolling the jar back to **2.8** (July's
+known-good pairing with this same DimThreads build) fixed it immediately: queue 392 → 0 within
+seconds, terrain visible.
 
-What changed on the render side in this update:
+Eliminated along the way: TFC (void persisted with TFC disabled), Hardcore True Darkness v6 (void
+persisted with it disabled), Farsight 5.8 (void persisted after rolling it back to 5.1), worldgen
+(chunks were always on disk).
 
-1. **Hardcore True Darkness 4.0.0 → "v6"** — a different mod entirely (new mod id
-   `hardcore_true_darkness`, package `com.hyrrx…`). It locks gamma to 0, darkens the lightmap, draws a
-   full-screen "final darkness" post-process shader, and if that pass can't load it renders a
-   **fallback blackout**. It is now **server-enforced**: clients without the matching v6 jar are
-   disconnected, and the server kicks a client that doesn't report "ready" within
-   `statusTimeoutTicks` (default 200 ticks = 10 s). The log shows it detected Oculus
-   (`client readiness report: Oculus`) and ran its darkness path during the session.
-2. Oculus + **Hysteria Shaders** (a deliberately very dark horror shader) were active — the
-   shaderpack settings file was (re)written at 19:50:01.
-3. Farsight 5.1 → 5.8, EntityCulling 1.10 → 1.11, Mo' Bends 5 → 6, NotEnoughAnimations — none of these
-   can blank the whole world on their own.
+State now (client): `chunksending-1.20.1-2.8.jar` and `farsight-1.20.1-5.1.jar` active, byte-identical
+to the server's jars (5.8 adds a new cancellable HEAD hook on `ClientPacketListener.updateLevelChunk`;
+it was not the cause but is kept on the known-good 5.1 by request). **A `.disabled` rename is not a
+pin in a CurseForge-managed instance**: at 21:28 the app re-scanned the profile, flipped
+`chunksending-1.20.1-4.1.jar.disabled` back to `.jar`, and Forge loaded 4.1 over 2.8 (void returned).
+The 4.1 / 5.8 / darkness-v6 jars are therefore parked outside `mods/` in
+`local/mods-rolled-back-2026-11-01/` so only one jar per mod exists; the app adopts the remaining
+jar by fingerprint (it already did so for Hardcore True Darkness 4.0.0). Check in the app that
+Chunk Sending, Farsight and Hardcore True Darkness show 2.8 / 5.1 / 4.0.0 and use "Change version"
+there if any still shows the newer file. Profile auto-update is already off. The server already
+runs all three — do not sync the parked jars to it.
 
-**Diagnosis order (cheapest first):**
-
-1. In the world press **F3**. If the "C:" counter shows rendered sections > 0 and the F3 world/biome
-   text is populated, the world is loaded and it is a darkness/shader overlay. (It will be.)
-2. Toggle shaders off (Oculus default key **K**, or `enableShaders=false` in
-   `config/oculus.properties`). If terrain appears, the HTD v6 pass + Hysteria combination is the
-   cause.
-3. If still black with shaders off, move `mods/hardcore_true_darkness-6.jar` out of `mods/`. The
-   pre-update jar is still available as a drop-in rollback at
-   `Servers/spookydookie/mods/hardcoretruedarkness-4.0.0.jar` (the version `SERVER_MODS.md`
-   documents, and the one the not-yet-updated server still runs — so rolling back also restores
-   client/server parity). If you roll back, lock the mod in CurseForge so it isn't re-updated.
-4. If you keep v6: the server must get the identical jar when it is updated, every player needs it,
-   and `defaultconfigs/hardcore_true_darkness-server.toml` (added, `statusTimeoutTicks = 1200`)
-   should be copied to the server so slow joins aren't kicked at 10 s.
+**Shaders-on black screen → Hardcore True Darkness rolled back to 4.0.0.** With Oculus + Hysteria
+enabled the view at (-49, 109, -34) was pure black; with shaders off it was fine. The only new
+component on the shader path since July was Hardcore True Darkness v6, which runs a vanilla
+post-process chain after level rendering (`DarknessFloor` 0.018, `DarknessStrength` default 1.0,
+`DaylightPreserve` default 0) and under Oculus crushes the whole frame. Applied: `hardcoretruedarkness-4.0.0.jar`
+(July's version, from `Servers/spookydookie/mods/`) copied in, `hardcore_true_darkness-6.jar` →
+`.disabled`, and the v6-only `defaultconfigs/hardcore_true_darkness-server.toml` removed (4.0.0 has
+a different mod id and no server gate). **Pin 4.0.0 in CurseForge.** The server already runs 4.0.0.
+Confirmed in-game 2026-11-01 21:40: chunks load and the shaders-on view is no longer black.
 
 ---
 
@@ -168,8 +170,7 @@ Also fixed while here:
 
 ## 5. Reviewed, no change needed
 
-Chunk Sending 4.1 (config migrated, `maxChunksPerTick = 5` kept), Smooth Chunk 4.4, Farsight 5.8
-(chunk preview still off), Sophisticated Backpacks/Storage/Core (new stack-upgrade conversion items
+Smooth Chunk 4.4, Sophisticated Backpacks/Storage/Core (new stack-upgrade conversion items
 only), Storage Drawers 12.15 (new Push/Pull upgrades + Connection Key — drawers are the intended
 early-game storage), The Obsessed 1.5.2 (tuned values intact; new `Allow Building Structures` /
 `Horse Stealing` left on — "imitation" is on-theme), JEI 15.56 (config format migrated; the
@@ -207,7 +208,8 @@ Known, pre-existing log noise (not new): `betterchunkloading` ↔ Canary mixin c
 ## 7. Server update checklist (when you do it)
 
 1. `python scripts/sync_server_mods.py` (regenerates `SERVER_MODS.md`; keep the client-only
-   exclusions).
+   exclusions). Keep the server on `chunksending-1.20.1-2.8` and `farsight-1.20.1-5.1` (it already
+   has them); the `.disabled` 4.1/5.8 jars must not be copied.
 2. Copy `defaultconfigs/` (minecolonies, tfc, hardcore_true_darkness), `config/openloader/`,
    `config/serversidehorror.json`, `config/weeping_angels*`, `config/doorknocker-common.toml`,
    `config/simpledaylengthextender-common.toml`, `config/ftbquests/`, `kubejs/`.

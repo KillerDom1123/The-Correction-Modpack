@@ -3,3 +3,7 @@
 	#Show Santa hats on angels at Xmas?
 	santa_hats = true
 
+[donators]
+	#Look up the mod's donator list online (used for donator wings). Disable this if you play offline or the lookup causes problems.
+	donator_lookup = true
+

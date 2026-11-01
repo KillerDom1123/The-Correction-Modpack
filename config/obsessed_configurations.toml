@@ -34,4 +34,10 @@
 	"Whitelist mobs" = ["minecraft:villager", "modname: (another option - ignores all mobs from a particular mod)", "(add as many as you need, replace this)"]
 	#The intruder mode version can rarely steal an item from your chests (one item at a time max, and only from chests' top left slot). You'll later get it back as a deposit gift, with all attributes of the item preserved. Set to false to disable this mechanic.
 	"Allow Item Stealing" = true
+	#Set to false to disable the entity from building structures in your world, including copying yours
+	"Allow Building Structures" = true
+	#If set to true, the obsessed can attempt to steal tamed horses and ride off with them for a short period.
+	"Horse Stealing" = true
+	#With this config file, you can make the Obsessed attack any specified mobs on sight from any mod, simply by adding their registry IDs in this list. It triggers attacks from flee modes, and will not attack invulnerable or invisible mobs. You can target all mobs from a mod by adding an entry like: arphex-
+	"Mobs to attack on sight" = ["the_knocker-", "man_from_the_shadow-"]
 

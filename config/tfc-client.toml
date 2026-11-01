@@ -70,7 +70,7 @@
 	#   FAHRENHEIT = Exact degrees Fahrenheit
 	#   KELVIN = Exact Kelvin
 	#   RANKINE = Exact degrees Rankine
-	#Allowed Values: COLOR, CELSIUS, FAHRENHEIT, RANKINE, KELVIN
+	#Allowed Values: CELSIUS, FAHRENHEIT, RANKINE, KELVIN
 	climateTooltipStyle = "CELSIUS"
 	#
 	# The style to display all time delta / duration tooltips in.

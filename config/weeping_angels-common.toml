@@ -26,3 +26,15 @@
 	#Dimensions where teleportation is banned.
 	banned_dimensions = ["minecraft:the_end"]
 
+[spawns]
+	#Natural spawning stops once this many Weeping Angels are already within 'nearby_radius' blocks of the spawn position. 0 = no limit.
+	#Range: 0 ~ 1000
+	max_nearby = 6
+	#The radius (in blocks) used by 'max_nearby'.
+	#Range: 1 ~ 256
+	nearby_radius = 48
+	#Dimensions Weeping Angels will never spawn in naturally, e.g. ["ad_astra:moon"]. Per-biome settings are in config/weeping_angels_spawns.json.
+	spawn_dimension_blacklist = []
+	#Generate Snow Angels (angels buried in snow) in snowy biomes. Only affects newly generated chunks. Requires a restart.
+	snow_angels = true
+

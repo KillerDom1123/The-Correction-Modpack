@@ -119,6 +119,18 @@
 	mobattackcitizens = true
 	#minecolonies.config.shouldraiderbreakdoors.comment [Default: true]
 	shouldraiderbreakdoors = true
+	#Whether or not to spawn raiders. [Default: true]
+	enablecolonyraids = true
+	#minecolonies.config.raiddifficulty.comment [Default: 5, min: 0, max: 10]
+	#Range: 0 ~ 10
+	raidDifficulty = 8
+	#minecolonies.config.maxraiders.comment [Default: 80, min: 6, max: 400]
+	#Range: 6 ~ 400
+	maxRaiders = 80
+	#Whether or not raiders are able to break through blocks [Default: true]
+	raidersbreakblocks = true
+	#Whether or not raiders can break through doors. [Default: true]
+	raidersbreakdoors = true
 	#minecolonies.config.guarddamagemultiplier.comment [Default: 1.000000, min: 0.100000, max: 15.000000]
 	#Range: 0.1 ~ 15.0
 	guardDamageMultiplier = 0.6
@@ -159,6 +171,9 @@
 	#Amount of additional threads to be used for pathfinding. [Default: 1, min: 1, max: 10]
 	#Range: 1 ~ 10
 	pathfindingmaxthreadcount = 4
+	#Multiplier for the maximum path nodes per pathfinding job. [Default: 1.0, min: 0.1, max: 10.0]
+	#Range: 0.1 ~ 10.0
+	pathNodeLimitMultiplier = 1.0
 
 #All configurations related to the request system
 [requestSystem]

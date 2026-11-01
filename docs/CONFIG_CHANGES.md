@@ -754,9 +754,56 @@ Two consequence channels, both keyed off four bands (Calm/Unease/Dread/Breakdown
 
 **Scope/apply:** TOML edited in instance `defaultconfigs` + both `saves/*/serverconfig` + server `defaultconfigs` (server had no world at edit time — next world seeds from defaults). Script synced instance ↔ server. Active on next boot; `/reload` refreshes the generated defs on a running server (TOML needs world load). *Revert:* move `TFCModdedFood` back from `data-disabled/`, delete the kubejs script, restore the five TOML values.
 
+---
+
+## 2026-11-01 — Mod-update review (≈80 mods updated, 13 jars removed) — *client instance only*
+Full write-up with evidence and the open decisions: **`docs/UPDATE_REVIEW_2026-11-01.md`**. The dedicated server was **not** changed in this pass.
+
+### Corrections to earlier sections
+- **Day Length (`DayLength30`) — never worked.** Every log since July shows `Failed to load function spooky_daylen:tick` (TFC replaces `/time add <n>` with its own syntax, so the function fails to compile) followed by `Couldn't load tag minecraft:tick … (from data/DayLength30)`. A tag with a missing reference is dropped whole, so **`wa_buff:tick` (WeepingAngelsBuff) never ran either**. The day length actually in effect came from Simple Day Length Extender (2.0×/2.0× + TFC auto-adjust ≈ 60-minute day). Pack retired to `config/openloader/data-disabled/DayLength30/`; `simpledaylengthextender-common.toml` now `dayLengthMultiplier = 1.5`, `nightLengthMultiplier = 1.5`, `autoCalendarAdjustments = false` → 36000 real ticks per day = **30 min**, sleeping skips the night, and the Weeping Angels buff tick loads again.
+- **TerraFirmaCraft world generation has never been active.** All nine worlds on disk (three in `saves/`, six in `simplebackups/`) generate `minecraft:overworld` with `minecraft:noise` + the vanilla/Terralith multi-noise biome source; region data is vanilla stone/deepslate, Terralith cave biomes and Mekanism/IE/Create ores. TFC's `tfc:overworld` preset was never selected. Removal recommended — see the review doc.
+- **The Forgotten** section above is historical: the jar was removed 2026-11-01 (it was already disabled per `SERVER_MODS.md`). The remaining surface-monster suppressor was TFC's `enableVanillaMonstersOnSurface = false` (fixed below).
+
+### MineColonies 1.1.1231 → 1.1.1301 — `defaultconfigs/minecolonies-server.toml` + `MineColoniesSlowResearch`
+Raid keys were renamed; the new world seeded `raidDifficulty = 5` (mod default), silently dropping the documented 8. Added the new keys with the documented values (`enablecolonyraids = true`, `raidDifficulty = 8`, `maxRaiders = 80`, `raidersbreakblocks = true`, `raidersbreakdoors = true`, `pathNodeLimitMultiplier = 1.0`) alongside the old ones (each version discards the keys it doesn't know, so the one file seeds either server version). Live `saves/New World (2)` fixed 5 → 8. `pathfindingmaxthreadcount` no longer exists in 1301.
+1301 also added 11 mounted-combat/barding researches; scaled with the documented rule (×2 tiers 1–2, ×3 tiers 3–4, ×4 tiers 5–6, cap 1024) → pack now 212 files. All 201 existing overrides still match jar paths and the jar's versions are byte-identical to 1231.
+
+### Weeping Angels 46.1.5 → 46.1.6
+- `config/weeping_angels_spawns.json` was regenerated with 37 new biome entries; **9 arrived enabled at weight 8, groups of 1–4** (8 Incendium nether biomes + `quark:glimmering_weald`). Set `canSpawnHere = false`; the curated 16-biome set (weight 2, Deep Dark 3, solitary) is unchanged.
+- `config/weeping_angels-common.toml` gained `[spawns]`: `snow_angels` **true → false** (worldgen would bury angels in every snowy biome, bypassing per-biome rarity), `max_nearby` **6 → 1** (solitary). `teleport_chance` / `interdimensional_teleporting` / `teleport_range` preserved.
+
+### Server-Side Horror 4.2 → 5.1 — `config/serversidehorror.json`
+New event `random_starer` (5.0 changelog: "new starer event which picks its players from players who joined the server"); absent keys fall back to mod defaults (enabled). Added `random_starer_enable = false`, `random_starer_chance = 8000000` to match the documented starer rarity and the no-fake-players preference. All existing keys preserved.
+
+### Door Knocker 1.2.0 → 1.3 — `config/doorknocker-common.toml`
+New independent `[doorknocker.trapdoors]` event arrived at the mod's frequent defaults (24000/48000 day, 12000/24000 night). Aligned to the documented door timings: **48000/96000 day, 24000/48000 night**. The mod dropped its sound keys.
+
+### Waystones — `WaystonesGate` datapack extended
+`waystoneandcreate` ships a Create compacting route (amethyst + 4 pearls + 4 emeralds → uncut warpstone → cutting → Warp Stone) that skipped the Eye of Ender gate (pre-existing). Added `data/waystoneandcreate/recipes/compact_warp_stone.json`: one emerald → `minecraft:ender_eye`. Create Waystones Recipes 2.0.1 also ships `data/waystones/recipes/warp_stone.json` (mechanical crafting, no eye) at the **same path** as the pack's override, so the pack's recipe still wins.
+
+### Hardcore True Darkness 4.0.0 → 6 (new mod id `hardcore_true_darkness`)
+A complete rewrite: server-enforced with a client/server protocol handshake (clients without the matching v6 jar are disconnected), gamma locked to 0, a full-screen "final darkness" post-process pass with a blackout fallback. Added `defaultconfigs/hardcore_true_darkness-server.toml` with `statusTimeoutTicks = 1200` (max; the default 200 = 10 s kicks slow joins in this pack). **Prime suspect for the "void" world** — see the review doc §1. The pre-update jar remains at `Servers/spookydookie/mods/hardcoretruedarkness-4.0.0.jar` as a rollback.
+
+### TerraFirmaCraft 3.2.23 → 3.2.28
+- Data overrides verified: `TFCFoodHunger` (146), `TFCLightItems` (58) and `TFCVanillaCraftingTable` all still match; no `item_sizes`/`food_items` file was added, removed or changed in 3.2.28. `tfc_vanilla_food.js` generated 628 defs cleanly.
+- `config/tfc-client.toml`: `showGuideBookTabInInventory`, `showGuideBookLinksAlways`, `showHoeOverlaysInInfoMods` → **false**. The Calendar/Nutrition/Climate inventory tabs have **no config toggle** (verified in `ClientForgeEventHandler.onScreenOpen`); new **`TFCHideInventoryTabs`** resource pack (`config/openloader/resources/`) blanks the tab strip in `tfc:textures/gui/icons.png` — the buttons still exist, invisibly.
+- `tfc-server.toml` (instance `defaultconfigs/` + live `saves/New World (2)`; **server not changed**): `enableNetherPortals` **false → true** (the Waystones Eye-of-Ender gate, the Occultism ritual costs and three installed nether worldgen mods all assume a reachable nether); `enableVanillaMonstersOnSurface` **false → true** (TFC was silently denying every surface vanilla monster spawn — contradicts "a world that fights back"); `enableInfestations` **true → false**; `enableOverburdening` **true → false** (direct toggle for what `TFCLightItems` works around).
+
+### KubeJS — `oc_sanity.js`
+`CONFIG.debug` **true → false** (left on after the "Sanity fix" commits; it logged DIAG lines every 2 s per player). The live log confirmed both channels load and evaluate correctly.
+
+### FTB Quests — Broken World
+Removed the undocumented "Warmth" quest: its icon and both tasks were `cold_sweat:*` items (Cold Sweat removed). Backup `broken_world.snbt.bak`. Every other quest/reward/icon ID in the eight pack chapters resolves against the current mod set; the WDA chapter is the `wda_questline` mod's own content.
+
+### modlist
+Regenerated via `tools/generate_modlist.py` — 286 enabled, 0 disabled. Uncategorised: cozyapartments, lunaracolonies, hardcore_true_darkness, nochatrestrictions, sword_and_kingdom_schematic.
+
+### Reviewed — no change
+Chunk Sending 4.1 (config migrated; `maxChunksPerTick = 5` kept), Smooth Chunk 4.4, Farsight 5.8, Sophisticated Backpacks/Storage/Core, Storage Drawers 12.15 (new Push/Pull upgrades), The Obsessed 1.5.2 (tuned values intact; new structure-building/horse-stealing left on), JEI 15.56, Collective/Double Doors (configs moved to `config/serilum/`), Blood Magic 3.3.8, AmbientSounds 6.3.11 (`QuietAmbience` paths unchanged), AE2 15.4.12, Ad Astra 1.15.21, Extreme Reactors/Mekanism/Occultism/SecurityCraft overrides (all 17 OpenLoader packs checked programmatically against the updated jars).
+
 ## Appendix A — OpenLoader packs created
-`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
-`config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`.
+`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity`, `ExtremeReactorsProgression`, `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
+`config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).
 
 ## Appendix B — Known crash (NOT caused by these config changes)
 Startup crash traced to a **Mixin injection failure**: TerraFirmaCraft's `BiomeMixin` (`shouldFreezeWithClimate` redirect) fails because **Serene Seasons** (and Cold Sweat's freezing mixin) rewrite the same vanilla biome freeze/precipitation methods. This is a **mod-vs-mod incompatibility** at class-load, before any config/datapack is read — data edits cannot cause or fix it. **Recommended fix:** disable one of the conflicting climate mods (most likely **TerraFirmaCraft** vs **Serene Seasons**). **Update:** both **Serene Seasons** and **Cold Sweat** are now disabled/removed, so this specific freeze-mixin conflict should be resolved — TerraFirmaCraft is the only remaining climate mixin on those methods.

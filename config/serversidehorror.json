@@ -75,6 +75,8 @@
     "MenT97",
     "DanTDM"
   ],
+  "random_starer_chance": 8000000,
+  "random_starer_enable": false,
   "heads_from_list_chance": 520000,
   "heads_from_list_enable": true,
   "heads_from_list_list": [

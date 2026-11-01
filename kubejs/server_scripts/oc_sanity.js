@@ -30,7 +30,7 @@ const CONFIG = {
   spawn:   { enabled: true, gamma: 1.0, naturalOnly: true, noPlayerSanity: 0 },
   bandLines: true,
   affectPeaceful: true,
-  debug: true,   // DIAG: temporarily ON for troubleshooting — set back to false once confirmed
+  debug: false,  // verified live 2026-11-01 (DIAG lines in logs/latest.log); keep off — true spams the log every 2s per player
 }
 
 // Horror entity ids — used for the proximity drain AND Channel B suppression.

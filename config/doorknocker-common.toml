@@ -54,13 +54,13 @@
 		#Range: 0.0 ~ 1.0
 		openChance = 0.1
 		#Range: 20 ~ 288000
-		dayMinTicks = 24000
+		dayMinTicks = 48000
 		#Range: 20 ~ 288000
-		dayMaxTicks = 48000
+		dayMaxTicks = 96000
 		#Range: 20 ~ 288000
-		nightMinTicks = 12000
+		nightMinTicks = 24000
 		#Range: 20 ~ 288000
-		nightMaxTicks = 24000
+		nightMaxTicks = 48000
 		#Range: 0 ~ 128
 		dayMinDistance = 0
 		#Range: 1 ~ 128

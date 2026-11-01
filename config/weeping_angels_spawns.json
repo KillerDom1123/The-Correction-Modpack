@@ -256,56 +256,56 @@
     "minCount": 0,
     "maxCount": 1,
     "spawnWeight": 1,
-    "canSpawnHere": true
+    "canSpawnHere": false
   },
   "incendium:infernal_dunes": {
     "mobCategory": "MONSTER",
     "minCount": 0,
     "maxCount": 1,
     "spawnWeight": 1,
-    "canSpawnHere": true
+    "canSpawnHere": false
   },
   "incendium:inverted_forest": {
     "mobCategory": "MONSTER",
     "minCount": 0,
     "maxCount": 1,
     "spawnWeight": 1,
-    "canSpawnHere": true
+    "canSpawnHere": false
   },
   "incendium:quartz_flats": {
     "mobCategory": "MONSTER",
     "minCount": 0,
     "maxCount": 1,
     "spawnWeight": 1,
-    "canSpawnHere": true
+    "canSpawnHere": false
   },
   "incendium:toxic_heap": {
     "mobCategory": "MONSTER",
     "minCount": 0,
     "maxCount": 1,
     "spawnWeight": 1,
-    "canSpawnHere": true
+    "canSpawnHere": false
   },
   "incendium:volcanic_deltas": {
     "mobCategory": "MONSTER",
     "minCount": 0,
     "maxCount": 1,
     "spawnWeight": 1,
-    "canSpawnHere": true
+    "canSpawnHere": false
   },
   "incendium:weeping_valley": {
     "mobCategory": "MONSTER",
     "minCount": 0,
     "maxCount": 1,
     "spawnWeight": 1,
-    "canSpawnHere": true
+    "canSpawnHere": false
   },
   "incendium:withered_forest": {
     "mobCategory": "MONSTER",
     "minCount": 0,
     "maxCount": 1,
     "spawnWeight": 1,
-    "canSpawnHere": true
+    "canSpawnHere": false
   },
   "mahoutsukai:marble": {
     "mobCategory": "MONSTER",
@@ -764,10 +764,10 @@
   },
   "quark:glimmering_weald": {
     "mobCategory": "MONSTER",
-    "minCount": 1,
-    "maxCount": 4,
-    "spawnWeight": 8,
-    "canSpawnHere": true
+    "minCount": 0,
+    "maxCount": 1,
+    "spawnWeight": 1,
+    "canSpawnHere": false
   },
   "terralith:alpha_islands": {
     "mobCategory": "MONSTER",

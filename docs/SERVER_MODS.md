@@ -5,6 +5,10 @@
 **Active mods:** 264 · **Disabled:** 0
 **Generated:** 2026-07-12 (updated same day via `scripts/sync_server_mods.py`)
 
+> **⚠️ Stale as of 2026-11-01 — the client instance was updated (≈80 mods updated, 13 removed) and the server has NOT been.**
+> Re-run `scripts/sync_server_mods.py` when updating the server. Two things need deliberate handling:
+> **Hardcore True Darkness is now "v6"** (`hardcore_true_darkness-6.jar`, replaces `hardcoretruedarkness-4.0.0.jar`) — it is a client/server protocol gate, so server and every client must run the same jar; and the client's `defaultconfigs/`, `config/openloader/`, horror configs, quests and `kubejs/` changed — see `docs/UPDATE_REVIEW_2026-11-01.md` §7 for the copy list.
+
 > The jar filename (including its version) is the authoritative record. The category
 > groupings below are a best-effort organization for readability — a few mods could
 > reasonably sit in more than one section.

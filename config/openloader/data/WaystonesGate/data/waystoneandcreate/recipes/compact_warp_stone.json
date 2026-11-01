@@ -1,0 +1,17 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    { "item": "minecraft:amethyst_shard" },
+    { "item": "minecraft:ender_eye" },
+    { "item": "minecraft:ender_pearl" },
+    { "item": "minecraft:ender_pearl" },
+    { "item": "minecraft:ender_pearl" },
+    { "tag": "balm:emeralds" },
+    { "tag": "balm:emeralds" },
+    { "tag": "balm:emeralds" },
+    { "tag": "balm:emeralds" }
+  ],
+  "results": [
+    { "item": "waystoneandcreate:uncut_warpstone" }
+  ]
+}

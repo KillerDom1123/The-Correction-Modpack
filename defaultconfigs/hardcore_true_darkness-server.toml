@@ -1,0 +1,8 @@
+#Hardcore True Darkness server settings.
+#How long the server waits for a player's Hardcore True Darkness client to confirm it is ready before disconnecting them.
+#Minecraft measures time in ticks: 20 ticks equals 1 second.
+#Pack default raised from 200 (10 s) to the maximum 1200 (60 s): this 286-mod pack takes well over 10 s between login and the client finishing its join-time reloads, and the default kicked slow clients.
+#This setting does not disable darkness or allow players without the matching mod to join.
+#Range: 20 ~ 1200
+statusTimeoutTicks = 1200
+

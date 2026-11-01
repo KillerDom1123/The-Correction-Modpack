@@ -6,9 +6,9 @@
 > *They fell because they found something they could not understand."*
 
 <!-- MODLIST:START -->
-> **At a glance** — Minecraft 1.20.1 · Forge · **283 mods** · full list in [modlist.md](modlist.md)
+> **At a glance** — Minecraft 1.20.1 · Forge · **286 mods** · full list in [modlist.md](modlist.md)
 >
-> Core libraries & performance (70) · Create & addons (22) · Tech — energy, automation, industry (22) · Magic (9) · Colony / civilisation (8) · Horror & atmosphere (26) · Mobs & world creatures (4) · Worldgen & structures (27) · Food & farming (7) · Decoration & building (19) · Storage, QoL & utility (50) · Security & protection (3) · Quests, loot, data & guides (16)
+> Core libraries & performance (70) · Create & addons (22) · Tech — energy, automation, industry (22) · Magic (8) · Colony / civilisation (8) · Horror & atmosphere (25) · Mobs & world creatures (4) · Worldgen & structures (27) · Food & farming (7) · Decoration & building (19) · Storage, QoL & utility (50) · Security & protection (3) · Quests, loot, data & guides (16) · Uncategorised (edit CATEGORY_RULES) (5)
 <!-- MODLIST:END -->
 
 ---

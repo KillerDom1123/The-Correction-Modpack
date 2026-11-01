@@ -9,13 +9,13 @@
 	dayStartInTicks = 0
 	# Multiply the day length by this number. Fractions are supported, but must be above 1.0 (cannot shorten).
 	#Range: 1.0 ~ 100.0
-	dayLengthMultiplier = 2.0
+	dayLengthMultiplier = 1.5
 	# Start time in ticks to use the night multiplier. 13000 represents a standard Minecraft night start of 19:00.
 	#Range: 1 ~ 2147482647
 	nightStartInTicks = 13000
 	# Multiply the night length by this number. Fractions supported, but must be above 1.0 (cannot shorten).
 	#Range: 1.0 ~ 100.0
-	nightLengthMultiplier = 2.0
+	nightLengthMultiplier = 1.5
 	# If true (default), the 'doDaylightCycle' gamerule check during sleep is forced to always be true. This allows sleeping to work properly. You *might* need to disable this for compatibility with some sleeping mods, but probably not.
 	overrideGameRuleSleepCheck = true
 	# If true (default), some mod-added calendars/seasons will dynamically adjust day/night ratio.
@@ -23,7 +23,7 @@
 	# the day length could be about x2.91 and night length about x1.59 depending on time of year. Keeping showDetailsToLog enabled will let you check final multipliers.
 	# Also note that if the night start time is configured with the default 13000 it will be corrected to 12000 so that the day and night length difference makes sense.
 	# Currently supported mods: TerraFirmaCraft 3.x and below, nothing else yet (please share your requests back to me - I don't know of any other mods that have variable day/night lengths).
-	autoCalendarAdjustments = true
+	autoCalendarAdjustments = false
 	# If true (default), details of day/night length will be logged to console. Setting to false might be useful to reduce log spam, especially
 	# if autoCalendarAdjustments are in effect since it would make semi-regular log entries whenever calendar adjustments occur throughout the year/seasons.
 	showDetailsToLog = true

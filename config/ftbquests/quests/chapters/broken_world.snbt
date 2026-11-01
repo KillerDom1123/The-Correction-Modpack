@@ -107,29 +107,6 @@
 		}
 		{
 			description: [
-				"&8[ SURVIVAL NOTE — WARMTH ]&r"
-				""
-				"&7The cold here is not weather. It is a condition of the world. In the earliest records, standing still is simply how people died.&r"
-				""
-				"&8Objective: keep your body temperature up. A waterskin and a way to read the cold will buy you time to learn everything else.&r"
-			]
-			icon: "cold_sweat:waterskin"
-			id: "7A01000000000104"
-			rewards: [
-				{ id: "7A01000000000310", type: "xp", xp: 15 }
-				{ id: "7A01000000000311", item: "minecraft:campfire", type: "item" }
-				{ count: 4, id: "7A01000000000312", item: "farmersdelight:cooked_bacon", type: "item" }
-			]
-			subtitle: "Warmth"
-			tasks: [
-				{ id: "7A01000000000207", item: "cold_sweat:waterskin", type: "item" }
-				{ id: "7A01000000000208", item: "cold_sweat:thermometer", type: "item" }
-			]
-			x: -3.0d
-			y: 0.0d
-		}
-		{
-			description: [
 				"&8[ SURVIVAL NOTE — FOOD ]&r"
 				""
 				"&7Raw scavenging will not sustain a person here for long. The old kitchens I have catalogued were elaborate. Ours will start smaller.&r"

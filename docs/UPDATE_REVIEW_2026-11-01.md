@@ -9,7 +9,8 @@ Everything listed under "Applied" is also recorded per-mod in `CONFIG_CHANGES.md
 "2026-11-01 — Mod-update review").
 
 **Status as of 2026-11-02:** the void world and the shaders black screen are fixed (§1); TFC was removed (§2);
-a consistency pass followed (§8); Immersive Portals was added with a compat shim for DimThreads (§9). The
+a consistency pass followed (§8); Immersive Portals was added with a compat shim for DimThreads (§9); a new dedicated server, `Servers/Server v2`,
+was built from the client (§7). The
 mod-set record is in `CONFIG_CHANGES.md`, "Mod set changes, 2026-11-01 evening → 2026-11-02".
 
 ---
@@ -215,6 +216,10 @@ Known, pre-existing log noise (not new): `betterchunkloading` ↔ Canary mixin c
    consumables are referenced by no quest.
 
 ## 7. Server update checklist (when you do it)
+
+**Done 2026-11-02 by building a new server instead of updating the old one:** `Servers/Server v2` covers every item
+below (pinned jars, shim, Serene Seasons, no TFC, `minecraft:normal`, current configs) and has a fresh world;
+the July server is untouched. See `CONFIG_CHANGES.md`, "Server v2". The list is kept as the record.
 
 1. `python scripts/sync_server_mods.py` (regenerates `SERVER_MODS.md`; keep the client-only
    exclusions). Keep the server on `chunksending-1.20.1-2.8` and `farsight-1.20.1-5.1` (it already

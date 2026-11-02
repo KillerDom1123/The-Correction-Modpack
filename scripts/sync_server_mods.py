@@ -12,6 +12,10 @@ so the server always equals "instance minus exclusions".
 Usage:
     python scripts/sync_server_mods.py            # do the sync
     python scripts/sync_server_mods.py --dry-run  # show what would change
+    python scripts/sync_server_mods.py --server "E:/.../Servers/<other>"   # another server
+
+The default target is the current server, "Server v2" (created 2026-11-02). The original
+July server (Servers/spookydookie) is kept as-is for reference and is NOT synced by default.
 
 Exclusions are matched by lowercase filename PREFIX so version bumps stay
 excluded (e.g. "oculus-" matches oculus-mc1.20.1-1.8.0.jar and any update).
@@ -25,7 +29,8 @@ from pathlib import Path
 
 # Instance root = parent of this script's folder
 INSTANCE_MODS = Path(__file__).resolve().parent.parent / "mods"
-SERVER_MODS = Path(r"E:\Program Files (x86)\CurseForge\mc\Servers\spookydookie\mods")
+SERVERS_ROOT = Path(r"E:\Program Files (x86)\CurseForge\mc\Servers")
+DEFAULT_SERVER = SERVERS_ROOT / "Server v2"
 
 # Client-only mods (lowercase filename prefixes). Two categories:
 #   crash  = loads client classes on a dedicated server -> boot crash
@@ -69,7 +74,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--dry-run", action="store_true",
                         help="report changes without copying/deleting")
+    parser.add_argument("--server", type=Path, default=DEFAULT_SERVER,
+                        help=f"server root folder (default: {DEFAULT_SERVER})")
     args = parser.parse_args()
+    SERVER_MODS = args.server / "mods"
+    print(f"server target dir    : {SERVER_MODS}")
 
     for d, label in ((INSTANCE_MODS, "instance"), (SERVER_MODS, "server")):
         if not d.is_dir():

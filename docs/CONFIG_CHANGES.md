@@ -940,6 +940,25 @@ Changes made in the CurseForge app after the update review started, compared wit
 
 **Pinned back to the server's July jars:** Chunk Sending 4.1 → **2.8**, Farsight 5.8 → **5.1**, Hardcore True Darkness 6 → **4.0.0**. The newer jars are parked in `local/mods-rolled-back-2026-11-01/`.
 
+### Server v2 (2026-11-02) — `Servers/Server v2`, a new dedicated server matching the client
+The July server (`Servers/spookydookie`, 264 mods, TFC-era, no world) is **left unchanged** for reference. A new server was built beside it, up to date with the client, with a new world.
+
+**How it was built** (all copies; nothing written to the July server):
+- **Forge 47.4.10:** `libraries/`, `run.bat`, `run.sh` and the installer jar copied from the July server (same Forge version; Java 17 still pinned in the launch scripts).
+- **Mods:** `scripts/sync_server_mods.py --server "…/Server v2"` → the client's 303 active jars minus the 22 client-only ones = **281 jars**, including the pinned Chunk Sending 2.8 / Farsight 5.1 / Hardcore True Darkness 4.0.0, Serene Seasons, the Immersive Portals set and the `immptl_dimthread_compat` shim. TFC and its dependants are absent.
+- **Pack content from the client:** `config/` (all OpenLoader packs, FTB Quests, every mod config), `defaultconfigs/`, `kubejs/`, `blueprints/`. Left out: `*.bak` backups, `chunksending.json.v41`, and JEI's per-world client state.
+- **`server.properties`** from the July file, with three changes: `level-type` `tfc:overworld` → **`minecraft:normal`** (TFC's own default had been written there); `difficulty` `easy` → **`normal`** (every client world is Normal; Easy was just the vanilla default); a fresh, empty `level-seed`. Everything else as July: online mode, port 25565, view and simulation distance 10, no whitelist.
+- **`user_jvm_args.txt`:** same memory (`-Xms6G -Xmx8G`); the custom `log4j2_server.xml` was dropped, because its only purpose was silencing TFC's calendar log spam. Forge's default logging applies.
+- `eula.txt` carried over from the July server (already accepted there).
+
+**Verified on first boot** (02:07–02:09, clean log): `Done` in ≈11 s of world load (≈60 s total start); the shim loaded with **0** "non-server-main thread" lines; OpenLoader injected **17/17** data packs; KubeJS **3/3** startup and **7/7** server scripts with 0 errors; the sanity mechanic loaded with both channels on; no `Can't keep up`. The world's generated `serverconfig/` carries the pack defaults: Pale Hound and CANTBREATHE 3600–7200 s, solitary; Mimic 3600–7200; Cave Dweller 7200–14400; MineColonies `raidDifficulty 8`; Mahou displacement cap 256; no TFC file. `level.dat`: Normal difficulty, `minecraft:noise` generator, `naturalRegeneration`/`doInsomnia`/`doTraderSpawning`/`doPatrolSpawning` all **true**, DimThreads active at 4 threads. (`doDaylightCycle` reads false only because Simple Day Length Extender holds time until the first player joins.) Remaining ERROR lines are the same mod-data noise the client logs on every launch.
+
+**Tooling changed with it:**
+- `scripts/sync_server_mods.py` now takes `--server <folder>` and **defaults to `Servers/Server v2`**, so a routine sync can no longer touch the July server.
+- New `tools/generate_server_modlist.py` regenerates `docs/SERVER_MODS.md` from the server's actual `mods/` folder (same parser and categories as `tools/generate_modlist.py`). Run it after each sync.
+
+**To keep it in step later:** after changing the client, run the sync script, then copy whichever of `config/`, `defaultconfigs/`, `kubejs/` changed, then regenerate the server mod list. `defaultconfigs/` only seeds new worlds; for this world, edit `world/serverconfig/` directly.
+
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).

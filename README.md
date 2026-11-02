@@ -122,9 +122,12 @@ All mods are the property of their respective authors — please support them.
 
 The pack is **server-ready**. To host:
 
+The current server is **`Servers/Server v2`** (Forge 47.4.10, Java 17, 281 mods, built 2026-11-02 with a fresh world). Its mod list is in **[docs/SERVER_MODS.md](docs/SERVER_MODS.md)**.
+
 1. Install a matching **Forge 1.20.1 (47.4.10)** dedicated server with the **same mod list and versions** as clients.
-2. Copy these directories to the server: **`mods/`**, **`config/`** (includes the OpenLoader datapacks and quests), **`defaultconfigs/`**, and **`kubejs/`**. Copy `saves/<world>` → the server's `world/` if migrating an existing map.
-3. Keep `mods/` and `kubejs/startup_scripts/` **identical** on server and clients (registry parity), or players will be unable to connect.
+2. Copy the mods with `python scripts/sync_server_mods.py` (defaults to `Servers/Server v2`; `--server <folder>` for another). It copies the client's mods minus the client-only list and prunes anything else.
+3. Copy **`config/`** (includes the OpenLoader datapacks and quests), **`defaultconfigs/`**, and **`kubejs/`**. Copy `saves/<world>` → the server's `world/` if migrating an existing map.
+4. Keep `mods/` and `kubejs/startup_scripts/` **identical** on server and clients (registry parity), or players will be unable to connect. Then regenerate the server mod list with `python tools/generate_server_modlist.py`.
 
 Client-only tweaks (audio, video, personal options) stay on each player's client and are ignored by the server.
 

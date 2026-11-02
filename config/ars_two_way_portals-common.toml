@@ -1,0 +1,13 @@
+
+[portal_features]
+	#Allow Dominion Wand interaction to rotate symmetrical two-way portals.
+	#Disable this to turn off Dominion Wand portal rotation entirely.
+	canRotatePortal = true
+	#Allow shift-right-click rotation to enable gravity-changing portal travel.
+	canRotateGravity = true
+	#Allow Leap to remove and replace tracked source-stone frame blocks.
+	canLeapSourceblocks = true
+	#Use Immersive Portals for normally thrown Double-Sided Stable Warp Scrolls
+	#when Immersive Portals is installed. Sneak-throwing always creates regular Ars portals.
+	immersivePortalIntegration = true
+

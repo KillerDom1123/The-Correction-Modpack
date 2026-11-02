@@ -76,3 +76,6 @@ config/spark/
 /config/crash_assistant/
 
 user-prefs.json
+
+# compat shim build output (source is tracked, the jar is not)
+/tools/immptl_dimthread_compat/build/

@@ -6,9 +6,9 @@
 > *They fell because they found something they could not understand."*
 
 <!-- MODLIST:START -->
-> **At a glance** — Minecraft 1.20.1 · Forge · **286 mods** · full list in [modlist.md](modlist.md)
+> **At a glance** — Minecraft 1.20.1 · Forge · **303 mods** · full list in [modlist.md](modlist.md)
 >
-> Core libraries & performance (70) · Create & addons (22) · Tech — energy, automation, industry (22) · Magic (8) · Colony / civilisation (8) · Horror & atmosphere (25) · Mobs & world creatures (4) · Worldgen & structures (27) · Food & farming (7) · Decoration & building (19) · Storage, QoL & utility (50) · Security & protection (3) · Quests, loot, data & guides (16) · Uncategorised (edit CATEGORY_RULES) (5)
+> Core libraries & performance (72) · Create & addons (23) · Tech — energy, automation, industry (19) · Magic (9) · Colony / civilisation (11) · Horror & atmosphere (26) · Mobs & world creatures (4) · Worldgen & structures (28) · Food & farming (7) · Decoration & building (30) · Storage, QoL & utility (55) · Security & protection (3) · Quests, loot, data & guides (16)
 <!-- MODLIST:END -->
 
 ---
@@ -109,7 +109,9 @@ A curated set built around the theme (full list in **[modlist.md](modlist.md)**)
 - **MineColonies** — rebuilding a living settlement
 - **Ars Nouveau · Occultism · Hexerei · Forbidden Arcanus** — the arcane path
 - **Ad Astra** — the journey beyond the world
-- **TerraFirmaCraft, Terralith, Incendium, Alex's Caves, YUNG's structures, Dungeons Arise** — a deeper, stranger world to explore
+- **Terralith, Incendium, Alex's Caves, YUNG's structures, Dungeons Arise** — a deeper, stranger world to explore
+- **Serene Seasons** — a turning year, with winters that bite
+- **Immersive Portals** — portals you can see and walk through seamlessly
 - **The horror suite** — rare, atmospheric threats (kept deliberately uncommon)
 
 All mods are the property of their respective authors — please support them.
@@ -132,7 +134,8 @@ Client-only tweaks (audio, video, personal options) stay on each player's client
 
 This repository tracks the pack's **configuration and custom content**, not the mod binaries:
 
-- **Tracked:** `config/` (all mod configs, OpenLoader datapacks, FTB Quests), `kubejs/` (custom scripts/items), `defaultconfigs/` (per-world defaults), and the `docs/` markdown.
+- **Tracked:** `config/` (all mod configs, OpenLoader datapacks, FTB Quests), `kubejs/` (custom scripts/items), `defaultconfigs/` (per-world defaults), the `docs/` markdown, and `tools/` (the modlist generator and the source of the pack's own compat mod).
+- **Built here:** `immptl_dimthread_compat` — a one-mixin mod that lets Immersive Portals and DimThreads run together. Build it with `python tools/immptl_dimthread_compat/build.py --install`; a copy of the jar is kept in `local/`. It belongs on clients **and** the server.
 - **Not tracked:** `mods/`, `saves/`, caches, logs, and machine-specific files (see `.gitignore`).
 
 The pack is heavily **rebalanced by design** — see **[docs/CONFIG_CHANGES.md](docs/CONFIG_CHANGES.md)** for a full per-mod record of every configuration change and the reasoning behind it (progression gating, horror rarity, colony danger, etc.).

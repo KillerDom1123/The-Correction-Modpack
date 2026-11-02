@@ -8,6 +8,10 @@ server was **not** touched (two accidental edits to its `defaultconfigs/tfc-serv
 Everything listed under "Applied" is also recorded per-mod in `CONFIG_CHANGES.md` (section
 "2026-11-01 — Mod-update review").
 
+**Status as of 2026-11-02:** the void world and the shaders black screen are fixed (§1); TFC was removed (§2);
+a consistency pass followed (§8); Immersive Portals was added with a compat shim for DimThreads (§9). The
+mod-set record is in `CONFIG_CHANGES.md`, "Mod set changes, 2026-11-01 evening → 2026-11-02".
+
 ---
 
 ## 1. The "void" world — what the evidence says
@@ -96,6 +100,10 @@ Also set: `enableInfestations = false` (rat infestations on stored food) and
 `enableOverburdening = false` (direct toggle for what `TFCLightItems` works around).
 
 ### Decision for you: remove TFC or keep it
+
+**Decided 2026-11-01: removed.** TerraFirmaCraft, `mcw_tfc_aio` and TFC Carry On Storage are disabled. Still open:
+retire the inert leftovers listed below, and switch TFC's forced game rules back on in worlds created while it was
+installed (`CONFIG_CHANGES.md`, "Mod set changes"). The analysis below is kept as the record.
 
 **Recommended: remove TerraFirmaCraft** (plus its dependants `mcw_tfc_aio-0.2.30` and
 `TFC_CarryOnStorage1.2.0`). Then:
@@ -186,15 +194,16 @@ Known, pre-existing log noise (not new): `betterchunkloading` ↔ Canary mixin c
 
 ## 6. Proposals not applied (your call)
 
-1. **Remove TFC** — see §2.
-2. **HTD v6: keep or roll back** — see §1. Rolling back is the only option that lets the current
-   server accept this client.
+1. ~~**Remove TFC**~~ — done 2026-11-01; leftovers still to retire (§2).
+2. ~~**HTD v6: keep or roll back**~~ — rolled back to 4.0.0 on 2026-11-01; it was also what blacked out the
+   shaders view (§1).
 3. **Crash Assistant 1.11.12** added `send_uploaded_logs_data_to_kostromdan_dev = true` (sends upload
    metadata to a third-party server) and dropped the privacy-policy prompt. Set it to `false` if you
    don't want that.
 4. **Lore-loot coverage gaps** in `oc_loot.js` (same class of gap CONFIG_CHANGES already fixed for
    WDA/YUNG's): `abandoned_watchtower_refurnished:chests/freshloot` (new in 7.0), Spooky Campsite (2
-   tables), Big Lost City (5), and IDAS (206 tables). Worth a routing pass.
+   tables), Big Lost City (5), IDAS (206 tables), and YUNG's Better Nether Fortresses (skipped in July because TFC
+   blocked the nether; reachable again). Worth a routing pass.
 5. **EntityCulling 1.11** added `safeMode = true`; check in-game whether it costs FPS.
 6. **Stale docs** (lore/design, left alone): `ftbquest.md` lists "Knocker" under Unidentified
    Contact; `thelore.md` lists From The Fog as an Observer; `implore_implementation_plan.md` still
@@ -209,10 +218,52 @@ Known, pre-existing log noise (not new): `betterchunkloading` ↔ Canary mixin c
 
 1. `python scripts/sync_server_mods.py` (regenerates `SERVER_MODS.md`; keep the client-only
    exclusions). Keep the server on `chunksending-1.20.1-2.8` and `farsight-1.20.1-5.1` (it already
-   has them); the `.disabled` 4.1/5.8 jars must not be copied.
-2. Copy `defaultconfigs/` (minecolonies, tfc, hardcore_true_darkness), `config/openloader/`,
+   has them); the newer 4.1/5.8 jars are parked in the client's `local/mods-rolled-back-2026-11-01/` and must
+   not be copied.
+2. Copy `defaultconfigs/` (minecolonies, **pale_hound, cant_breathe** — new 2026-11-01 22:00; tfc only if TFC stays),
+   `config/openloader/` (HorrorSpawnRarity now also covers John Mod Reborn + Creeping Woods),
    `config/serversidehorror.json`, `config/weeping_angels*`, `config/doorknocker-common.toml`,
-   `config/simpledaylengthextender-common.toml`, `config/ftbquests/`, `kubejs/`.
-3. Apply the four `tfc-server.toml` toggles from §2 to the server's `defaultconfigs/tfc-server.toml`
-   (not done — server out of scope this pass).
-4. HTD v6 is a hard protocol gate: server and every client must run the same jar.
+   `config/simpledaylengthextender-common.toml`, `config/quark-common.toml`, `config/naturescompass-common.toml`,
+   `config/sereneseasons/`, `config/ftbquests/`, `kubejs/`. Jade / Xaero minimap changes are client-only.
+3. ~~Apply the four `tfc-server.toml` toggles from §2~~ — moot now that TFC is removed (item 6).
+4. Keep Hardcore True Darkness on `hardcoretruedarkness-4.0.0.jar` (the client was rolled back to it; v6 is a hard
+   protocol gate and must not be reintroduced on one side only).
+5. Copy the four Immersive Portals jars **and** `immptl_dimthread_compat-1.0.0.jar` (from `local/`) to the server; without the
+   shim the server log floods the same way (`docs/CONFIG_CHANGES.md`, "Immersive Portals × DimThreads").
+6. Add `sereneseasons-forge-1.20.1-9.1.0.3.jar` to the server — it is not client-only and the server has no copy;
+   seasons are computed server-side. Remove the server's TFC jar and dependants if TFC stays removed, and set
+   `level-type=minecraft:normal` in `server.properties`.
+7. The sync script's client-only exclusion list is sufficient as it stands: a dedicated server built from the
+   current `mods/` minus that list (281 jars, shim included) started cleanly on 2026-11-02.
+
+## 8. Consistency pass (2026-11-01 22:00) — configs the docs never covered
+
+Done after the void/HTD fixes were confirmed. Every documented value was re-verified; the changes
+are all to mods the July docs never reviewed, or to documented intents that were not actually in
+effect. Full entries with before/after and the reasoning are in `docs/CONFIG_CHANGES.md`
+("2026-11-01 (22:00)"):
+
+- **Pale Hound** was timer-summoned every 13–20 min, up to three at once, in every modded biome — its own
+  config's blacklist overrode the datapack tag the July pass relied on. Now `defaultconfigs/pale_hound-server.toml`
+  (hour-plus gaps, solitary, the five documented biomes).
+- **CANTBREATHE** (never reviewed) every 14–25 min → `defaultconfigs/cant_breathe-server.toml`, hour-plus gaps.
+- **John Mod Reborn** (weight 6/9/9 everywhere, baby packs of 3–9) and **Creeping Woods** (17 forest spawns,
+  weights 10–130) → weight 2 via `HorrorSpawnRarity`, same precedent as Rake/TOWW/Wendigo/WS.
+- **Xaero's Minimap** (new) radar off; **Jade** no longer identifies horror entities; **Nature's Compass** cannot
+  locate Alex's Caves biomes; **Quark** Totem of Holding off (Corpse is the death system); **Serene Seasons**
+  `day_duration` 36000 to match the 30-minute day.
+- Proposals left for you: singleplayer view/simulation distance 64/64 (the integrated server ticks ~16,600 chunks),
+  Artifacts night-vision goggles, Iron's/Ars teleports, compass XP cost, Comforts, retiring TFC leftovers.
+
+## 9. Immersive Portals × DimThreads (2026-11-02)
+
+Immersive Portals 3.0.7, Full Immersion, Ars Two-Way Portals and the Make it Compatible patch were added. The
+first world load wrote a 1.3 GB log in under three minutes: Immersive Portals' chunk-ticket flush checks that it
+is on the server thread, and under DimThreads each dimension ticks on its own worker, so the check failed once
+per tick per dimension. Neither project will fix it (DimThreads 1.20.1 has no build after v1.2.1 and the issue is
+unanswered; Immersive Portals' repository is archived).
+
+Resolved with a one-mixin shim built for this pack, `tools/immptl_dimthread_compat/`, which lets that one check
+accept the DimThreads worker that owns the level. Verified headless (80,685 errors in 90 s without it, 0 with it,
+no other change) and in-game (portals load and render their far side). It must also go on the server.
+Full entry: `CONFIG_CHANGES.md`, "Immersive Portals × DimThreads".

@@ -6,8 +6,16 @@
 **Generated:** 2026-07-12 (updated same day via `scripts/sync_server_mods.py`)
 
 > **⚠️ Stale as of 2026-11-01 — the client instance was updated (≈80 mods updated, 13 removed) and the server has NOT been.**
-> Re-run `scripts/sync_server_mods.py` when updating the server. Two things need deliberate handling:
-> **Hardcore True Darkness is now "v6"** (`hardcore_true_darkness-6.jar`, replaces `hardcoretruedarkness-4.0.0.jar`) — it is a client/server protocol gate, so server and every client must run the same jar; and the client's `defaultconfigs/`, `config/openloader/`, horror configs, quests and `kubejs/` changed — see `docs/UPDATE_REVIEW_2026-11-01.md` §7 for the copy list.
+> Re-run `scripts/sync_server_mods.py` when updating the server. Things that need deliberate handling:
+> - **Keep `hardcoretruedarkness-4.0.0.jar`, `chunksending-1.20.1-2.8.jar` and `farsight-1.20.1-5.1.jar`.** The client was rolled back to exactly these server jars; the newer v6 / 4.1 / 5.8 jars broke it and are parked in the client's `local/mods-rolled-back-2026-11-01/`. Never sync them.
+> - **TerraFirmaCraft and its dependants are disabled on the client**, so the sync drops them; also set `level-type=minecraft:normal` in `server.properties` (it is TFC's own `tfc:overworld` default today).
+> - **Serene Seasons** is new and runs server-side.
+> - The client's `defaultconfigs/`, `config/openloader/`, horror configs, quests and `kubejs/` changed — see `docs/UPDATE_REVIEW_2026-11-01.md` §7 for the copy list.
+
+> **2026-11-02:** the client now also runs **Immersive Portals 3.0.7 + Full Immersion + Ars Two-Way Portals + Make it Compatible** and the pack-built
+> **`immptl_dimthread_compat-1.0.0.jar`** (`tools/immptl_dimthread_compat/`, copy in `local/`). All five are common mods and must be copied to the
+> server with the sync; the shim is what stops Immersive Portals and DimThreads from flooding the log. See `docs/CONFIG_CHANGES.md`.
+> A headless dedicated server built from the client's `mods/` minus the current client-only list (281 jars, shim included) started cleanly on 2026-11-02, so the list needs no additions for the new mods.
 
 > The jar filename (including its version) is the authoritative record. The category
 > groupings below are a best-effort organization for readability — a few mods could

@@ -1,0 +1,21 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "birch_forest",
+    "dark_forest",
+    "flower_forest",
+    "forest",
+    "old_growth_birch_forest",
+    "windswept_forest",
+    "old_growth_pine_taiga",
+    "old_growth_spruce_taiga",
+    "snowy_taiga",
+    "taiga"
+  ],
+  "spawners": {
+    "type": "creepingwoods:creature_from_the_woods_hanging",
+    "weight": 2,
+    "minCount": 1,
+    "maxCount": 1
+  }
+}

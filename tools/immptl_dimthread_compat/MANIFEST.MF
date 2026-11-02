@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: immptl_dimthread_compat
+Implementation-Version: 1.0.0
+MixinConfigs: immptl_dimthread_compat.mixins.json
+

@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/SrRapero720/dimthreads/issues/47"
+
+[[mods]]
+modId = "immptl_dimthread_compat"
+version = "1.0.0"
+displayName = "Immersive Portals x DimThreads compat (Spooky Dookie)"
+authors = "Spooky Dookie pack"
+description = '''
+One mixin: Immersive Portals' ImmPtlChunkTickets.flushThrottling accepts the DimThreads
+worker thread that owns the level, instead of logging "Called in a non-server-main thread."
+and skipping the flush. Built against immersive-portals 3.0.7 and dimthread 1.2.1.
+'''
+
+[[dependencies.immptl_dimthread_compat]]
+modId = "imm_ptl_core"
+mandatory = true
+versionRange = "[3.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.immptl_dimthread_compat]]
+modId = "dimthread"
+mandatory = true
+versionRange = "[1.2,)"
+ordering = "AFTER"
+side = "BOTH"

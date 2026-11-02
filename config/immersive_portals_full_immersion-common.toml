@@ -1,0 +1,56 @@
+
+[combat]
+	#Allow players to attack entities through portals.
+	playerMeleeThroughPortals = true
+	#Allow hostile mobs to make melee attacks through portals.
+	mobMeleeThroughPortals = true
+	#Allow ranged mobs to acquire and fire at targets through portals.
+	rangedTargetingThroughPortals = true
+
+[navigation]
+	#Allow hostile mobs to pursue players through usable portals.
+	mobPortalPursuit = true
+	#Ticks between portal-awareness scans for each mob.
+	#Range: 10 ~ 100
+	aiScanIntervalTicks = 10
+	#Maximum route distance considered by portal-aware mobs.
+	#Range: 4.0 ~ 128.0
+	aiPortalRange = 32.0
+
+[performance]
+	#Maximum chunk-loading radius requested by ordinary portals. Lower values sharply reduce remote chunk ticking, autosave work, and entity spawning. True Immersion will never raise a lower Immersive Portals setting.
+	#Range: 2 ~ 32
+	portalChunkLoadingRadiusCap = 4
+	#Maximum distance in chunks at which a player activates portal destination chunk loading. Portals farther away remain inert unless another player or a real chunk loader keeps the destination active.
+	#Range: 2 ~ 32
+	portalDiscoveryRangeChunks = 8
+	#Maximum apparent distance in blocks for particles viewed through a portal. This does not load chunks.
+	#Range: 16 ~ 512
+	portalParticleVisibilityRange = 128
+	#Radius of the permanent vanilla Overworld spawn ticket. Vanilla uses 11, which retains 2209 chunk holders even with no players online. A radius of 3 retains a compact spawn region and approximately 961 holders.
+	#Range: 2 ~ 11
+	spawnChunkRadius = 3
+
+[raycast]
+	#Maximum number of portals a single interaction ray may traverse.
+	#Range: 1 ~ 16
+	maxPortalDepth = 4
+
+[environment]
+	#Allow ordinary water and lava to continue flowing through portals when the destination dimension permits that fluid.
+	fluidFlowThroughPortals = true
+
+[stability]
+	#Server-side keepalive timeout in seconds. Vanilla is 15. This does not fix tick stalls; it only prevents brief local-server freezes from immediately disconnecting players while the real stall source is profiled.
+	#Range: 15 ~ 600
+	keepaliveTimeoutSeconds = 120
+	#Netty read timeout in seconds for Minecraft client/server channels. Vanilla is 30. Increasing this prevents local modpack stalls from closing the network channel while the game is still recovering.
+	#Range: 30 ~ 600
+	readTimeoutSeconds = 120
+	#Suppress Netty read-timeout disconnects for local/loopback connections. This is intended for heavy single-player or localhost modpack testing where long recipe reloads, dimension work, or profiling stalls can otherwise kick the only player before the server recovers.
+	suppressLocalReadTimeouts = true
+
+[diagnostics]
+	#Log concise server-side portal ray diagnostics. Intended for troubleshooting only.
+	diagnosticLogging = false
+

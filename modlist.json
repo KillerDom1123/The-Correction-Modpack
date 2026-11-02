@@ -3,24 +3,23 @@
   "minecraft": "1.20.1",
   "loader": "forge",
   "counts": {
-    "enabled": 286,
-    "disabled": 0
+    "enabled": 303,
+    "disabled": 5
   },
   "categories": {
-    "Core libraries & performance": 70,
-    "Create & addons": 22,
-    "Tech — energy, automation, industry": 22,
-    "Magic": 8,
-    "Colony / civilisation": 8,
-    "Horror & atmosphere": 25,
+    "Core libraries & performance": 72,
+    "Create & addons": 23,
+    "Tech — energy, automation, industry": 19,
+    "Magic": 9,
+    "Colony / civilisation": 11,
+    "Horror & atmosphere": 26,
     "Mobs & world creatures": 4,
-    "Worldgen & structures": 27,
+    "Worldgen & structures": 28,
     "Food & farming": 7,
-    "Decoration & building": 19,
-    "Storage, QoL & utility": 50,
+    "Decoration & building": 30,
+    "Storage, QoL & utility": 55,
     "Security & protection": 3,
-    "Quests, loot, data & guides": 16,
-    "Uncategorised (edit CATEGORY_RULES)": 5
+    "Quests, loot, data & guides": 16
   },
   "mods": [
     {
@@ -161,6 +160,13 @@
       "modid": "ars_nouveau",
       "version": "4.12.7",
       "file": "ars_nouveau-1.20.1-4.12.7-all.jar",
+      "category": "Magic"
+    },
+    {
+      "name": "Ars Nouveau: Two-Way Portals",
+      "modid": "ars_two_way_portals",
+      "version": "1.3.4",
+      "file": "ars_two_way_portals-1.3.4.jar",
       "category": "Magic"
     },
     {
@@ -369,8 +375,8 @@
     {
       "name": "chunksending mod",
       "modid": "chunksending",
-      "version": "1.20.1-4.1",
-      "file": "chunksending-1.20.1-4.1.jar",
+      "version": "1.20.1-2.8",
+      "file": "chunksending-1.20.1-2.8.jar",
       "category": "Core libraries & performance"
     },
     {
@@ -504,7 +510,7 @@
       "modid": "cozyapartments",
       "version": "1.2",
       "file": "cozyapartments 1.20.1 v1.2.jar",
-      "category": "Uncategorised (edit CATEGORY_RULES)"
+      "category": "Colony / civilisation"
     },
     {
       "name": "Crash Assistant",
@@ -789,8 +795,8 @@
     {
       "name": "Farsight mod",
       "modid": "farsight_view",
-      "version": "1.20.1-5.8",
-      "file": "farsight-1.20.1-5.8.jar",
+      "version": "1.20.1-5.1",
+      "file": "farsight-1.20.1-5.1.jar",
       "category": "Storage, QoL & utility"
     },
     {
@@ -847,7 +853,7 @@
       "modid": "lunaracolonies",
       "version": "1.20.1.28s",
       "file": "forge-lunara-colonies-1.20.1.28.jar",
-      "category": "Uncategorised (edit CATEGORY_RULES)"
+      "category": "Colony / civilisation"
     },
     {
       "name": "Fragile Torches",
@@ -970,10 +976,10 @@
     },
     {
       "name": "Hardcore True Darkness",
-      "modid": "hardcore_true_darkness",
-      "version": "6",
-      "file": "hardcore_true_darkness-6.jar",
-      "category": "Uncategorised (edit CATEGORY_RULES)"
+      "modid": "hardcoretruedarkness",
+      "version": "4.0.0",
+      "file": "hardcoretruedarkness-4.0.0.jar",
+      "category": "Horror & atmosphere"
     },
     {
       "name": "Hexerei",
@@ -1011,6 +1017,34 @@
       "category": "Core libraries & performance"
     },
     {
+      "name": "Immersive Portals",
+      "modid": "immersive_portals",
+      "version": "3.0.7",
+      "file": "immersive-portals-3.0.7-all.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Immersive Portals Core",
+      "modid": "imm_ptl_core",
+      "version": "3.0.7",
+      "file": "immersive-portals-3.0.7-all.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "QMiscUtil",
+      "modid": "q_misc_util",
+      "version": "3.0.7",
+      "file": "immersive-portals-3.0.7-all.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Immersive Portals: Full Immersion",
+      "modid": "immersive_portals_full_immersion",
+      "version": "1.0.20",
+      "file": "immersive_portals_full_immersion-1.0.20.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
       "name": "Immersive Weathering",
       "modid": "immersive_weathering",
       "version": "1.20.1-2.0.5",
@@ -1030,6 +1064,13 @@
       "version": "4.3.0-36",
       "file": "ImmersivePetroleum-1.20.1-4.3.1-36b.jar",
       "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Immersive Portals x DimThreads compat (Spooky Dookie)",
+      "modid": "immptl_dimthread_compat",
+      "version": "1.0.0",
+      "file": "immptl_dimthread_compat-1.0.0.jar",
+      "category": "Core libraries & performance"
     },
     {
       "name": "Incendium",
@@ -1200,6 +1241,13 @@
       "category": "Worldgen & structures"
     },
     {
+      "name": "LumiLib",
+      "modid": "lumilib",
+      "version": "0.4.1",
+      "file": "lumilib-0.4.2-forge-1.20.1-0.4.2.jar",
+      "category": "Core libraries & performance"
+    },
+    {
       "name": "Mahou Tsukai",
       "modid": "mahoutsukai",
       "version": "1.20.1-v1.34.81",
@@ -1207,11 +1255,88 @@
       "category": "Magic"
     },
     {
-      "name": "Macaw's All-In-One for TFC",
-      "modid": "mcw_tfc_aio",
-      "version": "0.2.30-1.20.1",
-      "file": "mcw_tfc_aio-0.2.30-1.20.1.jar",
-      "category": "Tech — energy, automation, industry"
+      "name": "Make it Compatible: Immersive Portals",
+      "modid": "micimmptl",
+      "version": "1.1.0",
+      "file": "make-it-compatible-immersive-portals-forge-1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Macaw's Bridges",
+      "modid": "mcwbridges",
+      "version": "3.1.2",
+      "file": "mcw-bridges-3.1.2-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Doors",
+      "modid": "mcwdoors",
+      "version": "1.1.5",
+      "file": "mcw-doors-1.1.5-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Furniture",
+      "modid": "mcwfurnitures",
+      "version": "3.4.1",
+      "file": "mcw-furniture-3.4.1-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Holidays",
+      "modid": "mcwholidays",
+      "version": "1.1.2",
+      "file": "mcw-holidays-1.1.2-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Lights and Lamps",
+      "modid": "mcwlights",
+      "version": "1.1.5",
+      "file": "mcw-lights-1.1.5-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Fences and Walls",
+      "modid": "mcwfences",
+      "version": "1.2.1",
+      "file": "mcw-mcwfences-1.2.1-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Paths and Pavings",
+      "modid": "mcwpaths",
+      "version": "1.1.1",
+      "file": "mcw-mcwpaths-1.1.1-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Stairs and Balconies",
+      "modid": "mcwstairs",
+      "version": "1.0.2",
+      "file": "mcw-mcwstairs-1.0.2-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Windows",
+      "modid": "mcwwindows",
+      "version": "2.4.2",
+      "file": "mcw-mcwwindows-2.4.2-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Roofs",
+      "modid": "mcwroofs",
+      "version": "2.3.2",
+      "file": "mcw-roofs-2.3.2-mc1.20.1forge.jar",
+      "category": "Decoration & building"
+    },
+    {
+      "name": "Macaw's Trapdoors",
+      "modid": "mcwtrpdoors",
+      "version": "1.1.5",
+      "file": "mcw-trapdoors-1.1.5-mc1.20.1forge.jar",
+      "category": "Decoration & building"
     },
     {
       "name": "Mekanism",
@@ -1298,6 +1423,13 @@
       "category": "Worldgen & structures"
     },
     {
+      "name": "Create: More Bridges",
+      "modid": "morebridges",
+      "version": "1.0.2",
+      "file": "morebridges-forge-1.0.2+1.20.1.jar",
+      "category": "Create & addons"
+    },
+    {
       "name": "More Overlays Updated",
       "modid": "moreoverlays",
       "version": "1.24.1",
@@ -1344,7 +1476,7 @@
       "modid": "nochatrestrictions",
       "version": "1.20.1-v1.0.0",
       "file": "NoChatRestrictions-Forge-MC1.20.1-v1.0.0.jar",
-      "category": "Uncategorised (edit CATEGORY_RULES)"
+      "category": "Storage, QoL & utility"
     },
     {
       "name": "NotEnoughAnimations",
@@ -1543,6 +1675,13 @@
       "category": "Core libraries & performance"
     },
     {
+      "name": "Sophisticated Backpacks: Realistic Crafting",
+      "modid": "sbrc",
+      "version": "1.1",
+      "file": "sbrc-1.1-1.20.1.jar",
+      "category": "Storage, QoL & utility"
+    },
+    {
       "name": "SC CRT",
       "modid": "sc_cheiders",
       "version": "1.0.0",
@@ -1555,6 +1694,13 @@
       "version": "1.0.3",
       "file": "Searchables-forge-1.20.1-1.0.3.jar",
       "category": "Core libraries & performance"
+    },
+    {
+      "name": "Serene Seasons",
+      "modid": "sereneseasons",
+      "version": "9.1.0.3",
+      "file": "SereneSeasons-forge-1.20.1-9.1.0.3.jar",
+      "category": "Worldgen & structures"
     },
     {
       "name": "Server-Side Horror",
@@ -1771,14 +1917,7 @@
       "modid": "sword_and_kingdom_schematic",
       "version": "1.2",
       "file": "sword_and_kingdom_schematic-1.7.jar",
-      "category": "Uncategorised (edit CATEGORY_RULES)"
-    },
-    {
-      "name": "TerraFirmaCraft",
-      "modid": "tfc",
-      "version": "3.2.28",
-      "file": "TerraFirmaCraft-Forge-1.20.1-3.2.28.jar",
-      "category": "Tech — energy, automation, industry"
+      "category": "Colony / civilisation"
     },
     {
       "name": "Terralith",
@@ -1786,13 +1925,6 @@
       "version": "2.5.4",
       "file": "Terralith_1.20.x_v2.5.4.jar",
       "category": "Worldgen & structures"
-    },
-    {
-      "name": "TFC : Carry on Storage",
-      "modid": "tfc_knapsacks",
-      "version": "1.0.0",
-      "file": "TFC_CarryOnStorage1.2.0.jar",
-      "category": "Tech — energy, automation, industry"
     },
     {
       "name": "The Man From The Fog",
@@ -2033,5 +2165,41 @@
       "category": "Core libraries & performance"
     }
   ],
-  "disabled": []
+  "disabled": [
+    {
+      "name": "Ars Sophisticated Compatibility",
+      "modid": "arssophisticatedcompat",
+      "version": "0.3.0+mc1.20.1-forge",
+      "file": "arssophisticatedcompat-0.3.0+mc1.20.1-forge.jar.disabled",
+      "category": "Storage, QoL & utility"
+    },
+    {
+      "name": "Macaw's All-In-One for TFC",
+      "modid": "mcw_tfc_aio",
+      "version": "0.2.30-1.20.1",
+      "file": "mcw_tfc_aio-0.2.30-1.20.1.jar.disabled",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "Mekanism + Sophisticated Backpacks",
+      "modid": "mekanismsophisticatedbackpacks",
+      "version": "1.0.1+mc1.20.1-forge",
+      "file": "mekanismsophisticatedbackpacks-1.0.1+mc1.20.1-forge.jar.disabled",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "TerraFirmaCraft",
+      "modid": "tfc",
+      "version": "3.2.28",
+      "file": "TerraFirmaCraft-Forge-1.20.1-3.2.28.jar.disabled",
+      "category": "Tech — energy, automation, industry"
+    },
+    {
+      "name": "TFC : Carry on Storage",
+      "modid": "tfc_knapsacks",
+      "version": "1.0.0",
+      "file": "TFC_CarryOnStorage1.2.0.jar.disabled",
+      "category": "Tech — energy, automation, industry"
+    }
+  ]
 }

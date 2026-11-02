@@ -14,7 +14,7 @@
 	#Range: 0 ~ 1000000
 	sampleSpaceModifier = 16
 	#A list of biomes that the compass will not be able to search for, specified by resource location. The wildcard character * can be used to match any number of characters, and ? can be used to match one character. Ex: ["minecraft:savanna", "minecraft:desert", "minecraft:*ocean*"]
-	biomeBlacklist = []
+	biomeBlacklist = ["alexscaves:abyssal_chasm", "alexscaves:candy_cavity", "alexscaves:forlorn_hollows", "alexscaves:magnetic_caves", "alexscaves:primordial_caves", "alexscaves:toxic_caves"]
 	#The default number of XP levels consumed when searching for a biome. Individual biomes can be configured via perBiomeXpLevels.
 	#Range: 0 ~ 3
 	defaultXpLevels = 0

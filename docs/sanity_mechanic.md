@@ -231,8 +231,8 @@ EntityEvents.checkSpawn(event => {
 
 | Bucket | Spawn mechanism | Scalable by Channel B? | Members (per `CONFIG_CHANGES.md`) |
 |---|---|:--:|---|
-| **Natural / biome-weighted** | Vanilla/Forge spawn pipeline, biome spawn weight | **Yes** — routes through `checkSpawn` | The `HorrorSpawnRarity` set: **Rake, The One Who Watches, Wendigo, Whispering Spirits, Pale Hound**; general vanilla hostiles; **Weeping Angels** (biome spawn config — **[verify]** it routes through check-spawn) |
-| **Timer / scheduler self-summon** | The mod's own internal tick timer reads its `*-server.toml` cadence and summons directly | **No** — bypasses `checkSpawn`; KubeJS cannot rewrite a mod's loaded config per-player at runtime | **The Mimic** (`can_spawn_min/max`), **Cave Dweller** (`can_spawn_min/max`), **The Man From The Fog** (`min/max_spawn_rate`) |
+| **Natural / biome-weighted** | Vanilla/Forge spawn pipeline, biome spawn weight | **Yes** — routes through `checkSpawn` | The `HorrorSpawnRarity` set: **Rake, The One Who Watches, Wendigo, Whispering Spirits** (+ John Mod Reborn, Creeping Woods since 2026-11-01); general vanilla hostiles; **Weeping Angels** (biome spawn config — **[verify]** it routes through check-spawn) |
+| **Timer / scheduler self-summon** | The mod's own internal tick timer reads its `*-server.toml` cadence and summons directly | **No** — bypasses `checkSpawn`; KubeJS cannot rewrite a mod's loaded config per-player at runtime | **The Mimic** (`can_spawn_min/max`), **Cave Dweller** (`can_spawn_min/max`), **The Pale Hound** and **CANTBREATHE** (`can_spawn_min/max` — corrected 2026-11-01; Pale Hound was wrongly listed above as biome-weighted), **The Man From The Fog** (`min/max_spawn_rate`) |
 
 Bucket 2 keeps the static cadence already tuned in `CONFIG_CHANGES.md`; sanity cannot dynamically rarify it. Attempting to fight those schedulers by deleting freshly-summoned entities (`EntityEvents.spawned` post-removal) is possible but **rejected**: it flickers, many MCreator mobs summon outside the normal placement path so it wouldn't catch them anyway, and a scheduler that finds its spawn gone tends to just retry. Not worth the fragility.
 
@@ -286,8 +286,8 @@ So sanity sits *alongside* the other systems, is retunable and removable without
 | Situation | Behaviour | Why |
 |---|---|---|
 | **Multiplayer** | Fully per-player: per-player state, `@s`-targeted sounds/effects, per-player cooldowns and band lines. One player's breakdown is invisible and inaudible to another. | Sanity is a subjective state. |
-| **The Forgotten mob limiter** | Unaffected. The limiter suppresses *natural* spawns; horror mobs are structure/rare-spawn driven, so proximity detection still works. | Documented in `CONFIG_CHANGES.md`. |
-| **Nether portals disabled (TFC)** | Depth term never triggers in the Nether because players effectively can't reach it; the dimension guard makes it moot regardless. | `enableNetherPortals=false`. |
+| **The Forgotten mob limiter** *(mod removed 2026-11-01 — historical)* | Unaffected. The limiter suppresses *natural* spawns; horror mobs are structure/rare-spawn driven, so proximity detection still works. | Documented in `CONFIG_CHANGES.md`. |
+| **Nether access** | The Nether is reachable again (TFC, which disabled nether portals, was removed 2026-11-01). The depth term is overworld-only by its dimension guard, so being in the Nether never drains via depth. | dimension guard in `oc_sanity.js` |
 | **Sleeping through the night** | Rapid recovery, then daylight recovery on waking. A safe base fully resets dread overnight. | Intended rhythm. |
 | **Death** | Sanity reset to baseline on respawn (§3.2). | Deterministic regardless of Forge's copy-on-death behaviour; thematically "a clean slate." |
 | **Dimension change** | State persists on the player; drains/restores re-evaluate against the new dimension next interval. | Sanity is a property of the mind, not the place. |

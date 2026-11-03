@@ -3,7 +3,7 @@
 **Server:** `Servers/Server v2`  
 **Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10 · **Runtime:** Java 17 (pinned in `run.bat`/`run.sh`)  
 **Active mods:** 281 · **Disabled:** 0  
-**Generated:** 2026-11-02 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
+**Generated:** 2026-11-03 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
 
 > The server is the client instance's `mods/` **minus the client-only list** below, kept in step by
 > `scripts/sync_server_mods.py` (default target: `Servers/Server v2`). Every jar here must match the client
@@ -343,7 +343,7 @@
 
 ---
 
-## Client-only mods excluded from the server (22)
+## Client-only mods excluded from the server (23)
 Present in the client instance but deliberately **not** copied to the server. They set
 `IGNORE_SERVER_VERSION`, so clients keep them and are not refused for the server lacking them.
 
@@ -374,6 +374,7 @@ Present in the client instance but deliberately **not** copied to the server. Th
 - sound-physics-remastered-forge-1.20.1-1.5.1.jar
 
 **Client-only utilities:**
+- farsight_immptl_compat-1.0.0.jar (pack-built; source in `tools/farsight_immptl_compat/`, restores Farsight's chunk keeping under Immersive Portals)
 - jei-1.20.1-forge-15.56.0.205.jar (recipe viewer)
 - xaerominimap-forge-1.20.1-26.6.0.jar (minimap; the world map's server component is kept)
 

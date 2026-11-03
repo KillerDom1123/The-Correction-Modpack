@@ -25,7 +25,7 @@
   },
   "enableSmartPostProcessing": {
     "desc:": "Enables smart post processing, which slightly improves the general chunk loading speed by waiting with post processing(e.g. fluid updates) until neighbouring chunks are loaded: default:true",
-    "enableSmartPostProcessing": true
+    "enableSmartPostProcessing": false
   },
   "enableFasterChunkTasks": {
     "desc:": "Enables faster worldgen tasks: default:false",

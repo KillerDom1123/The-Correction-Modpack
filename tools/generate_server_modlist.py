@@ -38,13 +38,14 @@ EXCLUSION_GROUPS = [
     ("Client animation / audio",
      ["mobends-", "notenoughanimations-", "ambientsounds_", "sound-physics-remastered-", "presencefootsteps-"]),
     ("Client-only utilities",
-     ["jei-", "xaerominimap-"]),
+     ["jei-", "xaerominimap-", "farsight_immptl_compat-"]),
 ]
 NOTES = {
     "cavedust-": " — confirmed server crash 2026-07-12 (loads `client.gui.screens.Screen`)",
     "voidfog-": " — confirmed server crash 2026-07-12 (loads `client.renderer.FogRenderer`)",
     "jei-": " (recipe viewer)",
     "xaerominimap-": " (minimap; the world map's server component is kept)",
+    "farsight_immptl_compat-": " (pack-built; source in `tools/farsight_immptl_compat/`, restores Farsight's chunk keeping under Immersive Portals)",
 }
 
 

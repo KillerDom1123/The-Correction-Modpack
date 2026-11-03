@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "MIT"
+clientSideOnly = true
+
+[[mods]]
+modId = "farsight_immptl_compat"
+version = "1.0.0"
+displayName = "Farsight x Immersive Portals compat (Spooky Dookie)"
+authors = "Spooky Dookie pack"
+displayTest = "IGNORE_ALL_VERSION"
+description = '''
+Client only. Immersive Portals replaces the client chunk cache, so Farsight switches its own
+chunk manager off and the server's unload packets apply at once. This restores Farsight's
+delayed unload on top of Immersive Portals' chunk map: chunks the server forgets stay loaded
+while they are within your render distance, capped at 32 chunks. Built against
+immersive-portals 3.0.7 and farsight 1.20.1-5.1.
+'''
+
+[[dependencies.farsight_immptl_compat]]
+modId = "imm_ptl_core"
+mandatory = true
+versionRange = "[3.0,)"
+ordering = "AFTER"
+side = "CLIENT"
+
+[[dependencies.farsight_immptl_compat]]
+modId = "farsight_view"
+mandatory = true
+versionRange = "*"
+ordering = "AFTER"
+side = "CLIENT"

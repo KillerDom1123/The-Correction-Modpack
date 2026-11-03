@@ -62,6 +62,7 @@ CLIENT_ONLY_PREFIXES = [
     # client-only utilities
     "jei-",               # recipe viewer
     "xaerominimap-",      # minimap client; world map stays server-side
+    "farsight_immptl_compat-",  # pack-built; restores Farsight chunk keeping under Immersive Portals
 ]
 
 

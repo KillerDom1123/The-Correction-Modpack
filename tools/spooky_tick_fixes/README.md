@@ -56,15 +56,22 @@ normal play these procedures cost about 2.2 ms per tick with 2 players.
 
 | Switch | Targets (`execute` of each) | What it does | Why it's safe |
 |---|---|---|---|
-| `horrorRayCastLoadedOnly` | Creeping Woods `CreatureFromTheWoodsRaytracingProcedure`, `ShadowFigureDespawnProcedure`, `StatueMovementProcedure`; Rake `RakeRaytracingProcedure`; Whispering Spirits `PlayerLookAtSpiritProcedure`; John `WeepingJohnOnEntityTickUpdateProcedure`; The Obsessed `PlayerTickProcedure` | If any chunk in the ray's x/z span isn't loaded (`hasChunk`, which never loads one), it returns vanilla's own "nothing hit" result instead of loading the chunk | Each procedure then looks for its creature near the hit point, and entities exist only in loaded chunks, so the answer can't change |
+| `horrorRayCastLoadedOnly` | Creeping Woods `CreatureFromTheWoodsRaytracingProcedure`, `ShadowFigureDespawnProcedure`, `StatueMovementProcedure`; Rake `RakeRaytracingProcedure`; Whispering Spirits `PlayerLookAtSpiritProcedure`; John `WeepingJohnOnEntityTickUpdateProcedure`; The Obsessed `PlayerTickProcedure` | If any chunk in the ray's x/z span isn't a finished, loaded chunk right now (`getChunkNow`, which never waits), it returns vanilla's own "nothing hit" result instead of loading the chunk | Each procedure then looks for its creature near the hit point, and entities exist only in loaded chunks, so the answer can't change |
 | `horrorRayCastDedupe` | Same | Within one procedure run, a cast identical to the one just before it reuses that result (same level, end points, block and fluid modes). The memo is cleared at the start of every run. | The three copies are evaluated back to back in one expression, with nothing changing the world in between |
 
 All of it goes through `RayGuard`. It applies to server levels only: client-side calls reach vanilla unchanged.
 `/tickfixes stats` reports guarded casts, duplicates reused, and casts stopped at unloaded chunks. Expect about two in
 three to be duplicates, and stops only while someone moves faster than chunks load.
 
-**Not covered.** The Obsessed's `PlayerTickProcedure` also reads single blocks (`isEmptyBlock`, `getBlockState`) near the
-player. Those can't be answered without the chunk, so they're unchanged; they cost 2.5 s during the sailing stall.
+**1.3.1 fix.** 1.3.0 checked with `hasChunk`, but that only tests a chunk's *ticket level*. A chunk still loading or
+generating ahead of a moving player passed the check, vanilla `clip` then blocked on it, and on 2026-11-06 at 22:05
+the watchdog crashed the server after a 120 s tick (Rake's ray cast). 1.3.1 uses `getChunkNow`, which only returns a
+chunk whose load has finished.
+
+**1.3.2: The Obsessed waits for chunks** (`obsessedWaitForChunks`, `obsessedChunkRadius` = 3).
+- **The problem:** its `PlayerTickProcedure` also reads single blocks (`isEmptyBlock`, `getBlockState`) at random offsets of up to about 20 blocks around the player. A read can't be answered without the chunk, so these blocked on chunks still being generated: 19 s in one minute while a player was in fresh terrain (22:17).
+- **The fix:** the whole procedure is skipped for that player on any tick where a chunk within 3 chunks (48 blocks) isn't finished yet (`getChunkNow`, which never waits). It resumes once the area has loaded. This only happens on login or while moving into ungenerated terrain.
+- **Monitoring:** `/tickfixes stats` counts the deferred ticks.
 
 ## Activation range (1.1.0) — `[activationRange]`
 

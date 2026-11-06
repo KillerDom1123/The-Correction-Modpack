@@ -25,6 +25,7 @@
     "ray.SpiritRayMixin",
     "ray.JohnRayMixin",
     "ray.ObsessedRayMixin",
+    "ray.ObsessedChunkWaitMixin",
     "ServerLevelActivationRangeMixin",
     "anim.BornInChaosAnimationGateMixin",
     "anim.ObsessedAnimationGateMixin",

@@ -1232,7 +1232,23 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 
 **New server-side mods** (added to this instance; the server needs them too):
 - **Let Me Despawn** `letmedespawn-forge-1.20.1-1.26.11.1.jar`, plus its required library **Almanac** `almanac-forge-1.20.1-1.26.11.1.jar`. Mobs that pick up items now despawn normally and drop what they picked up.
-- **Dynamic View** `dynview-1.20.1-4.0.jar`. It lowers view and simulation distance when ticks run long. Its `config/dynview-common.toml` is created on first start. Intended values: max view 16, min view 8, max simulation 10, min simulation 6, target 40 ms, update every 60 s, log messages on. Check the log afterwards to confirm it actually changes simulation distance.
+- **Dynamic View** `dynview-1.20.1-4.0.jar` (reports itself as 2.3). It adjusts view and simulation distance from the average tick time.
+  - Its config is a Cupboard JSON, `config/dynamicview.json`, created on first start. The defaults were min/max view 10/10 and simulation 4/10.
+  - Applied values:
+
+    | Setting | Value | Why |
+    |---|---|---|
+    | `maxChunkViewDist` | 12 | The new `server.properties` `view-distance` |
+    | `minChunkViewDist` | 8 | |
+    | `maxSimulationDist` | 8 | The new `simulation-distance`; kept ≤ the minimum view distance |
+    | `minSimulationDist` | 6 | Keeps a colony around the player ticking |
+    | `meanAvgTickTime` | 40 ms | 10 ms of headroom, and below the activation range's 50 ms trigger |
+    | `viewDistanceUpdateRate` | 60 s | Each change makes clients reload chunks |
+    | `adjustSimulationDistance` | true | |
+    | `logMessages` | true | |
+
+  - The file is in this instance and on the VM. Cupboard's file watcher reloaded it live at 22:07.
+  - The VM's original was root-owned, because the server process runs as root, so the FTP user couldn't overwrite it. It was renamed to `dynamicview.json.root-owned-old`; the default copy is `dynamicview.json.default-bak`.
 
 **VM.**
 - Dynamic View and Let Me Despawn were uploaded first, without Almanac, and the 21:58 restart failed: "Mod letmedespawn requires almanac … and dungeonconfig … not installed". DungeonConfig is embedded in the Almanac jar (jar-in-jar), so that jar covers both.
@@ -1241,6 +1257,33 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - renamed the DimThreads and compat jars to `.jar.disabled`;
   - moved `spooky_tick_fixes-1.2.0` to `mods-removed/`.
 - 281 jars, parity verified. It takes effect on the next start.
+
+### Watchdog crashes 21:56 and 22:05, `spooky_tick_fixes` 1.3.1 (2026-11-06, night) — *client instance; VM pending*
+**Both crashes were the same failure.** In each, the watchdog killed the server after one tick ran past `max-tick-time` (120 s). The Server thread was inside `ServerChunkCache.getChunkBlocking`, called from a horror look-check ray cast while a player moved faster than chunks loaded. One world-generation thread was busy with terrain noise; the others were idle.
+- **21:56, old instance (1.2.0, no guard):** Creeping Woods' `CreatureFromTheWoodsRaytracingProcedure` called vanilla `clip`. The restart loop then hit the missing Almanac four times (21:56–21:58) until the sync.
+- **22:05, new instance (1.3.0):** Rake's `RakeRaytracingProcedure` called `RayGuard.clip`. The guard judged the span loaded and called vanilla `clip`, which blocked.
+
+**The 1.3.0 bug.** The span check used `hasChunk`. In `ServerChunkCache` that only tests that the chunk has a ticket at full-chunk level, not that its load has finished, so a chunk still generating ahead of the player passed.
+
+**The 1.3.1 fix.** The check now uses `ServerChunkCache.getChunkNow`. It reads the chunk's FULL future with `getNow` (verified in bytecode) and never waits, so a chunk that hasn't finished counts as not loaded and the cast returns vanilla's miss result.
+
+**Testing.** 1.3.1 boots on the scratch server: 27 patches applied, no errors. It's installed in this instance (`mods/` and `local/`).
+
+**VM.** The automated upload was refused by the session's permission check. Run `python scripts/sync_server_mods.py` (swaps 1.3.0 for 1.3.1), then restart. Until then the live server can hit the same hang.
+
+**Seen in passing.** The long-standing Better Chunk Loading mixin failure is a conflict with Canary's `chunk_access.ServerChunkCacheMixin`.
+
+### `spooky_tick_fixes` 1.3.2 — The Obsessed waits for chunks (2026-11-06, night) — *client instance + VM*
+- **What happened:** after the 22:11 restart (VM still on 1.3.0), Milton___ logged in at x −5537, far outside the pre-generated ±2,048 area. The profile (22:13–22:18, one 27.6 s tick) shows the Server thread blocked on chunks still being generated:
+  - Creeping Woods ray casts 30 s, Rake 25 s, shadow figure 5 s. All three went through the 1.3.0 guard bug, which 1.3.1 fixes; 1.3.1 was deployed after this profile.
+  - The Obsessed's `PlayerTickProcedure` block reads 19 s. The ray-cast guard doesn't cover these.
+- **The 22:10 crash** was the same 1.3.0 bug, through the Creeping Woods ray cast.
+- **1.3.2:**
+  - Skips The Obsessed's per-player tick while any chunk within 3 chunks of the player isn't finished (`getChunkNow`). Its reads reach about 20 blocks (random offsets ±10, 1–15, 1–20).
+  - Switches: `obsessedWaitForChunks`, `obsessedChunkRadius`.
+  - Boot-tested on the scratch server: 28 patches, no errors. Installed in this instance.
+- **VM:** uploaded with the sync (1.3.1 moved to `mods-removed/`; 281 jars, parity verified). Takes effect on restart.
+- **Also advised:** a world border at the pre-generated edge (`/worldborder center 0 0`, `/worldborder set 4096`) until the world is pre-generated further out.
 
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)

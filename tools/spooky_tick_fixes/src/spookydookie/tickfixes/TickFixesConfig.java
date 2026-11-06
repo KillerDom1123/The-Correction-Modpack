@@ -28,6 +28,8 @@ public final class TickFixesConfig {
     private static final ForgeConfigSpec.BooleanValue TOWW_SYNC_GATE;
     private static final ForgeConfigSpec.BooleanValue RAY_LOADED_ONLY;
     private static final ForgeConfigSpec.BooleanValue RAY_DEDUPE;
+    private static final ForgeConfigSpec.BooleanValue OBSESSED_CHUNK_WAIT;
+    private static final ForgeConfigSpec.IntValue OBSESSED_CHUNK_RADIUS;
 
     private static final ForgeConfigSpec.BooleanValue AR_ENABLED;
     private static final ForgeConfigSpec.DoubleValue AR_RANGE;
@@ -58,6 +60,8 @@ public final class TickFixesConfig {
     public static volatile boolean towwSyncGate = true;
     public static volatile boolean rayLoadedOnly = true;
     public static volatile boolean rayDedupe = true;
+    public static volatile boolean obsessedChunkWait = true;
+    public static volatile int obsessedChunkRadius = 3;
 
     public static volatile boolean activationEnabled = true;
     public static volatile double activationRangeBlocks = 48.0D;
@@ -123,6 +127,11 @@ public final class TickFixesConfig {
                 .define("horrorRayCastLoadedOnly", true);
         RAY_DEDUPE = b.comment("Same procedures: reuse the result of an identical ray cast made just before in the same procedure run (they cast each ray three times).")
                 .define("horrorRayCastDedupe", true);
+        OBSESSED_CHUNK_WAIT = b.comment("The Obsessed: skip its per-player tick while any chunk within obsessedChunkRadius of the player is still loading or",
+                                        "generating. Its block reads around the player would otherwise make the server thread wait for those chunks.")
+                .define("obsessedWaitForChunks", true);
+        OBSESSED_CHUNK_RADIUS = b.comment("Chunks around the player that must be loaded. Its reads reach about 20 blocks from the player; 3 chunks = 48 blocks.")
+                .defineInRange("obsessedChunkRadius", 3, 1, 8);
         b.pop();
 
         b.comment("Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs",
@@ -167,6 +176,8 @@ public final class TickFixesConfig {
         towwSyncGate = TOWW_SYNC_GATE.get();
         rayLoadedOnly = RAY_LOADED_ONLY.get();
         rayDedupe = RAY_DEDUPE.get();
+        obsessedChunkWait = OBSESSED_CHUNK_WAIT.get();
+        obsessedChunkRadius = OBSESSED_CHUNK_RADIUS.get();
         activationEnabled = AR_ENABLED.get();
         activationRangeBlocks = AR_RANGE.get();
         activationInterval = AR_INTERVAL.get();

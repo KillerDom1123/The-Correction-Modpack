@@ -38,6 +38,7 @@ public final class TickFixesMixinPlugin implements IMixinConfigPlugin {
             Map.entry("ray.SpiritRayMixin", "whispering_spirits"),
             Map.entry("ray.JohnRayMixin", "john_mod_reborn"),
             Map.entry("ray.ObsessedRayMixin", "the_obsessed"),
+            Map.entry("ray.ObsessedChunkWaitMixin", "the_obsessed"),
             Map.entry("anim.BornInChaosAnimationGateMixin", "born_in_chaos_v1"),
             Map.entry("anim.ObsessedAnimationGateMixin", "the_obsessed"),
             Map.entry("anim.CreepingWoodsAnimationGateMixin", "creepingwoods"),

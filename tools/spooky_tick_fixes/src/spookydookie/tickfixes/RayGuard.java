@@ -3,6 +3,7 @@ package spookydookie.tickfixes;
 import java.util.concurrent.atomic.LongAdder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -72,15 +73,22 @@ public final class RayGuard {
         return result;
     }
 
-    /** True if every chunk in the ray's x/z bounding box is loaded (hasChunk never loads one). */
+    /**
+     * True if every chunk in the ray's x/z bounding box is a finished, loaded chunk right now.
+     * Uses ServerChunkCache.getChunkNow, which only reads the chunk's FULL future with getNow() and never waits.
+     * (1.3.0 used hasChunk, which only checks the chunk's ticket level: a chunk still loading or generating ahead
+     * of a moving player passes that check, and vanilla clip then blocked on it. That hung the server for 120 s,
+     * and the watchdog crashed it on 2026-11-06 22:05.)
+     */
     private static boolean spanLoaded(Level level, Vec3 a, Vec3 b) {
+        ServerChunkCache cache = ((ServerLevel) level).m_7726_();
         int x0 = (int) Math.floor(Math.min(a.f_82479_, b.f_82479_) - EDGE) >> 4;
         int x1 = (int) Math.floor(Math.max(a.f_82479_, b.f_82479_) + EDGE) >> 4;
         int z0 = (int) Math.floor(Math.min(a.f_82481_, b.f_82481_) - EDGE) >> 4;
         int z1 = (int) Math.floor(Math.max(a.f_82481_, b.f_82481_) + EDGE) >> 4;
         for (int x = x0; x <= x1; x++) {
             for (int z = z0; z <= z1; z++) {
-                if (!level.m_7232_(x, z)) return false;
+                if (cache.m_7131_(x, z) == null) return false;
             }
         }
         return true;
@@ -92,9 +100,33 @@ public final class RayGuard {
         return BlockHitResult.m_82426_(to, Direction.m_122366_(d.f_82479_, d.f_82480_, d.f_82481_), BlockPos.m_274446_(to));
     }
 
+    static final LongAdder OBSESSED_WAITS = new LongAdder();
+
+    /**
+     * True if The Obsessed's player tick must be skipped this tick: a chunk within obsessedChunkRadius of the player
+     * is not a finished, loaded chunk yet (getChunkNow never waits). Uses the entity's position when there is one.
+     */
+    public static boolean obsessedMustWait(ServerLevel level, net.minecraft.world.entity.Entity entity, double x, double z) {
+        if (!TickFixesConfig.obsessedChunkWait) return false;
+        if (entity != null) { x = entity.m_20185_(); z = entity.m_20189_(); }
+        ServerChunkCache cache = level.m_7726_();
+        int r = TickFixesConfig.obsessedChunkRadius;
+        int cx = (int) Math.floor(x) >> 4, cz = (int) Math.floor(z) >> 4;
+        for (int dx = -r; dx <= r; dx++) {
+            for (int dz = -r; dz <= r; dz++) {
+                if (cache.m_7131_(cx + dx, cz + dz) == null) {
+                    OBSESSED_WAITS.increment();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     static String stats() {
         return "horror ray casts: " + CASTS.sum() + " guarded, " + DEDUPED.sum() + " duplicates reused, "
-                + STOPPED.sum() + " stopped at unloaded chunks (since start)";
+                + STOPPED.sum() + " stopped at unloaded chunks; Obsessed ticks deferred for loading chunks: "
+                + OBSESSED_WAITS.sum() + " (since start)";
     }
 
     private RayGuard() {}

@@ -1,27 +1,42 @@
 # Server Mod List — Spooky Dookie
 
-**Server:** `Servers/Server v2`  
-**Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10 · **Runtime:** Java 17 (pinned in `run.bat`/`run.sh`)  
-**Active mods:** 281 · **Disabled:** 0  
-**Generated:** 2026-11-03 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
+**Server:** the live VM (`files/server` under the FTP login)  
+**Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10  
+**Active jars:** 280 · **Disabled on the server:** 1  
+**Generated:** 2026-11-06 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
 
 > The server is the client instance's `mods/` **minus the client-only list** below, kept in step by
-> `scripts/sync_server_mods.py` (default target: `Servers/Server v2`). Every jar here must match the client
-> exactly, or players are refused at login.
+> `scripts/sync_server_mods.py`. Every jar here must match the client exactly, or players are refused at login.
+
+**Parity:** matches the client instance (303 active jars − 23 client-only = 280).
+
+> **Notes** (hand-maintained in `tools/generate_server_modlist.py`; everything else here is generated):
 >
-> **Pinned on both sides — never sync newer versions:** `chunksending-1.20.1-2.8` (4.1 never delivers chunks
-> under DimThreads), `farsight-1.20.1-5.1`, `hardcoretruedarkness-4.0.0` (v6 blacks out the view under shaders and is
-> a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.
->
-> **Pack-built:** `immptl_dimthread_compat-1.0.0.jar` (source in `tools/immptl_dimthread_compat/`) lets Immersive
-> Portals and DimThreads run together; without it the server log grows by ~100 MB a minute.
->
-> **Previous server:** `Servers/spookydookie` (July 2026, 264 mods, TFC-era) is kept unchanged for reference and is
-> no longer synced.
+> - **Live server:** the Proxmox VM, deployed over FTP by `scripts/sync_server_mods.py`. `Servers/Server v2`
+>   (built 2026-11-02) is now a local test bed (`--server`), and `Servers/spookydookie` (July 2026, TFC-era) is kept
+>   unchanged for reference; neither is synced by default.
+> - **Runtime:** the VM runs Java 21 (Ubuntu OpenJDK 21.0.12, `-Xms8G -Xmx32G`, G1). Forge 1.20.1 targets Java 17.
+> - **Pinned on both sides — never sync newer versions:** `chunksending-1.20.1-2.8` (4.1 never delivers chunks
+>   under DimThreads), `farsight-1.20.1-5.1`, `hardcoretruedarkness-4.0.0` (v6 blacks out the view under shaders and
+>   is a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.
+> - **Pack-built** (category *Local Fixes*, source in `tools/`): `immptl_dimthread_compat` lets Immersive Portals and
+>   DimThreads run together (without it the server log grows by ~100 MB a minute); `spooky_tick_fixes` holds the
+>   server-tick fixes and the activation range (config `config/spooky_tick_fixes-common.toml`). Both are on clients
+>   and the server. `farsight_immptl_compat` is client-only.
+> - **Removed / disabled 2026-11-06:** Data Anchor (an orphan library with a strict network channel, so it came off
+>   every client too) and The Man From The Fog (disabled in the client and on the VM).
+> - **Kept despite being client-leaning** (harmless idling on a server, and dropping them risked a dependency or
+>   client refusal): `Camerapture`, `farsight`, `sounds_of_the_forest`, `clientcrafting`, plus client-side libraries
+>   (`athena`, `fusion`, `Iceberg`, `Prism`, `CreativeCore`).
 
 ---
 
-## Core libraries & performance (68)
+## Local Fixes (2)
+
+- Immersive Portals x DimThreads compat (Spooky Dookie) — `immptl_dimthread_compat-1.0.0.jar`
+- Spooky Dookie tick fixes — `spooky_tick_fixes-1.1.0.jar`
+
+## Core libraries & performance (66)
 
 - Ad Astra: Structures Overhaul — `aso-0.1.0.jar`
 - AI-Improvements — `AI-Improvements-1.20-0.5.2.jar`
@@ -49,7 +64,6 @@
 - Cristel Lib — `cristellib-1.1.6-forge.jar`
 - Cupboard utilities — `cupboard-1.20.1-4.2.jar`
 - Curios API — `curios-forge-5.14.1+1.20.1.jar`
-- Data Anchor — `Data_Anchor-forge-1.20.1-1.0.0.24.jar`
 - Deimos — `deimos-1.20.1-forge-2.8.jar`
 - DimThreads — `dimthread-FORGE-mc1.20.1-v1.2.1.jar`
 - EntityCulling — `entityculling-forge-1.11.3-mc1.20.1.jar`
@@ -63,7 +77,6 @@
 - GlitchCore — `GlitchCore-forge-1.20.1-0.0.1.1.jar`
 - GuideME — `guideme-20.1.15.jar`
 - Iceberg — `Iceberg-1.20.1-forge-1.1.25.jar`
-- Immersive Portals x DimThreads compat (Spooky Dookie) — `immptl_dimthread_compat-1.0.0.jar`
 - Integrated API — `integrated_api-forge-1.20.1-1.9.1.jar`
 - Iron's Lib — `irons_lib-1.20.1-2.3.0.jar`
 - kotlinforforge-4.12.0-all — `kotlinforforge-4.12.0-all.jar`
@@ -166,7 +179,7 @@
 - TownTalk — `towntalk-1.20.1-1.1.0.jar`
 - UI Library Mod — `blockui-1.20.1-1.0.193.jar`
 
-## Horror & atmosphere (21)
+## Horror & atmosphere (20)
 
 - Antlers — `antlers-1.0.0.jar`
 - Born in Chaos — `born_in_chaos_[Forge]1.20.1_1.7.5.jar`
@@ -182,7 +195,6 @@
 - Rake: The Arrival — `RakeArrival-forge-1.20.1-1.7.jar`
 - Server-Side Horror — `serversidehorror-1.20.1-forge-5.1.jar`
 - Sounds of the Forest — `sounds_of_the_forest-1.0.2-forge-1.20.1.jar`
-- The Man From The Fog — `The-Man-From-The-Fog-1.4-1.20.1.jar`
 - The One Who Watches — `TheOneWhoWatches-V1.4.4-1.20.1.jar`
 - The Pale Hound — `Pale_Hound-1.20.1-1.10.0.jar`
 - the_obsessed — `the_obsessed-1.5.2g-forge-1.20.1.jar`
@@ -346,6 +358,7 @@
 ## Client-only mods excluded from the server (23)
 Present in the client instance but deliberately **not** copied to the server. They set
 `IGNORE_SERVER_VERSION`, so clients keep them and are not refused for the server lacking them.
+The groups and notes come from `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods.py`.
 
 **Rendering / shaders / visual FX — hard-crash a dedicated server:**
 - cavedust-2.0.4-1.20.1-forge.jar — confirmed server crash 2026-07-12 (loads `client.gui.screens.Screen`)
@@ -374,20 +387,20 @@ Present in the client instance but deliberately **not** copied to the server. Th
 - sound-physics-remastered-forge-1.20.1-1.5.1.jar
 
 **Client-only utilities:**
-- farsight_immptl_compat-1.0.0.jar (pack-built; source in `tools/farsight_immptl_compat/`, restores Farsight's chunk keeping under Immersive Portals)
-- jei-1.20.1-forge-15.56.0.205.jar (recipe viewer)
-- xaerominimap-forge-1.20.1-26.6.0.jar (minimap; the world map's server component is kept)
+- farsight_immptl_compat-1.0.0.jar — pack-built; source in `tools/farsight_immptl_compat/`, restores Farsight's chunk keeping under Immersive Portals
+- jei-1.20.1-forge-15.56.0.205.jar — recipe viewer
+- xaerominimap-forge-1.20.1-26.6.0.jar — minimap; the world map's server component is kept
 
-> **Kept despite being client-leaning** (harmless idling on a server, and dropping them risked a dependency or
-> client refusal): `Camerapture`, `farsight`, `sounds_of_the_forest`, `clientcrafting`, plus client-side libraries
-> (`athena`, `fusion`, `Iceberg`, `Prism`, `CreativeCore`). A dedicated server built from this list started cleanly
-> on 2026-11-02 (281 jars).
+## Disabled jars
+**On the server** (1) — left in `mods/` as `.jar.disabled`, not loaded:
 
-## Disabled mods
-The server has no disabled jars. The **client instance** keeps these as `.jar.disabled` — loaded on neither side:
+- The-Man-From-The-Fog-1.4-1.20.1.jar.disabled
+
+**In the client instance** (6) — kept as `.jar.disabled`; none may be active on the server:
 
 - TFC_CarryOnStorage1.2.0.jar.disabled
 - TerraFirmaCraft-Forge-1.20.1-3.2.28.jar.disabled
+- The-Man-From-The-Fog-1.4-1.20.1.jar.disabled
 - arssophisticatedcompat-0.3.0+mc1.20.1-forge.jar.disabled
 - mcw_tfc_aio-0.2.30-1.20.1.jar.disabled
 - mekanismsophisticatedbackpacks-1.0.1+mc1.20.1-forge.jar.disabled

@@ -17,6 +17,8 @@
     "FullImmersionDespawnMixin",
     "AlexsCavesMagnetMixin",
     "CitadelTrackerCacheMixin",
+    "AntlersDayCounterMixin",
+    "TowwWorldSyncMixin",
     "ServerLevelActivationRangeMixin",
     "anim.BornInChaosAnimationGateMixin",
     "anim.ObsessedAnimationGateMixin",

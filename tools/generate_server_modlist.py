@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
-"""Generate docs/SERVER_MODS.md from a dedicated server's actual mods/ folder.
+"""Generate docs/SERVER_MODS.md from the dedicated server's actual mods/ folder.
 
-Reuses the parser and CATEGORY_RULES of tools/generate_modlist.py and the client-only
-prefix list of scripts/sync_server_mods.py, so the three stay consistent.
+Reuses the parser and CATEGORY_RULES of tools/generate_modlist.py, and the server access and client-only
+groups of scripts/sync_server_mods.py, so the three stay consistent.
 
 Usage:
-    python tools/generate_server_modlist.py                     # current server (Server v2)
-    python tools/generate_server_modlist.py --server "<path>"   # another server folder
+    python tools/generate_server_modlist.py                     # the live VM, over FTP (the default)
+    python tools/generate_server_modlist.py --server "<path>"   # a local server folder, e.g. Servers/Server v2
 Run it after scripts/sync_server_mods.py.
+
+On the VM the jars are listed over FTP and their names and versions are read from the client instance's copy of
+the same file (parity means they are identical); a jar the client lacks is listed from its filename.
+Everything except NOTES below is read from the server and the client instance.
 """
 import argparse
 import importlib.util
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -29,66 +34,108 @@ def load(name: str, path: Path):
 gm = load("generate_modlist", ROOT / "tools" / "generate_modlist.py")
 sync = load("sync_server_mods", ROOT / "scripts" / "sync_server_mods.py")
 
-# Grouping of the client-only exclusions, in the order the sync script lists them.
-EXCLUSION_GROUPS = [
-    ("Rendering / shaders / visual FX — hard-crash a dedicated server",
-     ["embeddium-", "oculus-", "sodiumdynamiclights-", "sodiumoptionsapi-", "immediatelyfast-", "cavedust-", "voidfog-"]),
-    ("Client HUD / GUI / input — no server function",
-     ["betterf3-", "borderlesswindow-", "blur-", "controlling-", "mousetweaks-", "legendarytooltips-", "moreoverlays-", "chat_heads-"]),
-    ("Client animation / audio",
-     ["mobends-", "notenoughanimations-", "ambientsounds_", "sound-physics-remastered-", "presencefootsteps-"]),
-    ("Client-only utilities",
-     ["jei-", "xaerominimap-", "farsight_immptl_compat-"]),
-]
-NOTES = {
-    "cavedust-": " — confirmed server crash 2026-07-12 (loads `client.gui.screens.Screen`)",
-    "voidfog-": " — confirmed server crash 2026-07-12 (loads `client.renderer.FogRenderer`)",
-    "jei-": " (recipe viewer)",
-    "xaerominimap-": " (minimap; the world map's server component is kept)",
-    "farsight_immptl_compat-": " (pack-built; source in `tools/farsight_immptl_compat/`, restores Farsight's chunk keeping under Immersive Portals)",
-}
+
+def natural(s: str):
+    # "47.4.10" > "47.4.9": digit runs compare as numbers.
+    return [int(t) if i % 2 else t for i, t in enumerate(re.split(r"(\d+)", s))]
+
+# Hand-maintained: printed as-is. Update when the facts change.
+NOTES = """\
+> **Notes** (hand-maintained in `tools/generate_server_modlist.py`; everything else here is generated):
+>
+> - **Live server:** the Proxmox VM, deployed over FTP by `scripts/sync_server_mods.py`. `Servers/Server v2`
+>   (built 2026-11-02) is now a local test bed (`--server`), and `Servers/spookydookie` (July 2026, TFC-era) is kept
+>   unchanged for reference; neither is synced by default.
+> - **Runtime:** the VM runs Java 21 (Ubuntu OpenJDK 21.0.12, `-Xms8G -Xmx32G`, G1). Forge 1.20.1 targets Java 17.
+> - **Pinned on both sides — never sync newer versions:** `chunksending-1.20.1-2.8` (4.1 never delivers chunks
+>   under DimThreads), `farsight-1.20.1-5.1`, `hardcoretruedarkness-4.0.0` (v6 blacks out the view under shaders and
+>   is a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.
+> - **Pack-built** (category *Local Fixes*, source in `tools/`): `immptl_dimthread_compat` lets Immersive Portals and
+>   DimThreads run together (without it the server log grows by ~100 MB a minute); `spooky_tick_fixes` holds the
+>   server-tick fixes and the activation range (config `config/spooky_tick_fixes-common.toml`). Both are on clients
+>   and the server. `farsight_immptl_compat` is client-only.
+> - **Removed / disabled 2026-11-06:** Data Anchor (an orphan library with a strict network channel, so it came off
+>   every client too) and The Man From The Fog (disabled in the client and on the VM).
+> - **Kept despite being client-leaning** (harmless idling on a server, and dropping them risked a dependency or
+>   client refusal): `Camerapture`, `farsight`, `sounds_of_the_forest`, `clientcrafting`, plus client-side libraries
+>   (`athena`, `fusion`, `Iceberg`, `Prism`, `CreativeCore`).
+"""
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--server", type=Path, default=sync.DEFAULT_SERVER)
+    sync.add_target_args(ap)
     args = ap.parse_args()
-    server = args.server
-    mods_dir = server / "mods"
-    if not mods_dir.is_dir():
-        print(f"mods/ not found at {mods_dir}", file=sys.stderr)
-        return 1
+    server = sync.open_server(args.server)
+    try:
+        return generate(server, args.server)
+    finally:
+        server.close()
 
-    jars = [gm.parse_jar(p) for p in sorted(mods_dir.glob("*.jar"), key=lambda p: p.name.lower())]
+
+def generate(server, server_path: Path | None) -> int:
+    if not server.exists("mods"):
+        print(f"no mods/ folder on {server.label}", file=sys.stderr)
+        return 1
+    listing = server.listing("mods")
+    names = sorted(sync.jar_files(listing), key=str.lower)
+    server_disabled = sorted(sync.jar_files(listing, ".jar.disabled"), key=str.lower)
+
+    jars, from_filename = [], []
+    for n in names:
+        src = server.local_path(n) or ROOT / "mods" / n
+        if src.is_file():
+            jars.append(gm.parse_jar(src))
+        else:
+            from_filename.append(n)
+            jars.append({"file": n, "mc": None, "mods": [
+                {"modid": "?", "name": Path(n).stem, "version": gm.version_from_filename(n)}]})
+
+    # Installed Forge: libraries/net/minecraftforge/forge/<mc>-<forge>/
+    forge_lib = "libraries/net/minecraftforge/forge"
+    forge_dirs = [n for n, (k, _) in server.listing(forge_lib).items() if k == "d" and "-" in n] \
+        if server.exists(forge_lib) else []
+    mc, forge = max(forge_dirs, key=natural).split("-", 1) if forge_dirs else ("1.20.1", "unknown")
+
     client = sorted((ROOT / "mods").glob("*.jar"), key=lambda p: p.name.lower())
     excluded = [p.name for p in client if sync.is_client_only(p.name)]
+    expected = {p.name for p in client if not sync.is_client_only(p.name)}
     client_disabled = sorted(p.name for p in (ROOT / "mods").glob("*.jar.disabled"))
+    missing = sorted(expected - set(names), key=str.lower)
+    extra = sorted(set(names) - expected, key=str.lower)
 
     groups: dict[str, list[dict]] = {}
     for j in jars:
         groups.setdefault(gm.categorise(j["mods"][0]["modid"], j["file"]), []).append(j)
 
-    rel = server.relative_to(sync.SERVERS_ROOT.parent) if server.is_relative_to(sync.SERVERS_ROOT.parent) else server
+    if server_path is None:
+        where = "the live VM (`files/server` under the FTP login)"
+    else:
+        rel = server_path.relative_to(sync.SERVERS_ROOT.parent) \
+            if server_path.is_relative_to(sync.SERVERS_ROOT.parent) else server_path
+        where = f"`{rel.as_posix()}` (local folder)"
+
     out: list[str] = []
     w = out.append
     w("# Server Mod List — Spooky Dookie\n")
-    w(f"**Server:** `{rel.as_posix()}`  ")
-    w("**Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10 · **Runtime:** Java 17 (pinned in `run.bat`/`run.sh`)  ")
-    w(f"**Active mods:** {len(jars)} · **Disabled:** 0  ")
-    w(f"**Generated:** {date.today().isoformat()} by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.\n")
+    w(f"**Server:** {where}  ")
+    w(f"**Minecraft:** {mc} · **Loader:** Forge {forge}  ")
+    w(f"**Active jars:** {len(names)} · **Disabled on the server:** {len(server_disabled)}  ")
+    w(f"**Generated:** {date.today().isoformat()} by `tools/generate_server_modlist.py` from the server's own "
+      "`mods/` folder — do not edit by hand.\n")
     w("> The server is the client instance's `mods/` **minus the client-only list** below, kept in step by")
-    w("> `scripts/sync_server_mods.py` (default target: `Servers/Server v2`). Every jar here must match the client")
-    w("> exactly, or players are refused at login.")
-    w(">")
-    w("> **Pinned on both sides — never sync newer versions:** `chunksending-1.20.1-2.8` (4.1 never delivers chunks")
-    w("> under DimThreads), `farsight-1.20.1-5.1`, `hardcoretruedarkness-4.0.0` (v6 blacks out the view under shaders and is")
-    w("> a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.")
-    w(">")
-    w("> **Pack-built:** `immptl_dimthread_compat-1.0.0.jar` (source in `tools/immptl_dimthread_compat/`) lets Immersive")
-    w("> Portals and DimThreads run together; without it the server log grows by ~100 MB a minute.")
-    w(">")
-    w("> **Previous server:** `Servers/spookydookie` (July 2026, 264 mods, TFC-era) is kept unchanged for reference and is")
-    w("> no longer synced.\n")
+    w("> `scripts/sync_server_mods.py`. Every jar here must match the client exactly, or players are refused at login.\n")
+    if not (missing or extra):
+        w(f"**Parity:** matches the client instance ({len(client)} active jars − {len(excluded)} client-only "
+          f"= {len(expected)}).\n")
+    else:
+        w("**Parity: ⚠ differs from the client instance** — run `scripts/sync_server_mods.py`:\n")
+        for n in missing:
+            w(f"- missing on the server: `{n}`")
+        for n in extra:
+            w(f"- on the server but not wanted: `{n}`")
+        w("")
+    w(NOTES)
     w("---\n")
     for cat in [c for c, _ in gm.CATEGORY_RULES] + [gm.FALLBACK_CATEGORY]:
         items = groups.get(cat)
@@ -96,37 +143,45 @@ def main() -> int:
             continue
         w(f"## {cat} ({len(items)})\n")
         for j in sorted(items, key=lambda x: x["mods"][0]["name"].lower()):
-            names = " + ".join(m["name"] for m in j["mods"])
-            w(f"- {names} — `{j['file']}`")
+            names_ = " + ".join(m["name"] for m in j["mods"])
+            flag = " — *not in the client instance; name from the filename*" if j["file"] in from_filename else ""
+            w(f"- {names_} — `{j['file']}`{flag}")
         w("")
 
     w("---\n")
     w(f"## Client-only mods excluded from the server ({len(excluded)})")
     w("Present in the client instance but deliberately **not** copied to the server. They set")
-    w("`IGNORE_SERVER_VERSION`, so clients keep them and are not refused for the server lacking them.\n")
-    for title, prefixes in EXCLUSION_GROUPS:
-        hits = [(n, next(p for p in prefixes if n.lower().startswith(p))) for n in excluded
-                if any(n.lower().startswith(p) for p in prefixes)]
-        if not hits:
-            continue
-        w(f"**{title}:**")
-        for n, p in hits:
-            w(f"- {n}{NOTES.get(p, '')}")
+    w("`IGNORE_SERVER_VERSION`, so clients keep them and are not refused for the server lacking them.")
+    w("The groups and notes come from `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods.py`.\n")
+    by_group: dict[str, list[str]] = {}
+    for n in excluded:
+        group, note = sync.client_only_entry(n)
+        by_group.setdefault(group, []).append(f"- {n}" + (f" — {note}" if note else ""))
+    for group, _ in sync.CLIENT_ONLY_GROUPS:
+        if by_group.get(group):
+            w(f"**{group}:**")
+            out.extend(by_group[group])
+            w("")
+
+    w("## Disabled jars")
+    if server_disabled:
+        w(f"**On the server** ({len(server_disabled)}) — left in `mods/` as `.jar.disabled`, not loaded:\n")
+        out.extend(f"- {n}" for n in server_disabled)
         w("")
-    w("> **Kept despite being client-leaning** (harmless idling on a server, and dropping them risked a dependency or")
-    w("> client refusal): `Camerapture`, `farsight`, `sounds_of_the_forest`, `clientcrafting`, plus client-side libraries")
-    w("> (`athena`, `fusion`, `Iceberg`, `Prism`, `CreativeCore`). A dedicated server built from this list started cleanly")
-    w("> on 2026-11-02 (281 jars).\n")
-    w("## Disabled mods")
-    w("The server has no disabled jars. The **client instance** keeps these as `.jar.disabled` — loaded on neither side:\n")
-    for n in client_disabled:
-        w(f"- {n}")
+    else:
+        w("**On the server:** none.\n")
+    w(f"**In the client instance** ({len(client_disabled)}) — kept as `.jar.disabled`; none may be active on the server:\n")
+    out.extend(f"- {n}" for n in client_disabled)
     w("")
 
     target = ROOT / "docs" / "SERVER_MODS.md"
     target.write_text("\n".join(out), encoding="utf-8")
-    print(f"Wrote {target} — {len(jars)} server jars, {len(excluded)} client-only excluded, "
-          f"{len(client_disabled)} disabled on the client.")
+    print(f"Wrote {target}: {len(names)} server jars ({where}), {len(excluded)} client-only excluded, "
+          f"{len(server_disabled)} disabled on the server, {len(client_disabled)} disabled in the client.")
+    if missing or extra:
+        print(f"PARITY: {len(missing)} missing on the server, {len(extra)} unwanted on the server; see the document.")
+    if from_filename:
+        print("Not in the client instance (listed from filename):", ", ".join(from_filename))
     uncat = groups.get(gm.FALLBACK_CATEGORY, [])
     if uncat:
         print("Uncategorised:", ", ".join(j["mods"][0]["modid"] for j in uncat))

@@ -24,6 +24,8 @@ public final class TickFixesConfig {
     private static final ForgeConfigSpec.BooleanValue FULL_IMMERSION_GATE;
     private static final ForgeConfigSpec.BooleanValue ALEXSCAVES_GATE;
     private static final ForgeConfigSpec.BooleanValue CITADEL_CACHE;
+    private static final ForgeConfigSpec.BooleanValue ANTLERS_DAY_COUNTER;
+    private static final ForgeConfigSpec.BooleanValue TOWW_SYNC_GATE;
 
     private static final ForgeConfigSpec.BooleanValue AR_ENABLED;
     private static final ForgeConfigSpec.DoubleValue AR_RANGE;
@@ -50,6 +52,8 @@ public final class TickFixesConfig {
     public static volatile boolean fullImmersionGate = true;
     public static volatile boolean alexsCavesGate = true;
     public static volatile boolean citadelCache = true;
+    public static volatile boolean antlersDayCounter = true;
+    public static volatile boolean towwSyncGate = true;
 
     public static volatile boolean activationEnabled = true;
     public static volatile double activationRangeBlocks = 48.0D;
@@ -104,6 +108,11 @@ public final class TickFixesConfig {
                 .define("alexsCavesMovingBlockGate", true);
         CITADEL_CACHE = b.comment("Citadel: cache the tick-rate tracker per server instead of a saved-data lookup on every entity tick.")
                 .define("citadelTrackerCache", true);
+        ANTLERS_DAY_COUNTER = b.comment("Antlers: run its day counter on the overworld's tick only. It runs on every level's tick but the counter is global,",
+                                        "so it counted ~45x too fast and sent a full sync to every player each time. Changes behaviour: days count at the real pace.")
+                .define("antlersDayCounterOverworldOnly", true);
+        TOWW_SYNC_GATE = b.comment("The One Who Watches: skip its per-tick world-variable sync for levels with no players (the packet goes nowhere); the data is still marked for saving.")
+                .define("towwEmptyLevelSyncSkip", true);
         b.pop();
 
         b.comment("Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs",
@@ -144,6 +153,8 @@ public final class TickFixesConfig {
         fullImmersionGate = FULL_IMMERSION_GATE.get();
         alexsCavesGate = ALEXSCAVES_GATE.get();
         citadelCache = CITADEL_CACHE.get();
+        antlersDayCounter = ANTLERS_DAY_COUNTER.get();
+        towwSyncGate = TOWW_SYNC_GATE.get();
         activationEnabled = AR_ENABLED.get();
         activationRangeBlocks = AR_RANGE.get();
         activationInterval = AR_INTERVAL.get();
@@ -160,7 +171,8 @@ public final class TickFixesConfig {
                 + ") obsessedSync=" + obsessedSync + " spiritLookGate=" + spiritLookGate + " fragileTorches=" + fragileTorches
                 + " farmCharmSync=" + farmCharmSync + "(" + farmCharmRefreshTicks + "t) animationGates=" + animationGates
                 + " adAstraExtraGate=" + adAstraExtraGate + " fullImmersionGate=" + fullImmersionGate + " alexsCavesGate=" + alexsCavesGate
-                + " citadelCache=" + citadelCache + " | activationRange enabled=" + activationEnabled + " range=" + activationRangeBlocks
+                + " citadelCache=" + citadelCache + " antlersDayCounter=" + antlersDayCounter + " towwSyncGate=" + towwSyncGate
+                + " | activationRange enabled=" + activationEnabled + " range=" + activationRangeBlocks
                 + " interval=" + activationInterval + " adaptive=" + activationAdaptive + "(" + activationEnableAboveMspt + "/"
                 + activationDisableBelowMspt + " ms)";
     }

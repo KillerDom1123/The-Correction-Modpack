@@ -940,6 +940,7 @@ Player feedback asked for far less surface horror ("above land in overworld is p
 - `HorrorSpawnRarity/data/man/forge/biome_modifier/mftfhang_biome_modifier.json` → `{"type": "forge:none"}` (the hanging variant spawned at weight 10 in every biome and is not covered by the config switch; `forge:none` is Forge's registered no-op modifier).
 - Not affected: the cultist `man:house` structure, the Cultist villager job, and the once-per-world Ko-fi advert and cassette on first join (only removing the jar drops those). Already-spawned hanging Men stay until `/kill @e[type=man:mftfhang]`. `HorrorQuietAdvancements` stays in place.
 - Applied to this instance, and **deployed to the VM server on 2026-11-06**: `man_config.toml`, the `mftfhang` override and the `HorrorQuietAdvancements` pack, all uploaded and verified byte for byte (see "Server tick audit — phases 0–1" below). Still to copy: "The Correction (Dev)" (singleplayer only) and the local test bed `Servers/Server v2`.
+- **Later the same day the jar itself was disabled** (`.jar.disabled`) in this instance and on the VM, which also drops the structure, job and advert listed above. See "Man From The Fog jar disabled, deployment tooling" below.
 
 ### Mod set changes, 2026-11-01 evening → 2026-11-02 (record)
 Changes made in the CurseForge app after the update review started, compared with the committed `modlist.json` (commit "Config changes"). Each one's config work is in the entries above.
@@ -1132,6 +1133,58 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - no shim-related errors.
 
 **Still open:** the in-game checks (with players), the post-change spark profile, Alex's Caves' magnetism check, Slice & Dice wet air, The Obsessed's cached-namespace fix, and the watcher despawn rule (§5.5.2, held back because it changes horror pacing; it needs a decision).
+
+### Man From The Fog jar disabled, deployment tooling (2026-11-06, evening) — *client + VM*
+**Mod set.**
+- `The-Man-From-The-Fog-1.4-1.20.1.jar` is `.jar.disabled` in this instance and on the VM. The client and the VM must agree: `man:man` is a strict network channel, so a mismatch refuses the login with "mismatched mod channel list".
+- The second client instance, "The Correction (Dev)", was deleted; this instance is the only client.
+- VM parity: 280 active jars = the client's 303 − 23 client-only. Data Anchor is gone from every side, and `spooky_tick_fixes-1.1.0` is on both.
+
+**VM disk.** At 19:06 the 12.6 GB VM disk had 247 MB free and SimpleBackups aborted ("Not enough space on disk"). The full 18:00 copy in `/files/serverbak` had taken the remaining space. Its `simplebackups/` folder (9 zips, 2.44 GB) was an exact copy of the live one (same names and sizes) and was deleted, leaving about 2.7 GB free. SimpleBackups is unchanged (full backup every 120 min, keep 10, about 1 GB each), so the VM disk is to be grown in Proxmox.
+
+**Tooling (`scripts/`, `tools/`).**
+- **`scripts/sync_server_mods.py`** now deploys to the live VM by default, over FTP with the login from `~/.spooky_ftp_netrc`; `--server <folder>` targets a local server folder. It shows the changes and, for the VM, asks before applying (`--dry-run` only shows them, `--yes` skips the question).
+  - Uploads go to `<name>.part` and are then renamed, so a broken upload never loads.
+  - Unwanted jars are no longer deleted. They're renamed to `.jar.disabled` when the client has them disabled too, otherwise moved to `mods-removed/` beside `mods/`.
+  - Local targets compare SHA-256; the VM compares sizes.
+  - The client-only list now carries its groups and notes (`CLIENT_ONLY_GROUPS`), so the server doc can no longer miss a jar.
+- **`tools/generate_server_modlist.py`** reads the VM by default.
+  - It computes the server's disabled jars, the Forge version (from `libraries/`) and client parity.
+  - Its fixed prose is a single hand-maintained `NOTES` block, which now says the VM runs Java 21.
+  - `docs/SERVER_MODS.md` was regenerated from the VM: 280 jars, 1 disabled, parity OK.
+- **`tools/generate_modlist.py`:**
+  - new first category **Local Fixes**: `spooky_tick_fixes`, `immptl_dimthread_compat`, `farsight_immptl_compat` (the last two were filed under libraries and QoL);
+  - the Minecraft version is the most common declared x.y.z reading, no longer the first jar alphabetically;
+  - jars are closed after reading, and counts say jars and mods;
+  - `modlist.md`/`modlist.json`/README were regenerated (303 enabled jars, 306 mods, 6 disabled). The previous files predated Data Anchor's removal and the tick-fix jar.
+- **Build scripts:** the three `tools/*/build.py` share `tools/_javabuild.py`.
+  - The mod id and version are read from `mods.toml`, which must match `MANIFEST.MF`.
+  - `--install` removes older versions from `mods/` and `local/` for all three. Before this, two of them left the old jar, which would stop Forge with a duplicate mod.
+  - Library wildcards pick the highest version numerically; `mods/` jars must match exactly once.
+  - The JDK and library paths can be overridden (`SPOOKY_JDK`, `SPOOKY_MC_LIBS`).
+  - All three rebuilt to contents identical to the installed jars.
+- **Not synced:** the local test bed `Servers/Server v2` still has Data Anchor and an active Man From The Fog, and lacks `spooky_tick_fixes`. `python scripts/sync_server_mods.py --server "…/Servers/Server v2"` brings it in line.
+
+### `spooky_tick_fixes` 1.2.0 (2026-11-06, evening) — *client instance; VM pending*
+**Source.** The post-fix all-threads profile of the VM (19:06–19:20; it was too large to upload, so it was decoded from `config/spark/profile-2026-11-06_19.20.44.sparkprofile`).
+- **What changed after 1.1.0:** same population (about 550–600 entities, about 150 mimics); 20 TPS with a 46 ms median, down from 6.6–7.2 TPS at about 140 ms.
+- **DimThreads 1.2.1 doesn't run levels in parallel.** `DimThread.swapThreadsAndRun` is `static synchronized` and wraps each level's tick. So all ~45 levels tick one after another, and any cost paid per level is paid about 45 times per tick.
+
+**New patches** (details: `tools/spooky_tick_fixes/README.md`):
+- **`antlersDayCounterOverworldOnly`: a bug fix that changes behaviour.** Antlers' day counter runs on every level's tick, but the counter is global, and each run sent a full sync to every player.
+  - Measured on the scratch server: **10,170 counts in about 224 ticks (45.4 per tick) without the patch, and 227 with it.**
+  - Day counting returns to the real pace, and sync packets drop 45×. The counter's only effect is the one-time `wendigospawn` flag at day 2, which is already set in existing worlds.
+- **`towwEmptyLevelSyncSkip`:** The One Who Watches no longer encodes its per-level sync packet when that level has no players; the data is still marked dirty. Verified: an empty dimension's `WorldTime` still advances and is saved.
+
+**Our own overhead** (2.7% of the serial tick):
+- The activation-range immunity check reads fire ticks instead of calling `isOnFire()`, which goes through Create's NBT read.
+- The Fragile Torches pre-check uses one chunk lookup instead of two.
+
+**Verification.**
+- Scratch server: all 20 conditional patches applied, no errors.
+- Installed in this instance's `mods/` and `local/`, replacing 1.1.0. Not yet uploaded to the VM: `python scripts/sync_server_mods.py` swaps the jar there, then restart.
+
+**Seen while testing.** `Mixin apply failed betterchunkloading.mixins.json:ServerChunkCacheMixin` (it can't inject into `ServerChunkCache.getChunk`) appears in the VM log as well. It predates the shim, so Better Chunk Loading's chunk-priority hook has never been active.
 
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)

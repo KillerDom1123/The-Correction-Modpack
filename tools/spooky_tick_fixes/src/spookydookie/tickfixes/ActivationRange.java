@@ -88,7 +88,9 @@ public final class ActivationRange {
     private static boolean immune(Mob mob) {
         if (mob.m_5448_() != null) return true;                       // has a target
         if (mob.f_20916_ > 0 || mob.m_21188_() != null) return true;  // hurt recently
-        if (mob.m_6060_() || mob.m_20077_()) return true;              // burning / in lava
+        // burning / in lava. Fire ticks are read directly: isOnFire() also asks fireImmune(), which Create wraps
+        // with a persistent-data read. A fire-immune mob with fire ticks is now immune too (more conservative).
+        if (mob.m_20094_() > 0 || mob.m_20077_()) return true;
         if (mob.m_21523_() || mob.m_20159_() || mob.m_20160_()) return true; // leashed / riding / ridden
         if (mob instanceof Raider raider && raider.m_37885_() != null) return true; // in a raid
         return alwaysTick(mob.m_6095_());

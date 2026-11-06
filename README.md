@@ -6,9 +6,9 @@
 > *They fell because they found something they could not understand."*
 
 <!-- MODLIST:START -->
-> **At a glance** — Minecraft 1.20.1 · Forge · **303 mods** · full list in [modlist.md](modlist.md)
+> **At a glance** — Minecraft 1.20.1 · Forge · **303 mod jars (306 mods)** · full list in [modlist.md](modlist.md)
 >
-> Core libraries & performance (72) · Create & addons (23) · Tech — energy, automation, industry (19) · Magic (9) · Colony / civilisation (11) · Horror & atmosphere (26) · Mobs & world creatures (4) · Worldgen & structures (28) · Food & farming (7) · Decoration & building (30) · Storage, QoL & utility (55) · Security & protection (3) · Quests, loot, data & guides (16)
+> Local Fixes (3) · Core libraries & performance (70) · Create & addons (23) · Tech — energy, automation, industry (19) · Magic (9) · Colony / civilisation (11) · Horror & atmosphere (25) · Mobs & world creatures (4) · Worldgen & structures (28) · Food & farming (7) · Decoration & building (30) · Storage, QoL & utility (55) · Security & protection (3) · Quests, loot, data & guides (16)
 <!-- MODLIST:END -->
 
 ---
@@ -122,12 +122,15 @@ All mods are the property of their respective authors — please support them.
 
 The pack is **server-ready**. To host:
 
-The current server is **`Servers/Server v2`** (Forge 47.4.10, Java 17, 281 mods, built 2026-11-02 with a fresh world). Its mod list is in **[docs/SERVER_MODS.md](docs/SERVER_MODS.md)**.
+The live server runs on a **Proxmox VM** (Forge 47.4.10) and is deployed over FTP. Its mod list is in **[docs/SERVER_MODS.md](docs/SERVER_MODS.md)**. `Servers/Server v2` (built 2026-11-02) is now a local test bed.
 
 1. Install a matching **Forge 1.20.1 (47.4.10)** dedicated server with the **same mod list and versions** as clients.
-2. Copy the mods with `python scripts/sync_server_mods.py` (defaults to `Servers/Server v2`; `--server <folder>` for another). It copies the client's mods minus the client-only list and prunes anything else.
+2. Sync the mods with `python scripts/sync_server_mods.py`.
+   - It targets the VM by default, with the FTP login from `~/.spooky_ftp_netrc`; `--server <folder>` targets a local server folder instead.
+   - It copies the client's mods minus the client-only list and takes anything else out of `mods/`, moving it aside rather than deleting it.
+   - It shows the changes and asks before touching the VM. `--dry-run` only shows them.
 3. Copy **`config/`** (includes the OpenLoader datapacks and quests), **`defaultconfigs/`**, and **`kubejs/`**. Copy `saves/<world>` → the server's `world/` if migrating an existing map.
-4. Keep `mods/` and `kubejs/startup_scripts/` **identical** on server and clients (registry parity), or players will be unable to connect. Then regenerate the server mod list with `python tools/generate_server_modlist.py`.
+4. Keep `mods/` and `kubejs/startup_scripts/` **identical** on server and clients (registry parity), or players will be unable to connect. Then restart the server and regenerate the server mod list with `python tools/generate_server_modlist.py`; it reads the VM and reports parity.
 
 Client-only tweaks (audio, video, personal options) stay on each player's client and are ignored by the server.
 
@@ -137,9 +140,11 @@ Client-only tweaks (audio, video, personal options) stay on each player's client
 
 This repository tracks the pack's **configuration and custom content**, not the mod binaries:
 
-- **Tracked:** `config/` (all mod configs, OpenLoader datapacks, FTB Quests), `kubejs/` (custom scripts/items), `defaultconfigs/` (per-world defaults), the `docs/` markdown, and `tools/` (the modlist generator and the source of the pack's own compat mod).
+- **Tracked:** `config/` (all mod configs, OpenLoader datapacks, FTB Quests), `kubejs/` (custom scripts/items), `defaultconfigs/` (per-world defaults), the `docs/` markdown, and `tools/` (the modlist generators and the source of the pack's own mods, listed under **Local Fixes** in the modlist).
+- **Building:** each `tools/<mod>/build.py` uses the shared `tools/_javabuild.py` (JDK 17 plus the CurseForge install's libraries; no Gradle). The version lives in the mod's `mods.toml` and `MANIFEST.MF`. `--install` copies the jar into `mods/` and `local/` and removes older versions there.
 - **Built here:** `immptl_dimthread_compat` — a one-mixin mod that lets Immersive Portals and DimThreads run together. Build it with `python tools/immptl_dimthread_compat/build.py --install`; a copy of the jar is kept in `local/`. It belongs on clients **and** the server.
-- **Built here:** `spooky_tick_fixes` — behaviour-preserving server-tick fixes (dormant mimics, TOWW follow range, The Obsessed sync, Whispering Spirits, Fragile Torches, Farm & Charm, MCreator animation handlers, Ad Astra Extra, Full Immersion, Alex's Caves, Citadel), plus an adaptive **activation range** (far mobs tick less often while the server is behind; MineColonies, guards and scripted horror are exempt; `/tickfixes stats` shows its status). Each patch has a switch in `config/spooky_tick_fixes-common.toml`. Build it with `python tools/spooky_tick_fixes/build.py --install`. It ships on clients and the server, but the server can run it alone. Details: `tools/spooky_tick_fixes/README.md` and `docs/SERVER_TICK_AUDIT_2026-11-06.md`.
+- **Built here:** `spooky_tick_fixes` — behaviour-preserving server-tick fixes (dormant mimics, TOWW follow range, The Obsessed sync, Whispering Spirits, Fragile Torches, Farm & Charm, MCreator animation handlers, Ad Astra Extra, Full Immersion, Alex's Caves, Citadel, TOWW's per-level sync, Antlers' day counter), plus an adaptive **activation range** (far mobs tick less often while the server is behind; MineColonies, guards and scripted horror are exempt; `/tickfixes stats` shows its status). Each patch has a switch in `config/spooky_tick_fixes-common.toml`. Build it with `python tools/spooky_tick_fixes/build.py --install`. It ships on clients and the server, but the server can run it alone. Details: `tools/spooky_tick_fixes/README.md` and `docs/SERVER_TICK_AUDIT_2026-11-06.md`.
+- **Built here:** `farsight_immptl_compat` — restores Farsight's client chunk keeping under Immersive Portals. Client-only; the sync never copies it to the server.
 - **Not tracked:** `mods/`, `saves/`, caches, logs, and machine-specific files (see `.gitignore`).
 
 The pack is heavily **rebalanced by design** — see **[docs/CONFIG_CHANGES.md](docs/CONFIG_CHANGES.md)** for a full per-mod record of every configuration change and the reasoning behind it (progression gating, horror rarity, colony danger, etc.).

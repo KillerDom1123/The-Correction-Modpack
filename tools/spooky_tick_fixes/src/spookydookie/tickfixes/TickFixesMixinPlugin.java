@@ -31,6 +31,8 @@ public final class TickFixesMixinPlugin implements IMixinConfigPlugin {
             Map.entry("FullImmersionDespawnMixin", "immersive_portals_full_immersion"),
             Map.entry("AlexsCavesMagnetMixin", "alexscaves"),
             Map.entry("CitadelTrackerCacheMixin", "citadel"),
+            Map.entry("AntlersDayCounterMixin", "antlers"),
+            Map.entry("TowwWorldSyncMixin", "the_one_who_watches"),
             Map.entry("anim.BornInChaosAnimationGateMixin", "born_in_chaos_v1"),
             Map.entry("anim.ObsessedAnimationGateMixin", "the_obsessed"),
             Map.entry("anim.CreepingWoodsAnimationGateMixin", "creepingwoods"),

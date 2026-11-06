@@ -81,3 +81,6 @@ user-prefs.json
 /tools/immptl_dimthread_compat/build/
 /tools/farsight_immptl_compat/build/
 /tools/spooky_tick_fixes/build/
+
+# Python bytecode (tools/_javabuild.py is imported by the build scripts)
+__pycache__/

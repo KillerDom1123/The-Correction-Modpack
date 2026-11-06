@@ -1,0 +1,62 @@
+
+#Spooky Dookie tick fixes. Each patch skips work that cannot change the outcome;
+#see docs/SERVER_TICK_AUDIT_2026-11-06.md section 5.3. Set a switch to false to restore the mod's own behaviour.
+[patches]
+	#Artifacts: a dormant mimic skips its tick while no player is within mimicWakeRange (it can only wake by targeting a player within 16 blocks, being hurt, or being in water).
+	mimicSleep = true
+	#Blocks. Must stay above the mimic's 16-block follow range.
+	#Range: 17.0 ~ 128.0
+	mimicWakeRange = 24.0
+	#The One Who Watches: cap the follow range of the stationary watchers (hanging, staring, crawling, hallucination, delusion, looked_at). The mod hardcodes 2048, which makes each path search visit up to 32768 nodes.
+	watcherFollowRange = true
+	#Follow range for those watchers. Their look-at-player goal has its own 1000-block range, so they still watch.
+	#Range: 8.0 ~ 2048.0
+	watcherFollowRangeCap = 32.0
+	#The Obsessed: send the player-variable sync once per player per tick (end of tick) instead of once per variable write (up to 102 per tick).
+	obsessedSyncCoalesce = true
+	#Whispering Spirits: skip the per-player look check (100 ray steps x 3 raycasts per tick) when no spirit is loaded in that dimension.
+	spiritLookGate = true
+	#Fragile Torches: check for a fragile torch at the mob's feet/head before the per-mob config list parse.
+	fragileTorchesPrecheck = true
+	#Farm & Charm: send an animal's saturation sync only when it changes (plus a periodic refresh and when a player starts tracking the animal), instead of every tick to every player.
+	farmCharmSyncOnChange = true
+	#Ticks between forced refreshes of an unchanged saturation value.
+	#Range: 20 ~ 1200
+	farmCharmRefreshTicks = 100
+	#MCreator animation-sync handlers (Born in Chaos, The Obsessed, Creeping Woods, Foes, TOWW, Rake, Antlers): skip mobs from other mods (each handler only acts on its own mod's entity classes).
+	animationGates = true
+	#Ad Astra Extra: skip its per-mob procedure for mobs that are neither 'gassed' nor in adastraextra:jupiter (its only two branches).
+	adAstraExtraGate = true
+	#Immersive Portals Full Immersion: skip its per-mob portal-AI wrapper and portal despawn check in dimensions that contain no portal.
+	fullImmersionGate = true
+	#Alex's Caves: skip the per-movement search for moving magnetic blocks in dimensions that contain none.
+	alexsCavesMovingBlockGate = true
+	#Citadel: cache the tick-rate tracker per server instead of a saved-data lookup on every entity tick.
+	citadelTrackerCache = true
+
+#Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs
+#(slow motion); MineColonies, guards, scripted horror and bosses are excluded by default.
+[activationRange]
+	#Master switch.
+	enabled = true
+	#Blocks from the nearest player in the same dimension beyond which a mob is 'far'.
+	#Range: 16.0 ~ 256.0
+	range = 48.0
+	#A far mob ticks once every this many ticks (staggered by entity id).
+	#Range: 2 ~ 20
+	interval = 4
+	#Only throttle while the server is behind: switch on when the average tick exceeds enableAboveMspt, off again below disableBelowMspt.
+	adaptive = true
+	#Range: 1.0 ~ 1000.0
+	enableAboveMspt = 50.0
+	#Range: 0.0 ~ 1000.0
+	disableBelowMspt = 30.0
+	#Advance AgeableMob age on skipped ticks, so growth and breeding cooldowns keep normal pace.
+	ageCatchUp = true
+	#Run the vanilla despawn check on skipped ticks, so despawn rates are unchanged.
+	despawnChecks = true
+	#Entity ids that always tick at full rate.
+	alwaysTickEntities = ["minecraft:ender_dragon", "minecraft:wither", "minecraft:warden", "minecraft:elder_guardian"]
+	#Mod namespaces whose entities always tick at full rate.
+	alwaysTickNamespaces = ["minecolonies", "guardvillagers", "the_one_who_watches", "rake_the_arrival", "the_obsessed", "cave_dweller", "weeping_angels", "pale_hound", "cant_breathe", "themimic_er", "whispering_spirits", "antlers", "john_mod_reborn", "creepingwoods", "man", "mahoutsukai"]
+

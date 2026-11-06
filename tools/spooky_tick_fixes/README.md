@@ -29,9 +29,24 @@ The portal and moving-block counts (`EntityCounters`) are kept from entity join/
 "present": joins are counted first, and the count never goes below zero. So a miscount turns a gate off; it never
 wrongly turns one on.
 
+## Patches added in 1.2.0
+
+These come from the post-fix profile of 2026-11-06 19:06–19:20, a 14-minute all-threads profile of the VM. All ~45 levels
+tick in series, because DimThreads 1.2.1 holds one global lock around each level tick, so a per-level cost is paid about
+45 times per tick.
+
+| Switch | Target | What it skips | Why it's safe |
+|---|---|---|---|
+| `antlersDayCounterOverworldOnly` | Antlers `DayCounterProcedure#onWorldTick` | The procedure on every level except the overworld (server side) | **Changes behaviour (a bug fix).** Its counter lives in global saved data, so it counted ~45 ticks per tick and sent a full sync to every player each time (~900 packets/s per player). Now it counts one per tick. Its only effect is the one-time `wendigospawn` flag at day 2, which the Wendigo Flute reads (1.6% of the serial tick) |
+| `towwEmptyLevelSyncSkip` | TOWW `TheOneWhoWatchesModVariables$WorldVariables#syncData` | Encoding the per-level sync packet for a level with no players. The data is still marked dirty | The packet is addressed to the players in that level, so with none it goes nowhere. The mod also syncs on login and on dimension change (2.3%) |
+
+The existing gates were also made cheaper. Our own code was 2.7% of the serial tick:
+- **Activation range:** the immunity check reads fire ticks directly instead of calling `isOnFire()`, which asks `fireImmune()`, which Create wraps with a persistent-data read. A fire-immune mob with fire ticks now counts as immune, which is more conservative.
+- **Fragile Torches pre-check:** one chunk lookup for both blocks instead of two `getBlockState` calls. The entity's cached feet state isn't used, because `baseTick` clears it after this event fires.
+
 ## Activation range (1.1.0) — `[activationRange]`
 
-This is the one feature that changes behaviour, for far mobs only. Mobs more than `range` (48) blocks from every player
+This changes behaviour, for far mobs only. (The other behaviour change is the 1.2.0 Antlers day-counter fix.) Mobs more than `range` (48) blocks from every player
 in their dimension tick once every `interval` (4) ticks, staggered by entity id. A skipped tick is skipped entirely, so
 the mob moves, thinks and runs its own timers in slow motion. Two things still run on skipped ticks, so their rates
 are unchanged:
@@ -72,8 +87,10 @@ rule (§5.5.2).
 ## Build / deploy
 
 `python tools/spooky_tick_fixes/build.py [--install]` builds with JDK 17 against the CurseForge install's libraries
-and the target mod jars. No Gradle, no network. Output: `build/spooky_tick_fixes-<version>.jar`; `--install` copies
-it to `mods/` and `local/` and removes older versions there. Then run `scripts/sync_server_mods.py` (or upload it to the VM's `mods/`).
+and the target mod jars (shared steps: `tools/_javabuild.py`). No Gradle, no network. The version is set in
+`resources/META-INF/mods.toml` and `MANIFEST.MF`, which must agree. Output: `build/spooky_tick_fixes-<version>.jar`;
+`--install` copies it to `mods/` and `local/` and removes older versions there. Then run
+`python scripts/sync_server_mods.py` to upload it to the VM, and restart the server.
 
 Rebuild after updating any target mod. If a target changed, startup fails with a clear mixin error naming the patch.
 Set that patch's switch to false, or remove it from `spooky_tick_fixes.mixins.json`.

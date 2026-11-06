@@ -1,0 +1,7 @@
+{
+  "criteria": {
+    "feelingwatched_0": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

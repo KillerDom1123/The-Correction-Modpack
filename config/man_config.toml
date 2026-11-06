@@ -1,7 +1,7 @@
 
 ["Server and Client"]
 	#enable spawning of the man
-	enable_spawning = true
+	enable_spawning = false
 	#minimum duration of spawning in ticks
 	min_spawn_rate = 48000.0
 	#maximum duration of spawning in ticks

@@ -330,6 +330,16 @@ Left enabled at prior values: `scary_sound`, `heads_from_list`, `random_heads` (
 
 **Why:** appears every ~2–8 in-game days, pursues longer and is harder to shake, and breaks through more/faster — a rare but serious event.
 
+### What the mod actually does (read from the 1.4 jar, 2026-11-06)
+- **Spawn timer:** one world-wide timer (`timer_global`) that every player advances by one per tick **while within 2 blocks of the surface heightmap**; underground players don't count. When it passes a random target between `min_spawn_rate` and `max_spawn_rate`, the Man is summoned in an Overworld biome, day or night (`spawn_at_day = true`), and moved 35–99 blocks from the player with `spreadplayers`. Because every surface player advances the same timer, three players outside bring him about three times as often. Nothing spawns if one is already within 200 blocks.
+- **On spawn:** a random spawn sound, and the player is granted `man:feelingwatched` ("Feeling Watched", description "Man spawning first time"). The shipped advancement is its own tab with `show_toast` and `announce_to_chat` true, so it told everyone he had arrived.
+- **Stalk, then chase:** looking at him (an unobstructed ray within 300 blocks) turns him into the aggressive form, which targets you and gives Darkness for `darkness_effect_duration`. The chase lasts `min/max_chase_duration`; he climbs, swims fast, breaks blocks up to `block_hardness` (`block_hardness_search` while searching), calls lightning (`lightnings`), and vanishes if you get `vanish_distance` away.
+- **Death:** a full-screen jumpscare (`jumpscare`). Killing him drops the Tear of the Man and grants `man:kill` (+100 XP, announced). Dying to him with a book and the Tear nearby yields the Fog Speed / Fog Protection enchantments.
+- **Other:** you can't sleep with him within 200 blocks ("You can't sleep..." plus 0.1 damage); `man:mftfhang`, a hanging variant at weight 10 in every biome, spawns under tree canopy at night and turns to face players within 100 blocks; a cultist `man:house` structure (spacing 60, any non-water biome) with a Cultist villager profession; once per world the first player to join gets a Ko-fi chat advert and Cassette 1 (not configurable). Commands live under `/man` (`spawn`, `timer`, `reset_timer`, `jumpscare_screen`, `debug`).
+
+### "Feeling Watched" silenced (2026-11-06) — `HorrorQuietAdvancements` OpenLoader datapack — *global*
+`data/man/advancements/feelingwatched.json` is overridden with the same `minecraft:impossible` criterion and **no `display` block**, so the advancement is still granted (the mod's spawn code does not null-check it, so deleting it could throw in the entity tick) but shows no toast, no chat line and no advancement tab. Players who already have it keep it invisibly. `man:kill` and the two enchantment advancements are left as they are. Takes effect on the next world load or `/reload`. Needed on every server that runs the mod (Server v2, the VM server) and in "The Correction".
+
 ---
 
 ## Day Length (`DayLength30` datapack) — *global*
@@ -924,6 +934,13 @@ Four jars were added 2026-11-02 ~01:00: **Immersive Portals 3.0.7** (mod ids `im
 
 **Farsight is inert while Immersive Portals is installed (2026-11-03):** the client log says `Farsight not enabled for: ResourceKey[minecraft:dimension / minecraft:overworld] as other mods changed the chunk source to: class qouteall.imm_ptl.core.chunk_loading.ImmPtlClientChunkMap`. Both mods replace the client chunk cache and Immersive Portals wins, so Farsight's client-side chunk keeping does nothing and the view range is limited by the server's `view-distance` (Server v2: 12) whatever the client slider says. Farsight has no server-side code. The pin to 5.1 is still needed for the Chunk Sending 2.8 stack, so the jar stays. To see farther on the server, raise `view-distance` in `Servers/Server v2/server.properties`; simulation distance is what costs tick time, view distance mostly costs chunk loading, memory and bandwidth. **Addressed 2026-11-03:** see "Farsight × Immersive Portals" below.
 
+### Man From The Fog disabled (2026-11-06) — `config/man_config.toml` + `HorrorSpawnRarity` — *global*
+Player feedback asked for far less surface horror ("above land in overworld is probably negligible"); the mod is surface-only by construction (its spawn timer only runs while a player is within 2 blocks of the surface), so it was switched off rather than tuned. Full reasoning and the rest of the horror proposals: `HORROR_REVIEW_2026-11-06.md`.
+- `config/man_config.toml` `enable_spawning` **true → false** (stops the timer-summoned Man and therefore the chase, jumpscare and no-sleep effects).
+- `HorrorSpawnRarity/data/man/forge/biome_modifier/mftfhang_biome_modifier.json` → `{"type": "forge:none"}` (the hanging variant spawned at weight 10 in every biome and is not covered by the config switch; `forge:none` is Forge's registered no-op modifier).
+- Not affected: the cultist `man:house` structure, the Cultist villager job, and the once-per-world Ko-fi advert and cassette on first join (only removing the jar drops those). Already-spawned hanging Men stay until `/kill @e[type=man:mftfhang]`. `HorrorQuietAdvancements` stays in place.
+- Applied to this instance only. Copy both files to the VM server, `Servers/Server v2` and "The Correction".
+
 ### Mod set changes, 2026-11-01 evening → 2026-11-02 (record)
 Changes made in the CurseForge app after the update review started, compared with the committed `modlist.json` (commit "Config changes"). Each one's config work is in the entries above.
 
@@ -1009,7 +1026,7 @@ All other values, including the guard multipliers, raid frequency and the other 
 **Not changed:** existing singleplayer worlds in `saves/` (each keeps its own `serverconfig/`), the "The Correction" instance, and the July `Servers/spookydookie`. Server v2 picks up the change on its next start.
 
 ## Appendix A — OpenLoader packs created
-`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
+`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).
 
 ## Appendix B — Known crash (NOT caused by these config changes)

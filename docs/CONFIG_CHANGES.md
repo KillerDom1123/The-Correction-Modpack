@@ -986,6 +986,28 @@ The July server (`Servers/spookydookie`, 264 mods, TFC-era, no world) is **left 
 
 **Still `true`:** the "The Correction" instance, which the user plays; it can hang the same way during Chunky runs until changed.
 
+### MineColonies server config replaced (2026-11-04) — `minecolonies-server.toml`, *client defaultconfigs + Server v2*
+The user supplied a new `minecolonies-server.toml` (1.1.1301 format, the version on both client and server). It was copied verbatim to this instance's `defaultconfigs/`, to Server v2's `defaultconfigs/`, and to Server v2's live `world/serverconfig/`. Value changes compared with the previous files:
+
+| Setting | Before | After |
+|---|---|---|
+| `workersalwaysworkinrain` | false | **true** |
+| `luckyblockchance` | 1 | **3** |
+| `loadtime` (minutes a colony stays loaded after its owner leaves) | 10 | **40** |
+| `colonyloadstrictness` | 3 | **1** (every claimed chunk is loaded) |
+| `canplayerusehometpcommand` | false | **true** |
+| `maxColonySize` | 20 | **75** |
+| `minColonyDistance` | 8 | **16** |
+| `initialColonySize` | 4 | **6** |
+| `maxdistancefromworldspawn` | 30000 | **75000** |
+| `raidDifficulty` | 8 | **5** (the mod default; this undoes the 2026-11-01 restoration to 8 above) |
+
+All other values, including the guard multipliers, raid frequency and the other 1301 raid keys, are unchanged. The new file no longer contains the 1.1.1231-only keys (`dobarbariansspawn`, `barbarianhordedifficulty`, `maxBarbarianSize`, `dobarbariansbreakthroughwalls`, `shouldraiderbreakdoors`, `pathfindingdebugverbosity`, `pathfindingmaxthreadcount`). That only matters for a 1231 server, and none is in use.
+
+**Load note:** with strictness 1 and a 40-minute load time, a large colony keeps all of its claimed chunks ticking for 40 minutes after its owner logs off. If server tick time rises once colonies grow, check this first in spark.
+
+**Not changed:** existing singleplayer worlds in `saves/` (each keeps its own `serverconfig/`), the "The Correction" instance, and the July `Servers/spookydookie`. Server v2 picks up the change on its next start.
+
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).

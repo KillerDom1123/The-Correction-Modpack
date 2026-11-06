@@ -33,6 +33,11 @@
 	alexsCavesMovingBlockGate = true
 	#Citadel: cache the tick-rate tracker per server instead of a saved-data lookup on every entity tick.
 	citadelTrackerCache = true
+	#Antlers: run its day counter on the overworld's tick only. It runs on every level's tick but the counter is global,
+	#so it counted ~45x too fast and sent a full sync to every player each time. Changes behaviour: days count at the real pace.
+	antlersDayCounterOverworldOnly = true
+	#The One Who Watches: skip its per-tick world-variable sync for levels with no players (the packet goes nowhere); the data is still marked for saving.
+	towwEmptyLevelSyncSkip = true
 
 #Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs
 #(slow motion); MineColonies, guards, scripted horror and bosses are excluded by default.

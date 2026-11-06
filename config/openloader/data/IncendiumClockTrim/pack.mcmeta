@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "description": "Incendium 5.3.5 clocks/main with fewer whole-world @e scans per tick (behaviour-identical apart from a <=0.5 s id fallback delay)"
+  }
+}

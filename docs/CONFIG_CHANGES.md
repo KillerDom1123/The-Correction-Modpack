@@ -1165,7 +1165,7 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - All three rebuilt to contents identical to the installed jars.
 - **Not synced:** the local test bed `Servers/Server v2` still has Data Anchor and an active Man From The Fog, and lacks `spooky_tick_fixes`. `python scripts/sync_server_mods.py --server "…/Servers/Server v2"` brings it in line.
 
-### `spooky_tick_fixes` 1.2.0 (2026-11-06, evening) — *client instance; VM pending*
+### `spooky_tick_fixes` 1.2.0 (2026-11-06, evening) — *client instance + VM*
 **Source.** The post-fix all-threads profile of the VM (19:06–19:20; it was too large to upload, so it was decoded from `config/spark/profile-2026-11-06_19.20.44.sparkprofile`).
 - **What changed after 1.1.0:** same population (about 550–600 entities, about 150 mimics); 20 TPS with a 46 ms median, down from 6.6–7.2 TPS at about 140 ms.
 - **DimThreads 1.2.1 doesn't run levels in parallel.** `DimThread.swapThreadsAndRun` is `static synchronized` and wraps each level's tick. So all ~45 levels tick one after another, and any cost paid per level is paid about 45 times per tick.
@@ -1182,12 +1182,43 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 
 **Verification.**
 - Scratch server: all 20 conditional patches applied, no errors.
-- Installed in this instance's `mods/` and `local/`, replacing 1.1.0. Not yet uploaded to the VM: `python scripts/sync_server_mods.py` swaps the jar there, then restart.
+- Installed in this instance's `mods/` and `local/`, replacing 1.1.0.
+- Uploaded to the VM with `scripts/sync_server_mods.py --yes`. 1.1.0 was moved to `mods-removed/`; 280 jars, parity verified. It takes effect on the next restart.
 
 **Seen while testing.** `Mixin apply failed betterchunkloading.mixins.json:ServerChunkCacheMixin` (it can't inject into `ServerChunkCache.getChunk`) appears in the VM log as well. It predates the shim, so Better Chunk Loading's chunk-priority hook has never been active.
 
+### Incendium clock trim (2026-11-06, evening) — `IncendiumClockTrim` OpenLoader datapack — *global (client instance + VM)*
+**Why.** All five of the world's scheduled functions are Incendium clocks. `incendium:clocks/main` reschedules itself every tick and runs 9 `@e` scans across every loaded dimension. Together they were 10% of the serial tick (about 4.5 ms), and 7.8 of those points were entity scanning. This reverses the earlier "leave Incendium as is" decision.
+
+**What.** Same-path overrides of two Incendium 5.3.5 functions. Changed lines are marked `trim`:
+- **`clocks/main`:**
+  - **(A) Shield scans:** the two shield-poison scans use `@a` instead of an untyped `@e`. Only players ever get `in.cd_shield`: it's set by player init/main and by the shield functions, which run as the player.
+  - **(A) Freeze scans:** the two `in.frozen` scans (countdown and snowflake particles) run only while `$trim.frozen in.dummy` is above 0.
+  - **(B) Missing-ID fallback:** runs every 10 ticks instead of every tick.
+- **`item/chilling_blade/on_hit`:** also sets `$trim.frozen` to 120, the freeze length. That's the only place `in.frozen` is ever set.
+
+**Behaviour.**
+- **(A) is identical.** One cosmetic edge: a mob that unloads mid-freeze and reloads later keeps its leftover score without particles until the next Chilling Blade hit.
+- **(B) adds a delay of up to 0.5 s** for mobs that arrive already tagged `in.checked` (the castle round-table room, both sanctum structures, two sentry-blaze summons) or whose ID was cleared by an ID-counter reset. In that window, Incendium's melee weapon effects don't trigger on them.
+
+**Rejected.**
+- Limiting the scans to the Nether: the Chilling Blade, Blazing Hatchet, Daybreaker, Warping Witherblade and Cake Batter find the mob they hit by its `in.eid`.
+- Running the clock less often: projectiles and castle AI run every tick.
+
+**Expected saving:** about 2–2.7 ms per tick. Without a Chilling Blade freeze active, 4 of the 9 scans are gone, and a fifth runs 1 tick in 10.
+
+**Verified on the scratch server.**
+- OpenLoader loaded the pack ("Found new data pack … loading it automatically"), with no function errors.
+- The `$trim.eid` counter cycles.
+- A mob pre-tagged `in.checked` had no ID, then had one 2 s later.
+- With the timer at 0, a mob's `in.frozen` 40 stayed at 40. With the timer at 40, it counted to 0 and so did the timer.
+
+**Deployed.** Uploaded to the VM's `config/openloader/data/IncendiumClockTrim/` (19 packs there now) and verified byte for byte. It takes effect on restart.
+
+**Maintenance.** The override pins Incendium 5.3.5's `clocks/main`. When Incendium updates, re-diff it against the jar's copy, or delete the pack.
+
 ## Appendix A — OpenLoader packs created
-`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
+`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).
 
 ## Appendix B — Known crash (NOT caused by these config changes)

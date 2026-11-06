@@ -34,7 +34,7 @@
 ## Local Fixes (2)
 
 - Immersive Portals x DimThreads compat (Spooky Dookie) — `immptl_dimthread_compat-1.0.0.jar`
-- Spooky Dookie tick fixes — `spooky_tick_fixes-1.1.0.jar`
+- Spooky Dookie tick fixes — `spooky_tick_fixes-1.2.0.jar`
 
 ## Core libraries & performance (66)
 

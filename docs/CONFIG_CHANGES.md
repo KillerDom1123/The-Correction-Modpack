@@ -1217,6 +1217,31 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 
 **Maintenance.** The override pins Incendium 5.3.5's `clocks/main`. When Incendium updates, re-diff it against the jar's copy, or delete the pack.
 
+### DimThreads disabled, `spooky_tick_fixes` 1.3.0, new server-side mods (2026-11-06, night) — *client instance + VM*
+**DimThreads off.**
+- DimThreads 1.2.1 wraps every dimension's tick in one global lock (`DimThread.swapThreadsAndRun` is `static synchronized`), so it never ticked dimensions in parallel.
+- The 46-minute profile with `/gamerule dimthread_active false` (20:40–21:26) averaged 18.6 TPS with 2 players and 1,313 entities. That's no worse than with it on.
+- `dimthread-FORGE-mc1.20.1-v1.2.1.jar` and `immptl_dimthread_compat-1.0.0.jar` are now `.jar.disabled` in this instance. The compat jar has to go too: its required mixin references DimThreads classes.
+- No other mod depends on DimThreads. The world's saved `dimthread_*` gamerules are simply ignored. The scratch server started cleanly without either jar.
+
+**`spooky_tick_fixes` 1.3.0: horror look-check ray casts.**
+- **Cause.** During that profile a sailing player outran chunk loading. Seven per-player look-check procedures (Creeping Woods ×3, Rake, Whispering Spirits, John, The Obsessed) cast rays whose vanilla `clip` loads chunks synchronously. The Server thread blocked for 97 s in two minutes, with one 18.9 s tick, while those chunks were loaded or generated.
+- **Fix.** Their `clip` calls now go through `RayGuard`. A ray spanning an unloaded chunk returns vanilla's miss result instead of loading it, and the three identical casts per step reuse one result. Switches: `horrorRayCastLoadedOnly`, `horrorRayCastDedupe`.
+- **Testing.** On the scratch server all 27 conditional patches applied (7 new ray targets), with no injection errors. The guard itself needs players to exercise it: `/tickfixes stats` now reports its counters.
+- **Details:** `tools/spooky_tick_fixes/README.md`.
+
+**New server-side mods** (added to this instance; the server needs them too):
+- **Let Me Despawn** `letmedespawn-forge-1.20.1-1.26.11.1.jar`, plus its required library **Almanac** `almanac-forge-1.20.1-1.26.11.1.jar`. Mobs that pick up items now despawn normally and drop what they picked up.
+- **Dynamic View** `dynview-1.20.1-4.0.jar`. It lowers view and simulation distance when ticks run long. Its `config/dynview-common.toml` is created on first start. Intended values: max view 16, min view 8, max simulation 10, min simulation 6, target 40 ms, update every 60 s, log messages on. Check the log afterwards to confirm it actually changes simulation distance.
+
+**VM.**
+- Dynamic View and Let Me Despawn were uploaded first, without Almanac, and the 21:58 restart failed: "Mod letmedespawn requires almanac … and dungeonconfig … not installed". DungeonConfig is embedded in the Almanac jar (jar-in-jar), so that jar covers both.
+- `scripts/sync_server_mods.py --yes` then:
+  - uploaded Almanac and `spooky_tick_fixes-1.3.0`;
+  - renamed the DimThreads and compat jars to `.jar.disabled`;
+  - moved `spooky_tick_fixes-1.2.0` to `mods-removed/`.
+- 281 jars, parity verified. It takes effect on the next start.
+
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).

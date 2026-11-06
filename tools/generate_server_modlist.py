@@ -50,10 +50,13 @@ NOTES = """\
 > - **Pinned on both sides — never sync newer versions:** `chunksending-1.20.1-2.8` (4.1 never delivers chunks
 >   under DimThreads), `farsight-1.20.1-5.1`, `hardcoretruedarkness-4.0.0` (v6 blacks out the view under shaders and
 >   is a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.
-> - **Pack-built** (category *Local Fixes*, source in `tools/`): `immptl_dimthread_compat` lets Immersive Portals and
->   DimThreads run together (without it the server log grows by ~100 MB a minute); `spooky_tick_fixes` holds the
->   server-tick fixes and the activation range (config `config/spooky_tick_fixes-common.toml`). Both are on clients
->   and the server. `farsight_immptl_compat` is client-only.
+> - **Pack-built** (category *Local Fixes*, source in `tools/`): `spooky_tick_fixes` holds the server-tick fixes, the
+>   activation range and the horror ray-cast guard (config `config/spooky_tick_fixes-common.toml`), on clients and the
+>   server. `farsight_immptl_compat` is client-only. `immptl_dimthread_compat` is disabled together with DimThreads.
+> - **DimThreads disabled 2026-11-06:** version 1.2.1 ticks every dimension under one global lock (no parallelism), and
+>   a 46-minute profile with it off was no slower. Its jar and `immptl_dimthread_compat` are `.jar.disabled` on both sides.
+> - **Server-side helpers added 2026-11-06:** Let Me Despawn (+ its library Almanac) lets mobs that picked up items
+>   despawn normally; Dynamic View (`dynview`) lowers view/simulation distance when ticks run long.
 > - **Removed / disabled 2026-11-06:** Data Anchor (an orphan library with a strict network channel, so it came off
 >   every client too) and The Man From The Fog (disabled in the client and on the VM).
 > - **Kept despite being client-leaning** (harmless idling on a server, and dropping them risked a dependency or

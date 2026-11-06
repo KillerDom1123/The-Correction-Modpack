@@ -55,6 +55,7 @@ CATEGORY_RULES = [
         "chunksending", "chunky", "connectivity", "coroutil", "dataanchor",
         "dimthread", "fastasyncworldsave", "limitedchunks", "mobtimizations",
         "recipeessentials", "smoothchunk", "structureessentials", "lumilib",
+        "almanac", "dynview", "letmedespawn",
     ]),
     ("Create & addons", ["create", "ponder", "compressedcreativity", "waystoneandcreate", "sliceanddice",
                          "morebridges"]),

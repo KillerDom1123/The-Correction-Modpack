@@ -26,6 +26,8 @@ public final class TickFixesConfig {
     private static final ForgeConfigSpec.BooleanValue CITADEL_CACHE;
     private static final ForgeConfigSpec.BooleanValue ANTLERS_DAY_COUNTER;
     private static final ForgeConfigSpec.BooleanValue TOWW_SYNC_GATE;
+    private static final ForgeConfigSpec.BooleanValue RAY_LOADED_ONLY;
+    private static final ForgeConfigSpec.BooleanValue RAY_DEDUPE;
 
     private static final ForgeConfigSpec.BooleanValue AR_ENABLED;
     private static final ForgeConfigSpec.DoubleValue AR_RANGE;
@@ -54,6 +56,8 @@ public final class TickFixesConfig {
     public static volatile boolean citadelCache = true;
     public static volatile boolean antlersDayCounter = true;
     public static volatile boolean towwSyncGate = true;
+    public static volatile boolean rayLoadedOnly = true;
+    public static volatile boolean rayDedupe = true;
 
     public static volatile boolean activationEnabled = true;
     public static volatile double activationRangeBlocks = 48.0D;
@@ -113,6 +117,12 @@ public final class TickFixesConfig {
                 .define("antlersDayCounterOverworldOnly", true);
         TOWW_SYNC_GATE = b.comment("The One Who Watches: skip its per-tick world-variable sync for levels with no players (the packet goes nowhere); the data is still marked for saving.")
                 .define("towwEmptyLevelSyncSkip", true);
+        RAY_LOADED_ONLY = b.comment("Horror look-checks (Creeping Woods, Rake, Whispering Spirits, John, The Obsessed): a ray cast that would touch a chunk",
+                                    "that is not loaded returns 'nothing hit' instead of loading (or generating) that chunk on the server thread.",
+                                    "Their creatures only exist in loaded chunks, so the result is the same. Stops the multi-second ticks seen while sailing.")
+                .define("horrorRayCastLoadedOnly", true);
+        RAY_DEDUPE = b.comment("Same procedures: reuse the result of an identical ray cast made just before in the same procedure run (they cast each ray three times).")
+                .define("horrorRayCastDedupe", true);
         b.pop();
 
         b.comment("Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs",
@@ -155,6 +165,8 @@ public final class TickFixesConfig {
         citadelCache = CITADEL_CACHE.get();
         antlersDayCounter = ANTLERS_DAY_COUNTER.get();
         towwSyncGate = TOWW_SYNC_GATE.get();
+        rayLoadedOnly = RAY_LOADED_ONLY.get();
+        rayDedupe = RAY_DEDUPE.get();
         activationEnabled = AR_ENABLED.get();
         activationRangeBlocks = AR_RANGE.get();
         activationInterval = AR_INTERVAL.get();
@@ -172,6 +184,7 @@ public final class TickFixesConfig {
                 + " farmCharmSync=" + farmCharmSync + "(" + farmCharmRefreshTicks + "t) animationGates=" + animationGates
                 + " adAstraExtraGate=" + adAstraExtraGate + " fullImmersionGate=" + fullImmersionGate + " alexsCavesGate=" + alexsCavesGate
                 + " citadelCache=" + citadelCache + " antlersDayCounter=" + antlersDayCounter + " towwSyncGate=" + towwSyncGate
+                + " rayLoadedOnly=" + rayLoadedOnly + " rayDedupe=" + rayDedupe
                 + " | activationRange enabled=" + activationEnabled + " range=" + activationRangeBlocks
                 + " interval=" + activationInterval + " adaptive=" + activationAdaptive + "(" + activationEnableAboveMspt + "/"
                 + activationDisableBelowMspt + " ms)";

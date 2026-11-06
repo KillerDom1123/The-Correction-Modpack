@@ -44,6 +44,28 @@ The existing gates were also made cheaper. Our own code was 2.7% of the serial t
 - **Activation range:** the immunity check reads fire ticks directly instead of calling `isOnFire()`, which asks `fireImmune()`, which Create wraps with a persistent-data read. A fire-immune mob with fire ticks now counts as immune, which is more conservative.
 - **Fragile Torches pre-check:** one chunk lookup for both blocks instead of two `getBlockState` calls. The entity's cached feet state isn't used, because `baseTick` clears it after this event fires.
 
+## Patches added in 1.3.0 — horror look-check ray casts
+
+**Why.** On 2026-11-06 a player sailing outran chunk loading, and the server stalled: one tick took 18.9 s, and the
+Server thread spent 97 s in two minutes blocked. Several horror mods ask "is the player looking at our creature?" every
+tick, for every player, by casting 15 short rays along the player's view, with 3 identical `Level.clip` calls per step.
+Vanilla `clip` loads every chunk the ray touches, synchronously. So a ray reaching the not-yet-loaded chunk ahead of a
+fast-moving player made the server thread load that chunk, or generate it beyond the pre-generated area. The worst
+offender was Creeping Woods' Creature from the Woods (85 s in those two minutes), then Rake and Whispering Spirits. In
+normal play these procedures cost about 2.2 ms per tick with 2 players.
+
+| Switch | Targets (`execute` of each) | What it does | Why it's safe |
+|---|---|---|---|
+| `horrorRayCastLoadedOnly` | Creeping Woods `CreatureFromTheWoodsRaytracingProcedure`, `ShadowFigureDespawnProcedure`, `StatueMovementProcedure`; Rake `RakeRaytracingProcedure`; Whispering Spirits `PlayerLookAtSpiritProcedure`; John `WeepingJohnOnEntityTickUpdateProcedure`; The Obsessed `PlayerTickProcedure` | If any chunk in the ray's x/z span isn't loaded (`hasChunk`, which never loads one), it returns vanilla's own "nothing hit" result instead of loading the chunk | Each procedure then looks for its creature near the hit point, and entities exist only in loaded chunks, so the answer can't change |
+| `horrorRayCastDedupe` | Same | Within one procedure run, a cast identical to the one just before it reuses that result (same level, end points, block and fluid modes). The memo is cleared at the start of every run. | The three copies are evaluated back to back in one expression, with nothing changing the world in between |
+
+All of it goes through `RayGuard`. It applies to server levels only: client-side calls reach vanilla unchanged.
+`/tickfixes stats` reports guarded casts, duplicates reused, and casts stopped at unloaded chunks. Expect about two in
+three to be duplicates, and stops only while someone moves faster than chunks load.
+
+**Not covered.** The Obsessed's `PlayerTickProcedure` also reads single blocks (`isEmptyBlock`, `getBlockState`) near the
+player. Those can't be answered without the chunk, so they're unchanged; they cost 2.5 s during the sailing stall.
+
 ## Activation range (1.1.0) — `[activationRange]`
 
 This changes behaviour, for far mobs only. (The other behaviour change is the 1.2.0 Antlers day-counter fix.) Mobs more than `range` (48) blocks from every player

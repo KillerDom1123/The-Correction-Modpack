@@ -2,13 +2,13 @@
 
 **Server:** the live VM (`files/server` under the FTP login)  
 **Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10  
-**Active jars:** 280 · **Disabled on the server:** 1  
+**Active jars:** 281 · **Disabled on the server:** 3  
 **Generated:** 2026-11-06 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
 
 > The server is the client instance's `mods/` **minus the client-only list** below, kept in step by
 > `scripts/sync_server_mods.py`. Every jar here must match the client exactly, or players are refused at login.
 
-**Parity:** matches the client instance (303 active jars − 23 client-only = 280).
+**Parity:** matches the client instance (304 active jars − 23 client-only = 281).
 
 > **Notes** (hand-maintained in `tools/generate_server_modlist.py`; everything else here is generated):
 >
@@ -19,10 +19,13 @@
 > - **Pinned on both sides — never sync newer versions:** `chunksending-1.20.1-2.8` (4.1 never delivers chunks
 >   under DimThreads), `farsight-1.20.1-5.1`, `hardcoretruedarkness-4.0.0` (v6 blacks out the view under shaders and
 >   is a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.
-> - **Pack-built** (category *Local Fixes*, source in `tools/`): `immptl_dimthread_compat` lets Immersive Portals and
->   DimThreads run together (without it the server log grows by ~100 MB a minute); `spooky_tick_fixes` holds the
->   server-tick fixes and the activation range (config `config/spooky_tick_fixes-common.toml`). Both are on clients
->   and the server. `farsight_immptl_compat` is client-only.
+> - **Pack-built** (category *Local Fixes*, source in `tools/`): `spooky_tick_fixes` holds the server-tick fixes, the
+>   activation range and the horror ray-cast guard (config `config/spooky_tick_fixes-common.toml`), on clients and the
+>   server. `farsight_immptl_compat` is client-only. `immptl_dimthread_compat` is disabled together with DimThreads.
+> - **DimThreads disabled 2026-11-06:** version 1.2.1 ticks every dimension under one global lock (no parallelism), and
+>   a 46-minute profile with it off was no slower. Its jar and `immptl_dimthread_compat` are `.jar.disabled` on both sides.
+> - **Server-side helpers added 2026-11-06:** Let Me Despawn (+ its library Almanac) lets mobs that picked up items
+>   despawn normally; Dynamic View (`dynview`) lowers view/simulation distance when ticks run long.
 > - **Removed / disabled 2026-11-06:** Data Anchor (an orphan library with a strict network channel, so it came off
 >   every client too) and The Man From The Fog (disabled in the client and on the VM).
 > - **Kept despite being client-leaning** (harmless idling on a server, and dropping them risked a dependency or
@@ -31,15 +34,15 @@
 
 ---
 
-## Local Fixes (2)
+## Local Fixes (1)
 
-- Immersive Portals x DimThreads compat (Spooky Dookie) — `immptl_dimthread_compat-1.0.0.jar`
-- Spooky Dookie tick fixes — `spooky_tick_fixes-1.2.0.jar`
+- Spooky Dookie tick fixes — `spooky_tick_fixes-1.3.0.jar`
 
-## Core libraries & performance (66)
+## Core libraries & performance (68)
 
 - Ad Astra: Structures Overhaul — `aso-0.1.0.jar`
 - AI-Improvements — `AI-Improvements-1.20-0.5.2.jar`
+- Almanac — `almanac-forge-1.20.1-1.26.11.1.jar`
 - Architectury — `architectury-9.2.14-forge.jar`
 - Athena — `athena-forge-1.20.1-3.1.2.jar`
 - Balm — `balm-forge-1.20.1-7.3.44.jar`
@@ -65,7 +68,7 @@
 - Cupboard utilities — `cupboard-1.20.1-4.2.jar`
 - Curios API — `curios-forge-5.14.1+1.20.1.jar`
 - Deimos — `deimos-1.20.1-forge-2.8.jar`
-- DimThreads — `dimthread-FORGE-mc1.20.1-v1.2.1.jar`
+- Dynamic view distance — `dynview-1.20.1-4.0.jar`
 - EntityCulling — `entityculling-forge-1.11.3-mc1.20.1.jar`
 - Fast Workbench — `FastWorkbench-1.20.1-8.0.4.jar`
 - fastasyncworldsave mod — `fastasyncworldsave-1.20.1-2.6.jar`
@@ -80,6 +83,7 @@
 - Integrated API — `integrated_api-forge-1.20.1-1.9.1.jar`
 - Iron's Lib — `irons_lib-1.20.1-2.3.0.jar`
 - kotlinforforge-4.12.0-all — `kotlinforforge-4.12.0-all.jar`
+- LetMeDespawn — `letmedespawn-forge-1.20.1-1.26.11.1.jar`
 - Limited Chunkloading — `limitedchunks-1.20.1-4.1.jar`
 - LumiLib — `lumilib-0.4.2-forge-1.20.1-0.4.2.jar`
 - Mixin Extras NeoForge on Forge Fix — `mixinextrasneoonforgefix-1.0.0.jar`
@@ -392,15 +396,19 @@ The groups and notes come from `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods
 - xaerominimap-forge-1.20.1-26.6.0.jar — minimap; the world map's server component is kept
 
 ## Disabled jars
-**On the server** (1) — left in `mods/` as `.jar.disabled`, not loaded:
+**On the server** (3) — left in `mods/` as `.jar.disabled`, not loaded:
 
+- dimthread-FORGE-mc1.20.1-v1.2.1.jar.disabled
+- immptl_dimthread_compat-1.0.0.jar.disabled
 - The-Man-From-The-Fog-1.4-1.20.1.jar.disabled
 
-**In the client instance** (6) — kept as `.jar.disabled`; none may be active on the server:
+**In the client instance** (8) — kept as `.jar.disabled`; none may be active on the server:
 
 - TFC_CarryOnStorage1.2.0.jar.disabled
 - TerraFirmaCraft-Forge-1.20.1-3.2.28.jar.disabled
 - The-Man-From-The-Fog-1.4-1.20.1.jar.disabled
 - arssophisticatedcompat-0.3.0+mc1.20.1-forge.jar.disabled
+- dimthread-FORGE-mc1.20.1-v1.2.1.jar.disabled
+- immptl_dimthread_compat-1.0.0.jar.disabled
 - mcw_tfc_aio-0.2.30-1.20.1.jar.disabled
 - mekanismsophisticatedbackpacks-1.0.1+mc1.20.1-forge.jar.disabled

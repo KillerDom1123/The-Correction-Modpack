@@ -1101,6 +1101,38 @@ The player-dependent patches (The Obsessed, Whispering Spirits, Farm & Charm, Fr
 
 **Revert:** delete the jar, or set any single switch to false. Nothing is stored in worlds.
 
+### `spooky_tick_fixes` 1.1.0 — second pass + activation range (2026-11-06) — *client instances + VM*
+It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correction (Dev)", the VM; the VM has 281 jars). Details: `tools/spooky_tick_fixes/README.md`.
+
+**New behaviour-preserving patches:**
+- **Full Immersion (`fullImmersionGate`, ~2.9% of the overworld tick).**
+  - **What's skipped:** the per-mob portal-AI wrapper (`PortalAiContext.begin`/`finishAi`) and the portal despawn check, in any dimension with no Immersive Portals portal loaded.
+  - **Why that's safe:** the mod only acts through `Portal` entities in the mob's level and indexes every one that joins.
+  - **Pairing:** begin/finishAi are skipped together via a per-mob flag, so its per-thread state can't be left stale.
+- **Alex's Caves (`alexsCavesMovingBlockGate`, ~0.4%).** The per-movement search for moving magnetic blocks is skipped in dimensions with none loaded; both functions then return their empty answer. Its per-entity magnetism check (~1.8%) is not changed; that needs a magnet-block count and is still open.
+- **Citadel (`citadelTrackerCache`, ~0.3%).** The tick-rate tracker is cached per server instead of a saved-data lookup on every entity tick. The cached path still marks the data dirty, so persistence is unchanged.
+- **Fail-open counts.** Portal and moving-block counts come from entity join/leave events and can only err towards "present", which switches a gate off, never on.
+
+**Activation range (`[activationRange]`, audit §5.5.1). This one changes behaviour, for far mobs only:**
+- **Rule:** mobs more than 48 blocks from every player tick 1 in 4 (staggered).
+- **Still normal pace:** ageing and despawn checks run on the skipped ticks too.
+- **Exempt:**
+  - targets, recently hurt, burning, in lava, leashed, riding, in a raid;
+  - bosses;
+  - the `minecolonies`, `guardvillagers`, scripted-horror and `mahoutsukai` namespaces (config lists; the audit doc proposed a datapack tag, but config lists turned out simpler);
+  - per the decisions taken: villagers are throttled, and adaptive mode is on (throttle only while the average tick is above 50 ms, off below 30 ms).
+- **Status:** `/tickfixes stats` (op) shows it.
+
+**Verified on the headless scratch server:**
+- all 18 conditional patches applied, and the activation-range hook ran;
+- `/tickfixes stats` reported 4–6 far mobs skipped per tick (adaptive off for the test) and `portals=0 acMovingBlocks=0`;
+- a throttled baby cow aged −23,900 → −23,700 in 10 s (normal rate);
+- a ridden (immune) pig dropped from 30 blocks died on landing within ~2 s, while the throttled plain pig was still at y 98.7;
+- dormant mimics still slept;
+- no shim-related errors.
+
+**Still open:** the in-game checks (with players), the post-change spark profile, Alex's Caves' magnetism check, Slice & Dice wet air, The Obsessed's cached-namespace fix, and the watcher despawn rule (§5.5.2, held back because it changes horror pacing; it needs a decision).
+
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).

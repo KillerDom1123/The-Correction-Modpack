@@ -1,5 +1,6 @@
 package spookydookie.tickfixes;
 
+import java.util.List;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 /**
@@ -20,6 +21,20 @@ public final class TickFixesConfig {
     private static final ForgeConfigSpec.IntValue FARM_CHARM_REFRESH;
     private static final ForgeConfigSpec.BooleanValue ANIMATION_GATES;
     private static final ForgeConfigSpec.BooleanValue ADASTRAEXTRA_GATE;
+    private static final ForgeConfigSpec.BooleanValue FULL_IMMERSION_GATE;
+    private static final ForgeConfigSpec.BooleanValue ALEXSCAVES_GATE;
+    private static final ForgeConfigSpec.BooleanValue CITADEL_CACHE;
+
+    private static final ForgeConfigSpec.BooleanValue AR_ENABLED;
+    private static final ForgeConfigSpec.DoubleValue AR_RANGE;
+    private static final ForgeConfigSpec.IntValue AR_INTERVAL;
+    private static final ForgeConfigSpec.BooleanValue AR_ADAPTIVE;
+    private static final ForgeConfigSpec.DoubleValue AR_ENABLE_ABOVE;
+    private static final ForgeConfigSpec.DoubleValue AR_DISABLE_BELOW;
+    private static final ForgeConfigSpec.BooleanValue AR_AGE_CATCH_UP;
+    private static final ForgeConfigSpec.BooleanValue AR_DESPAWN_CHECKS;
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> AR_ALWAYS_ENTITIES;
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> AR_ALWAYS_NAMESPACES;
 
     public static volatile boolean mimicSleep = true;
     public static volatile double mimicWakeRange = 24.0D;
@@ -32,6 +47,29 @@ public final class TickFixesConfig {
     public static volatile int farmCharmRefreshTicks = 100;
     public static volatile boolean animationGates = true;
     public static volatile boolean adAstraExtraGate = true;
+    public static volatile boolean fullImmersionGate = true;
+    public static volatile boolean alexsCavesGate = true;
+    public static volatile boolean citadelCache = true;
+
+    public static volatile boolean activationEnabled = true;
+    public static volatile double activationRangeBlocks = 48.0D;
+    public static volatile int activationInterval = 4;
+    public static volatile boolean activationAdaptive = true;
+    public static volatile double activationEnableAboveMspt = 50.0D;
+    public static volatile double activationDisableBelowMspt = 30.0D;
+    public static volatile boolean activationAgeCatchUp = true;
+    public static volatile boolean activationDespawnChecks = true;
+
+    private static final List<String> DEFAULT_ALWAYS_ENTITIES = List.of(
+            "minecraft:ender_dragon", "minecraft:wither", "minecraft:warden", "minecraft:elder_guardian");
+    private static final List<String> DEFAULT_ALWAYS_NAMESPACES = List.of(
+            // colonies and guards keep working while their owner is away
+            "minecolonies", "guardvillagers",
+            // scripted horror (stalking/approach logic and timers)
+            "the_one_who_watches", "rake_the_arrival", "the_obsessed", "cave_dweller", "weeping_angels", "pale_hound",
+            "cant_breathe", "themimic_er", "whispering_spirits", "antlers", "john_mod_reborn", "creepingwoods", "man",
+            // familiars and summons
+            "mahoutsukai");
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -60,6 +98,33 @@ public final class TickFixesConfig {
                 .define("animationGates", true);
         ADASTRAEXTRA_GATE = b.comment("Ad Astra Extra: skip its per-mob procedure for mobs that are neither 'gassed' nor in adastraextra:jupiter (its only two branches).")
                 .define("adAstraExtraGate", true);
+        FULL_IMMERSION_GATE = b.comment("Immersive Portals Full Immersion: skip its per-mob portal-AI wrapper and portal despawn check in dimensions that contain no portal.")
+                .define("fullImmersionGate", true);
+        ALEXSCAVES_GATE = b.comment("Alex's Caves: skip the per-movement search for moving magnetic blocks in dimensions that contain none.")
+                .define("alexsCavesMovingBlockGate", true);
+        CITADEL_CACHE = b.comment("Citadel: cache the tick-rate tracker per server instead of a saved-data lookup on every entity tick.")
+                .define("citadelTrackerCache", true);
+        b.pop();
+
+        b.comment("Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs",
+                  "(slow motion); MineColonies, guards, scripted horror and bosses are excluded by default.").push("activationRange");
+        AR_ENABLED = b.comment("Master switch.").define("enabled", true);
+        AR_RANGE = b.comment("Blocks from the nearest player in the same dimension beyond which a mob is 'far'.")
+                .defineInRange("range", 48.0D, 16.0D, 256.0D);
+        AR_INTERVAL = b.comment("A far mob ticks once every this many ticks (staggered by entity id).")
+                .defineInRange("interval", 4, 2, 20);
+        AR_ADAPTIVE = b.comment("Only throttle while the server is behind: switch on when the average tick exceeds enableAboveMspt, off again below disableBelowMspt.")
+                .define("adaptive", true);
+        AR_ENABLE_ABOVE = b.defineInRange("enableAboveMspt", 50.0D, 1.0D, 1000.0D);
+        AR_DISABLE_BELOW = b.defineInRange("disableBelowMspt", 30.0D, 0.0D, 1000.0D);
+        AR_AGE_CATCH_UP = b.comment("Advance AgeableMob age on skipped ticks, so growth and breeding cooldowns keep normal pace.")
+                .define("ageCatchUp", true);
+        AR_DESPAWN_CHECKS = b.comment("Run the vanilla despawn check on skipped ticks, so despawn rates are unchanged.")
+                .define("despawnChecks", true);
+        AR_ALWAYS_ENTITIES = b.comment("Entity ids that always tick at full rate.")
+                .defineListAllowEmpty(List.of("alwaysTickEntities"), () -> DEFAULT_ALWAYS_ENTITIES, o -> o instanceof String);
+        AR_ALWAYS_NAMESPACES = b.comment("Mod namespaces whose entities always tick at full rate.")
+                .defineListAllowEmpty(List.of("alwaysTickNamespaces"), () -> DEFAULT_ALWAYS_NAMESPACES, o -> o instanceof String);
         b.pop();
         SPEC = b.build();
     }
@@ -76,13 +141,28 @@ public final class TickFixesConfig {
         farmCharmRefreshTicks = FARM_CHARM_REFRESH.get();
         animationGates = ANIMATION_GATES.get();
         adAstraExtraGate = ADASTRAEXTRA_GATE.get();
+        fullImmersionGate = FULL_IMMERSION_GATE.get();
+        alexsCavesGate = ALEXSCAVES_GATE.get();
+        citadelCache = CITADEL_CACHE.get();
+        activationEnabled = AR_ENABLED.get();
+        activationRangeBlocks = AR_RANGE.get();
+        activationInterval = AR_INTERVAL.get();
+        activationAdaptive = AR_ADAPTIVE.get();
+        activationEnableAboveMspt = AR_ENABLE_ABOVE.get();
+        activationDisableBelowMspt = AR_DISABLE_BELOW.get();
+        activationAgeCatchUp = AR_AGE_CATCH_UP.get();
+        activationDespawnChecks = AR_DESPAWN_CHECKS.get();
+        ActivationRange.reloadLists(AR_ALWAYS_ENTITIES.get(), AR_ALWAYS_NAMESPACES.get());
     }
 
     static String summary() {
         return "mimicSleep=" + mimicSleep + "(" + mimicWakeRange + ") watcherFollowRange=" + watcherFollowRange + "(" + watcherFollowRangeCap
                 + ") obsessedSync=" + obsessedSync + " spiritLookGate=" + spiritLookGate + " fragileTorches=" + fragileTorches
                 + " farmCharmSync=" + farmCharmSync + "(" + farmCharmRefreshTicks + "t) animationGates=" + animationGates
-                + " adAstraExtraGate=" + adAstraExtraGate;
+                + " adAstraExtraGate=" + adAstraExtraGate + " fullImmersionGate=" + fullImmersionGate + " alexsCavesGate=" + alexsCavesGate
+                + " citadelCache=" + citadelCache + " | activationRange enabled=" + activationEnabled + " range=" + activationRangeBlocks
+                + " interval=" + activationInterval + " adaptive=" + activationAdaptive + "(" + activationEnableAboveMspt + "/"
+                + activationDisableBelowMspt + " ms)";
     }
 
     private TickFixesConfig() {}

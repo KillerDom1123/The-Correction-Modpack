@@ -11,7 +11,16 @@ Scope: why the dedicated server (Server v2 on the Proxmox VM) runs at about 7 TP
 - **§5.2.3:** the Fragile Torches list trimmed.
 - **Server files chown-ed,** which fixes spark's async-profiler.
 - **§3.3:** the in-game test command.
-- **§5.3, first pass:** built as `tools/spooky_tick_fixes` 1.0.0 and deployed to both local instances and the VM. It covers §5.3.1–5.3.4 and §5.3.6–5.3.8; §5.3.7's The Obsessed `EntityTickProcedure` fix and §5.3.5, §5.3.9 and §5.3.10 are still open.
+- **§5.3, first pass:** built as `tools/spooky_tick_fixes` 1.0.0 and deployed to both local instances and the VM. It covers §5.3.1–5.3.4 and §5.3.6–5.3.8.
+- **§5.3, second pass and §5.5.1:** `spooky_tick_fixes` 1.1.0, deployed everywhere. It adds:
+  - **§5.3.5** Full Immersion;
+  - **§5.3.9** Citadel only (Slice & Dice is still open);
+  - **§5.3.10** the moving-block search only (the magnetism check is still open);
+  - **§5.5.1** activation range, with config lists instead of a datapack tag; villagers throttled; adaptive mode on.
+  
+  Still open:
+  - §5.3.7's The Obsessed `EntityTickProcedure` fix;
+  - §5.5.2, the watcher despawn rule, which needs a decision.
 
 Related: `CONFIG_CHANGES.md` (sections "Performance — …", "Immersive Portals × DimThreads", "Better Chunk Loading smart post-processing off"), `UPDATE_REVIEW_2026-11-01.md`, `SERVER_MODS.md`.
 

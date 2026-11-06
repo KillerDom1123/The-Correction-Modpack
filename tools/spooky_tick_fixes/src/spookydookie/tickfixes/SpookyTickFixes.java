@@ -1,7 +1,9 @@
 package spookydookie.tickfixes;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
@@ -36,6 +38,12 @@ public final class SpookyTickFixes {
         forge.addListener(EventPriority.LOWEST, false, TickEvent.ServerTickEvent.class, ObsessedSyncCoalescer::onServerTick);
         forge.addListener(EventPriority.NORMAL, false, PlayerEvent.StartTracking.class, SaturationSyncFilter::onStartTracking);
         forge.addListener(EventPriority.NORMAL, false, EntityLeaveLevelEvent.class, SaturationSyncFilter::onLeave);
+        // Count joins first, so a join cancelled later over-counts (fail-open) rather than under-counts.
+        forge.addListener(EventPriority.HIGHEST, false, EntityJoinLevelEvent.class, EntityCounters::onJoin);
+        forge.addListener(EventPriority.NORMAL, false, EntityLeaveLevelEvent.class, EntityCounters::onLeave);
+        forge.addListener(EventPriority.HIGHEST, false, TickEvent.ServerTickEvent.class, ActivationRange::onServerTick);
+        forge.addListener(EventPriority.NORMAL, false, ServerStoppedEvent.class, e -> { EntityCounters.clear(); CitadelCache.clear(); });
+        forge.addListener(EventPriority.NORMAL, false, RegisterCommandsEvent.class, TickFixesCommand::register);
 
         LOGGER.info("[{}] loaded", MOD_ID);
     }

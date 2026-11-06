@@ -14,7 +14,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 INSTANCE = os.path.abspath(os.path.join(HERE, "..", ".."))
 LIB = r"E:/Program Files (x86)/CurseForge/mc/Install/libraries"
 JDK = r"E:/Program Files/Java/jdk-17/bin"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 JAR_NAME = f"spooky_tick_fixes-{VERSION}.jar"
 
 
@@ -41,11 +41,13 @@ classpath = [
     one(os.path.join(LIB, "org/ow2/asm/asm-tree/9.8/asm-tree-9.8.jar")),
     one(os.path.join(LIB, "com/electronwill/night-config/core/*/core-*.jar")),
     one(os.path.join(LIB, "com/google/guava/guava/*/guava-*.jar")),
+    one(os.path.join(LIB, "com/mojang/brigadier/*/brigadier-*.jar")),
     # Target mods whose types are referenced directly.
     one(os.path.join(INSTANCE, "mods", "artifacts-forge-*.jar")),
     one(os.path.join(INSTANCE, "mods", "the_obsessed-*.jar")),
     one(os.path.join(INSTANCE, "mods", "WhisperingSpirits-forge-*.jar")),
     one(os.path.join(INSTANCE, "mods", "letsdo-farm_and_charm-forge-*.jar")),
+    one(os.path.join(INSTANCE, "mods", "citadel-*.jar")),
 ]
 
 src = [os.path.join(dp, f) for dp, _, fs in os.walk(os.path.join(HERE, "src")) for f in fs if f.endswith(".java")]
@@ -67,5 +69,9 @@ print("built", out_jar, os.path.getsize(out_jar), "bytes")
 if "--install" in sys.argv:
     for dest in (os.path.join(INSTANCE, "mods"), os.path.join(INSTANCE, "local")):
         os.makedirs(dest, exist_ok=True)
+        for old in glob.glob(os.path.join(dest, "spooky_tick_fixes-*.jar")):
+            if os.path.basename(old) != JAR_NAME:
+                os.remove(old)
+                print("removed old", old)
         shutil.copy2(out_jar, os.path.join(dest, JAR_NAME))
         print("installed ->", os.path.join(dest, JAR_NAME))

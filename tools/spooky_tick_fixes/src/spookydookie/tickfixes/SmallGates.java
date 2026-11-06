@@ -54,5 +54,22 @@ public final class SmallGates {
         return !JUPITER.equals(entity.m_9236_().m_46472_().m_135782_());
     }
 
+    /**
+     * Full Immersion's per-mob portal AI (begin/finishAi) and its portal despawn check can only act through an
+     * Immersive Portals portal in the mob's own level; with none loaded there, they are skipped.
+     */
+    public static boolean fullImmersionIdle(net.minecraft.world.entity.Mob mob) {
+        if (!TickFixesConfig.fullImmersionGate || mob == null) return false;
+        Level level = mob.m_9236_();
+        return level instanceof ServerLevel && EntityCounters.noPortals(level);
+    }
+
+    /** Alex's Caves' moving-block collision/standing checks can only find AbstractMovingBlockEntity instances. */
+    public static boolean noAlexsCavesMovingBlocks(net.minecraft.world.entity.Entity entity) {
+        if (!TickFixesConfig.alexsCavesGate || entity == null) return false;
+        Level level = entity.m_9236_();
+        return !level.f_46443_ && EntityCounters.noMovingBlocks(level);
+    }
+
     private SmallGates() {}
 }

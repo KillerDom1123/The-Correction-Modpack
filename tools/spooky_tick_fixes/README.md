@@ -17,8 +17,46 @@ list: `docs/SERVER_TICK_AUDIT_2026-11-06.md` (§5.3). Applied changes: `docs/CON
 | `animationGates` | `EntityAnimationFactory#onEntityTick` of Born in Chaos, The Obsessed, Creeping Woods, Foes, TOWW, Rake, Antlers | The handler, for mobs from other mods | Bytecode check: every `instanceof` target is in the mod's own entity package. Decided per class hierarchy and cached |
 | `adAstraExtraGate` | Ad Astra Extra `EntityTickProcedure#onEntityTick` | The procedure, for mobs that are neither "gassed" nor in `adastraextra:jupiter` | Those are its only two branches. Persistent data is read without being created |
 
-Not in this pass (see the audit doc): Full Immersion portal-AI gating, Alex's Caves magnet gating, Slice & Dice,
-Citadel, activation range.
+## Patches added in 1.1.0
+
+| Switch | Target | What it skips | Why it's safe |
+|---|---|---|---|
+| `fullImmersionGate` | Full Immersion `PortalAiContext#begin`/`#finishAi`, `PortalDespawnCompatibility#shouldSuppressDespawn` | The per-mob portal-AI wrapper and the portal despawn check in a dimension with no Immersive Portals portal loaded | Projections and despawn suppression both need a `Portal` entity in the mob's level, and the mod indexes every one that joins. begin/finishAi are skipped as a pair (a per-mob flag), so its per-thread state can't go stale |
+| `alexsCavesMovingBlockGate` | Alex's Caves `MagnetUtil#getMovingBlockCollisions`, `#isEntityOnMovingMetal` | The per-movement entity search for moving magnetic blocks in a dimension with none loaded | Both only look for `AbstractMovingBlockEntity` (and its subclass), so they return their empty answer |
+| `citadelTrackerCache` | Citadel `ServerTickRateTracker#getForServer` | The saved-data lookup on every entity tick; the tracker is cached per server | The data and tracker are the same objects for the server's lifetime. The cached path still marks the data dirty, as the original does |
+
+The portal and moving-block counts (`EntityCounters`) are kept from entity join/leave events. They can only err towards
+"present": joins are counted first, and the count never goes below zero. So a miscount turns a gate off; it never
+wrongly turns one on.
+
+## Activation range (1.1.0) — `[activationRange]`
+
+This is the one feature that changes behaviour, for far mobs only. Mobs more than `range` (48) blocks from every player
+in their dimension tick once every `interval` (4) ticks, staggered by entity id. A skipped tick is skipped entirely, so
+the mob moves, thinks and runs its own timers in slow motion. Two things still run on skipped ticks, so their rates
+are unchanged:
+- `AgeableMob` age (growth and breeding cooldowns);
+- the vanilla despawn check.
+
+**Never throttled:**
+- non-mob entities;
+- mobs with a target, hurt recently, burning, in lava, leashed, riding or ridden, or in a raid;
+- `alwaysTickEntities` (vanilla bosses);
+- `alwaysTickNamespaces` (MineColonies, Guard Villagers, the scripted horror mods, Mahou Tsukai).
+
+MineColonies' wiki lists activation-range mods as conflicting, so it must stay in that list.
+
+**Adaptive mode** (default on): throttling switches on while the server's average tick is above `enableAboveMspt`
+(50) and off again below `disableBelowMspt` (30).
+
+`/tickfixes stats` (op) prints whether it is active, how many far mobs were skipped last tick, the portal and
+moving-block counts for your dimension, and the average tick time.
+
+Verified headless: a baby cow kept ageing at exactly 20/s while throttled; a throttled pig fell far more slowly than
+an immune (ridden) one; dormant mimics still slept.
+
+Not yet done (see the audit doc): Alex's Caves' per-entity magnetism check, Slice & Dice wet air, the watcher despawn
+rule (§5.5.2).
 
 ## Design
 
@@ -34,8 +72,8 @@ Citadel, activation range.
 ## Build / deploy
 
 `python tools/spooky_tick_fixes/build.py [--install]` builds with JDK 17 against the CurseForge install's libraries
-and the target mod jars. No Gradle, no network. Output: `build/spooky_tick_fixes-1.0.0.jar`; `--install` copies it
-to `mods/` and `local/`. Then run `scripts/sync_server_mods.py` (or upload it to the VM's `mods/`).
+and the target mod jars. No Gradle, no network. Output: `build/spooky_tick_fixes-<version>.jar`; `--install` copies
+it to `mods/` and `local/` and removes older versions there. Then run `scripts/sync_server_mods.py` (or upload it to the VM's `mods/`).
 
 Rebuild after updating any target mod. If a target changed, startup fails with a clear mixin error naming the patch.
 Set that patch's switch to false, or remove it from `spooky_tick_fixes.mixins.json`.

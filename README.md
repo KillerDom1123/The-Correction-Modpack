@@ -139,6 +139,7 @@ This repository tracks the pack's **configuration and custom content**, not the 
 
 - **Tracked:** `config/` (all mod configs, OpenLoader datapacks, FTB Quests), `kubejs/` (custom scripts/items), `defaultconfigs/` (per-world defaults), the `docs/` markdown, and `tools/` (the modlist generator and the source of the pack's own compat mod).
 - **Built here:** `immptl_dimthread_compat` — a one-mixin mod that lets Immersive Portals and DimThreads run together. Build it with `python tools/immptl_dimthread_compat/build.py --install`; a copy of the jar is kept in `local/`. It belongs on clients **and** the server.
+- **Built here:** `spooky_tick_fixes` — behaviour-preserving server-tick fixes (dormant mimics, TOWW follow range, The Obsessed sync, Whispering Spirits, Fragile Torches, Farm & Charm, MCreator animation handlers, Ad Astra Extra). Each patch has a switch in `config/spooky_tick_fixes-common.toml`. Build it with `python tools/spooky_tick_fixes/build.py --install`. It ships on clients and the server, but the server can run it alone. Details: `tools/spooky_tick_fixes/README.md` and `docs/SERVER_TICK_AUDIT_2026-11-06.md`.
 - **Not tracked:** `mods/`, `saves/`, caches, logs, and machine-specific files (see `.gitignore`).
 
 The pack is heavily **rebalanced by design** — see **[docs/CONFIG_CHANGES.md](docs/CONFIG_CHANGES.md)** for a full per-mod record of every configuration change and the reasoning behind it (progression gating, horror rarity, colony danger, etc.).

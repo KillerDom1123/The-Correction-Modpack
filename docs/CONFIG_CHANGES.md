@@ -939,7 +939,7 @@ Player feedback asked for far less surface horror ("above land in overworld is p
 - `config/man_config.toml` `enable_spawning` **true → false** (stops the timer-summoned Man and therefore the chase, jumpscare and no-sleep effects).
 - `HorrorSpawnRarity/data/man/forge/biome_modifier/mftfhang_biome_modifier.json` → `{"type": "forge:none"}` (the hanging variant spawned at weight 10 in every biome and is not covered by the config switch; `forge:none` is Forge's registered no-op modifier).
 - Not affected: the cultist `man:house` structure, the Cultist villager job, and the once-per-world Ko-fi advert and cassette on first join (only removing the jar drops those). Already-spawned hanging Men stay until `/kill @e[type=man:mftfhang]`. `HorrorQuietAdvancements` stays in place.
-- Applied to this instance only. Copy both files to the VM server, `Servers/Server v2` and "The Correction".
+- Applied to this instance, and **deployed to the VM server on 2026-11-06**: `man_config.toml`, the `mftfhang` override and the `HorrorQuietAdvancements` pack, all uploaded and verified byte for byte (see "Server tick audit — phases 0–1" below). Still to copy: "The Correction (Dev)" (singleplayer only) and the local test bed `Servers/Server v2`.
 
 ### Mod set changes, 2026-11-01 evening → 2026-11-02 (record)
 Changes made in the CurseForge app after the update review started, compared with the committed `modlist.json` (commit "Config changes"). Each one's config work is in the entries above.
@@ -1024,6 +1024,82 @@ All other values, including the guard multipliers, raid frequency and the other 
 **Load note:** with strictness 1 and a 40-minute load time, a large colony keeps all of its claimed chunks ticking for 40 minutes after its owner logs off. If server tick time rises once colonies grow, check this first in spark.
 
 **Not changed:** existing singleplayer worlds in `saves/` (each keeps its own `serverconfig/`), the "The Correction" instance, and the July `Servers/spookydookie`. Server v2 picks up the change on its next start.
+
+### Server tick audit — phases 0–1 (2026-11-06) — *VM server + client instances*
+Plan, findings and estimates: `SERVER_TICK_AUDIT_2026-11-06.md`.
+
+**The live server is now the Proxmox VM** (`/home/thecorrection/files/server`). It is reached over FTP and deployed to from this repo. `Servers/Server v2` is kept only as a local test bed and is out of step with the VM. The VM mirrors this instance's mods minus the 23 client-only jars (280 jars after this change).
+
+**Applied on the VM by the owner (phase 0):**
+- **JVM:** Aikar's G1 flag set added to `user_jvm_args.txt`. Memory deliberately kept at `-Xms8G -Xmx32G`.
+- **Host:** CPU governor confirmed on `performance`.
+- **`server.properties`:** `sync-chunk-writes` **true → false**.
+- **File ownership:** all server files chown-ed to the `thecorrection` user. `config/spark/tmp` had been root-owned since the server once ran as root, so spark could not unpack async-profiler (`AccessDeniedException`) and fell back to the slower Java sampler.
+
+**Phase 1 (this instance + VM; files uploaded and verified byte for byte; the VM was stopped; full backup at `/files/serverbak`):**
+
+| Change | Where | Why |
+|---|---|---|
+| `HorrorSpawnRarity` overrides: `toww_hanging` **30 → 2**, `toww_delusion` **3 → 2**, `toww_hallucination` **5 → 2**, Rake `ambient_sound` **15 → 2** | `config/openloader/data/HorrorSpawnRarity/data/{the_one_who_watches,rake_the_arrival}/forge/biome_modifier/` (new files). The hallucination and Rake files are copied from the jars with only `weight` changed, so their biome lists stay as shipped | The July pass aligned TOWW and Rake to the weight-2 benchmark but missed these entries. `toww_hanging` never despawns and was piling up (6 → 8 loaded across the profiles); each one carried a 2048-block follow range |
+| Fragile Torches gentle list: removed `boat`, `ender_pearl`, `egg`, `item`, `experience_orb`, `minecart` | `config/fragiletorches.toml` | The handler only sees living entities, so these six could never match. But the list is string-parsed for every mob on every tick, before the chance roll. No behaviour change |
+| **Data Anchor removed** (`Data_Anchor-forge-1.20.1-1.0.0.24.jar`) | Jar parked in `local/mods-removed-2026-11-06/` in **both** "Spooky Dookie" and "The Correction (Dev)"; deleted from the VM's `mods/` | Orphan library: no jar on either side uses it. Its chunk and block-entity tick hooks cost ~1% of the overworld tick |
+| Man From The Fog disabled | VM: `man_config.toml`, the `mftfhang` override, `HorrorQuietAdvancements` | See "Man From The Fog disabled" above |
+
+**Client compatibility (Data Anchor):** Data Anchor registers its own sync packets on a network channel with a strict version check (`"1"` on both sides). **Every client that joins must drop it too, or it will be refused at login.** Also remove it from each CurseForge profile, so the app doesn't restore it.
+
+**Check on the next server start:**
+- OpenLoader injects **18** data packs (`HorrorQuietAdvancements` is new);
+- no Data Anchor in the mod list;
+- no "Unable to initialise the async-profiler engine" warning from spark.
+
+Then take the new baseline with `/spark profiler start --thread * --timeout 300`.
+
+**`fog_residue` moved to CANTBREATHE (same day; this instance + VM):** with the Man disabled, the Field Reports quest "Recover Fog Residue" (`7A05000000000109`) could not be completed.
+- **`kubejs/server_scripts/oc_interactions.js`:** the `OC_RESIDUES` entries for `man:manfromthefog` / `man:managgresive` are replaced by `cant_breathe:cant_breathe`. Same 90% drop chance on death.
+- **Why CANTBREATHE:** it's the other timer-summoned surface stalker, with the same 1–2 hour solitary cadence, any overworld biome, and no damage immunity, so it can be killed.
+- **Rejected candidates:** TOWW (1,024 HP, 100 armor, custom damage handling), the Pale Hound (five remote biomes only), Creeping Woods' Demon Cloud (5 HP, too trivial for a marquee drop).
+- **Quest (`field_reports.snbt`):** title "THE MAN" → "THE BREATHLESS", subtitle "The Man" → "The Breathless", and the description rewritten for CANTBREATHE (it spots you from very far, breaks doors, thins the air). Quest and task IDs are unchanged, so progress is kept.
+- **Lore docs:** `configcheck.md` / `implore_implementation_plan.md` still name the Man as the residue source; they are historical.
+
+**Not done yet:**
+- Artifacts campsites and the optional configs (audit §5.2.4, §5.2.6) and the cleanup commands (§5.5.3), pending decisions;
+- syncing these configs to "The Correction (Dev)" (singleplayer) and `Servers/Server v2`.
+
+**Revert:**
+- delete the four new override files;
+- restore the six list entries in `fragiletorches.toml`;
+- move the Data Anchor jar back into `mods/` on every client and copy it back from `/files/serverbak/mods/` on the VM.
+
+### `spooky_tick_fixes` 1.0.0 — tick-fix shim, first pass (2026-11-06) — `tools/spooky_tick_fixes/`, *client instances + VM*
+A pack-built Forge mod of behaviour-preserving server-tick fixes (audit §5.3). Each patch skips work that cannot change the outcome. Each applies only when its target mod is installed (a mixin plugin logs `… -> applying (modid)`), and each has its own switch in `config/spooky_tick_fixes-common.toml`. Source, design notes and the per-patch safety argument: `tools/spooky_tick_fixes/README.md`. It has no network channels or registry entries (`displayTest = IGNORE_ALL_VERSION`), so a client without it can still join.
+
+| Patch | Target | Measured cost it removes (audit §4) |
+|---|---|---|
+| Dormant mimics skip their tick with no player within 24 blocks | Artifacts `MimicEntity#tick` | 11–17% of the overworld tick |
+| Follow range 2048 → 32 for TOWW hanging, staring, crawling, hallucination, delusion and looked_at (type default + clamp on join); chase variants untouched | `EntityAttributeModificationEvent` / `EntityJoinLevelEvent` | up to 15% (path searches) |
+| The Obsessed player-variable sync: one send per player per tick | `TheObsessedModVariables$PlayerVariables#syncPlayerVariables` | 5–11 ms per player per tick (server thread) |
+| Whispering Spirits look check skipped with no spirit loaded | `PlayerLookAtSpiritProcedure#execute` | 1.3–3.4% of the server thread |
+| Fragile Torches: check for a torch before the list parse | `FragTorchEvent#onEntityUpdate` | ~2.3% |
+| Farm & Charm saturation sync only on change (plus a 100-tick refresh and on start-tracking) | `PacketHandler#sendSaturationSync` | 0.75% plus ~1,500 packets/s per player |
+| MCreator animation handlers skip other mods' mobs (Born in Chaos, The Obsessed, Creeping Woods, Foes, TOWW, Rake, Antlers) | `EntityAnimationFactory#onEntityTick` × 7 | ~1.6% |
+| Ad Astra Extra skips mobs that are neither gassed nor on Jupiter | `EntityTickProcedure#onEntityTick` | ~1.0% |
+
+**Verified on a headless scratch server** (this instance's 280 server-side jars plus the shim, the repo's `config/`, `defaultconfigs/` and `kubejs/`, fresh world, Java 17):
+- all 13 patches applied; no shim-related error or mixin failure (the only one is the long-standing Better Chunk Loading/Canary clash);
+- config generated;
+- a dormant mimic summoned 12 blocks up stayed at y 84.0, while an awake one fell and landed (84 → 73);
+- watcher follow range: new hanging and staring watchers get 32, and hanging and staring watchers loaded with 2048 in their NBT are clamped to 32 within the same tick (checked through a datapack function); `toww_hunting` stays at 2048;
+- cow, pig, zombie, Born in Chaos and Creeping Woods mobs ticked for 20 s with the gates active.
+
+The player-dependent patches (The Obsessed, Whispering Spirits, Farm & Charm, Fragile Torches next to a torch) still need an in-game check.
+
+**Deployed:**
+- the jar is in `mods/` and `local/` of this instance (`build.py --install`) and in "The Correction (Dev)" `mods/`;
+- uploaded to the VM's `mods/` (281 jars), verified byte for byte. The VM was stopped; it loads on the next start.
+
+**Not in this pass:** Full Immersion portal-AI gating (§5.3.5: its portal index needs verifying first), Alex's Caves magnets (§5.3.10), Slice & Dice and Citadel (§5.3.9), activation range (§5.5.1).
+
+**Revert:** delete the jar, or set any single switch to false. Nothing is stored in worlds.
 
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)

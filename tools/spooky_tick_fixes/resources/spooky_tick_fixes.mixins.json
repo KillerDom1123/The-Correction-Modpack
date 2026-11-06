@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "spookydookie.tickfixes.mixin",
+  "plugin": "spookydookie.tickfixes.TickFixesMixinPlugin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EntityPersistentDataAccessor",
+    "MimicEntityMixin",
+    "ObsessedPlayerVariablesMixin",
+    "WhisperingSpiritLookMixin",
+    "FragileTorchesMixin",
+    "FarmCharmSaturationMixin",
+    "AdAstraExtraEntityTickMixin",
+    "anim.BornInChaosAnimationGateMixin",
+    "anim.ObsessedAnimationGateMixin",
+    "anim.CreepingWoodsAnimationGateMixin",
+    "anim.FoesAnimationGateMixin",
+    "anim.TowwAnimationGateMixin",
+    "anim.RakeAnimationGateMixin",
+    "anim.AntlersAnimationGateMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -80,3 +80,4 @@ user-prefs.json
 # compat shim build output (source is tracked, the jar is not)
 /tools/immptl_dimthread_compat/build/
 /tools/farsight_immptl_compat/build/
+/tools/spooky_tick_fixes/build/

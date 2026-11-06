@@ -223,9 +223,9 @@
 		{
 			dependencies: ["7A05000000000106"]
 			description: [
-				"&8[ FIELD REPORT — THE MAN ]&r"
+				"&8[ FIELD REPORT — THE BREATHLESS ]&r"
 				""
-				"&7It stands at the edge of the fog and watches. It does not approach while you look. The residue it leaves has no composition our instruments recognise, and it does not disperse.&r"
+				"&7Every account agrees that it noticed them first, from further away than anything should see. Doors did not slow it. Survivors describe the air going thin around it. Where it falls it leaves a residue our instruments cannot name, and it does not disperse.&r"
 				""
 				"&8Objective: recover Fog Residue.&r"
 			]
@@ -237,7 +237,7 @@
 				{ id: "7A0500000000031F", type: "xp", xp: 30 }
 				{ count: 2, id: "7A05000000000320", item: "farmersdelight:vegetable_soup", type: "item" }
 			]
-			subtitle: "The Man"
+			subtitle: "The Breathless"
 			tasks: [{ id: "7A05000000000209", item: "oldcivilisation:fog_residue", type: "item" }]
 			x: 2.5d
 			y: 3.5d

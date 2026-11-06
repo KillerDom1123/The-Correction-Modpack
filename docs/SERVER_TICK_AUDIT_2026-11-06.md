@@ -2,7 +2,16 @@
 
 Scope: why the dedicated server (Server v2 on the Proxmox VM) runs at about 7 TPS with one player online, and every change that would reduce its tick time. The work combined spark profiles, a bytecode scan of all 281 server jars, reading the code of every hook that showed up as costly, and online research into known issues.
 
-**Status: investigation only. Nothing in this document has been applied** except one in-game test command (§3.3). Changes that later get applied should be recorded in `CONFIG_CHANGES.md` as usual.
+**Status (2026-11-06): phases 0–1 applied; the rest is still proposed.** The live server is now the Proxmox VM, deployed to over FTP. Record applied changes in `CONFIG_CHANGES.md` as usual. Applied so far (details in CONFIG_CHANGES, "Server tick audit — phases 0–1"):
+- **§5.1.1:** the GC flags. Memory was kept at `-Xms8G -Xmx32G` by choice.
+- **§5.1.2:** CPU governor on `performance`.
+- **§5.1.3:** `sync-chunk-writes=false`.
+- **§5.2.1:** the spawn overrides. `mftfhang` was removed entirely, since Man From The Fog is now disabled.
+- **§5.2.2:** Data Anchor removed.
+- **§5.2.3:** the Fragile Torches list trimmed.
+- **Server files chown-ed,** which fixes spark's async-profiler.
+- **§3.3:** the in-game test command.
+- **§5.3, first pass:** built as `tools/spooky_tick_fixes` 1.0.0 and deployed to both local instances and the VM. It covers §5.3.1–5.3.4 and §5.3.6–5.3.8; §5.3.7's The Obsessed `EntityTickProcedure` fix and §5.3.5, §5.3.9 and §5.3.10 are still open.
 
 Related: `CONFIG_CHANGES.md` (sections "Performance — …", "Immersive Portals × DimThreads", "Better Chunk Loading smart post-processing off"), `UPDATE_REVIEW_2026-11-01.md`, `SERVER_MODS.md`.
 

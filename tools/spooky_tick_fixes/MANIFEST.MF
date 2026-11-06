@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: spooky_tick_fixes
+Implementation-Version: 1.0.0
+MixinConfigs: spooky_tick_fixes.mixins.json
+

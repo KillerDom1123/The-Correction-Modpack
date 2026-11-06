@@ -124,8 +124,9 @@ ItemEvents.rightClicked('oldcivilisation:audio_log', event => {
 const OC_RESIDUES = {
   'themimic_er:mimicer': 'oldcivilisation:distorted_replica',
   'cave_dweller:cave_dweller': 'oldcivilisation:deep_echo',
-  'man:manfromthefog': 'oldcivilisation:fog_residue',
-  'man:managgresive': 'oldcivilisation:fog_residue',
+  // fog_residue moved from Man From The Fog (disabled 2026-11-06) to CANTBREATHE, the other
+  // timer-summoned surface stalker, so the Field Reports quest stays obtainable.
+  'cant_breathe:cant_breathe': 'oldcivilisation:fog_residue',
   'weeping_angels:weeping_angel': 'oldcivilisation:temporal_residue',
 }
 EntityEvents.death(event => {

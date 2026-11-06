@@ -1,0 +1,30 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "MIT"
+
+[[mods]]
+modId = "spooky_tick_fixes"
+version = "1.0.0"
+displayName = "Spooky Dookie tick fixes"
+authors = "Spooky Dookie pack"
+# No network channels or registry entries, so a client without it can still join a server that has it.
+displayTest = "IGNORE_ALL_VERSION"
+description = '''
+Behaviour-preserving server-tick fixes for the Spooky Dookie pack (docs/SERVER_TICK_AUDIT_2026-11-06.md §5.3).
+Each patch only applies when its target mod is installed and has its own switch in
+config/spooky_tick_fixes-common.toml.
+'''
+
+[[dependencies.spooky_tick_fixes]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.spooky_tick_fixes]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,1.20.2)"
+ordering = "NONE"
+side = "BOTH"

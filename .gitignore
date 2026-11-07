@@ -77,6 +77,19 @@ config/spark/
 
 user-prefs.json
 
+# ── Per-machine / per-world client state (personal; purged from history 2026-11-07, never re-add) ──
+/servers.dat
+/servers.dat_old
+/rhino.local.properties
+/.qmenu_opened.marker
+/observable_announce
+/win_event*.txt
+/XaeroWaypoints_BACKUP*/
+/config/jei/world/
+/config/embeddium-fingerprint.json
+/config/chunky/tasks/
+/config/xaeropatreon.txt
+
 # compat shim build output (source is tracked, the jar is not)
 /tools/immptl_dimthread_compat/build/
 /tools/farsight_immptl_compat/build/

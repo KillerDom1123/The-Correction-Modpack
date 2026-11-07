@@ -1,6 +1,0 @@
-{
-  "pack": {
-    "pack_format": 15,
-    "description": "TFC: hides the Calendar/Nutrition/Climate inventory tab strip (icons + tab backgrounds made transparent). The buttons still exist invisibly; TFC has no config toggle for them."
-  }
-}

@@ -2,7 +2,10 @@ package spookydookie.tickfixes;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.ChunkEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
@@ -44,6 +47,15 @@ public final class SpookyTickFixes {
         forge.addListener(EventPriority.HIGHEST, false, TickEvent.ServerTickEvent.class, ActivationRange::onServerTick);
         forge.addListener(EventPriority.NORMAL, false, ServerStoppedEvent.class, e -> { EntityCounters.clear(); CitadelCache.clear(); });
         forge.addListener(EventPriority.NORMAL, false, RegisterCommandsEvent.class, TickFixesCommand::register);
+        // Chunk-safe ticking: the guarded window is a server level's tick, from the first START listener to the last END one.
+        forge.addListener(EventPriority.HIGHEST, false, TickEvent.LevelTickEvent.class, e -> {
+            if (e.phase == TickEvent.Phase.START && e.side == LogicalSide.SERVER && e.level instanceof ServerLevel sl) ChunkSafeTicking.begin(sl);
+        });
+        forge.addListener(EventPriority.LOWEST, false, TickEvent.LevelTickEvent.class, e -> {
+            if (e.phase == TickEvent.Phase.END && e.side == LogicalSide.SERVER) ChunkSafeTicking.end();
+        });
+        forge.addListener(EventPriority.NORMAL, false, ChunkEvent.Unload.class, e -> ChunkSafeTicking.onChunkUnload());
+        forge.addListener(EventPriority.NORMAL, false, ServerStoppedEvent.class, e -> ChunkSafeTicking.clearAll());
 
         LOGGER.info("[{}] loaded", MOD_ID);
     }

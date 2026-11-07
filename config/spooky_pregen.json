@@ -1,0 +1,48 @@
+// spooky_pregen: pre-generates the world with Chunky while the dedicated server is empty.
+// Only ever runs on a dedicated server (never in singleplayer). Pauses the moment a player logs in.
+// Edit, then run /pregen reload (no restart needed). /pregen status shows what it is doing; /pregen next previews.
+// Comments like these are allowed. Distances are in blocks; a Chunky "radius" is half the side of the square.
+{
+  "enabled": true,
+
+  // Look for new work this often while empty (minutes). Finished tasks chain straight into the next one.
+  "checkIntervalMinutes": 5,
+  // The server must have been empty this long before anything starts or resumes (minutes).
+  "emptyGraceMinutes": 5,
+  // Never generate while the world's disk has less free space than this (GB). The VM disk is 12.6 GB in total.
+  "minFreeDiskGb": 2.0,
+  // Pause for the rest of the day once the world folder has grown this much since midnight (MB). 0 = no cap.
+  // About 4-7 MB per finished region (32x32 chunks).
+  "maxDiskGrowthMbPerDay": 1000,
+
+  "shape": "square",
+  "pattern": "region",
+
+  // Fixed points, worked through in order BEFORE the edge rules: generate radius, then radius+step, ... up to maxRadius.
+  // Progress is stored per job name in world/spooky_pregen_state.json; renaming a job starts it again. Example:
+  //   { "name": "base-ring", "dimension": "minecraft:overworld", "x": 392, "z": -84, "radius": 512, "maxRadius": 1536, "step": 256 }
+  "jobs": [],
+
+  // Edge rules, once every job is done. "blob" mode: find the edge of the generated area (missing chunks next to
+  // generated ones, on every island except specks smaller than minIslandChunks), pick the edge chunk nearest to where
+  // players are (their last logout position and bed, read from playerdata and updated on every logout; spawn when none
+  // is known), grow a square there from blobStartRadius to blobMaxRadius in blobStep steps, then pick again.
+  // extraAnchors adds fixed points (e.g. a base): [{ "name": "base", "x": 392, "z": -84 }].
+  "edges": [
+    {
+      "enabled": true,
+      "dimension": "minecraft:overworld",
+      "mode": "blob",
+      "centerX": 0,
+      "centerZ": 0,
+      "maxDistance": 0,
+      "blobStartRadius": 256,
+      "blobMaxRadius": 1024,
+      "blobStep": 256,
+      "minIslandChunks": 64,
+      "playerAnchors": true,
+      "anchorMaxAgeDays": 30,
+      "extraAnchors": []
+    }
+  ]
+}

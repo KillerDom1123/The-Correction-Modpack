@@ -39,7 +39,7 @@ README_END = "<!-- MODLIST:END -->"
 # (lowercased). Order matters — put specific/library rules before generic ones.
 CATEGORY_RULES = [
     # The pack's own builds (source in tools/). First, so "dimthread"/"farsight" below don't claim them.
-    ("Local Fixes", ["spooky_tick_fixes", "immptl_dimthread_compat", "farsight_immptl_compat"]),
+    ("Local Fixes", ["spooky_tick_fixes", "spooky_pregen", "immptl_dimthread_compat", "farsight_immptl_compat"]),
     ("Core libraries & performance", [
         "architectury", "balm", "botarium", "citadel", "cloth", "creativecore",
         "cupboard", "curios", "geckolib", "glitchcore", "guideme", "integrated_api",

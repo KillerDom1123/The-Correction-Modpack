@@ -84,6 +84,56 @@ chunk whose load has finished.
 
 `/tickfixes stats` adds the counts: villager bed reads skipped, Obsessed reads stubbed, and off-thread requests with the top callers. The plugin now also logs the two vanilla patches (`-> applying (vanilla)`): **31** applying lines in total.
 
+## 1.3.4 — chunk-safe ticking (`[chunkSafeTicking]`)
+
+**The problem.** Every watchdog crash and multi-second stall of 2026-11-06/07 had the same cause, in a different piece of
+code each time:
+- the horror look ray casts;
+- The Obsessed's spawn search;
+- the vanilla villager bed check;
+- Immersive Weathering's fluid generators;
+- Create Connected's rotation propagation.
+
+Each one, while a level ticked, read a block in a chunk that didn't exist yet. Vanilla generates such a chunk on the spot
+and the server thread waits. On the VM, with players exploring, that wait is seconds to minutes; at 120 s the watchdog
+stopped the server.
+
+**The fix.** It covers all of them at once, and whatever else does the same:
+- **Where:** `LevelReadGuardMixin` redirects the chunk lookup inside `Level.getBlockState` and `Level.getFluidState`.
+  Canary overwrites `getBlockState`, so the mixin has priority 1500 to apply after it.
+- **When:** while a server level ticks (from the first `LevelTickEvent` START listener to the last END one), on the
+  server thread.
+- **What happens to a read:**
+
+| The chunk is… | Answer |
+|---|---|
+| loaded | unchanged, through a 4-entry cache that's cleared every tick and on chunk unload |
+| finished, in memory but not accessible | vanilla (it gets a ticket; nothing is generated) |
+| finished on disk (`Status` = full, read with the chunk scanner; the region file is checked first) | vanilla (a disk load). The check waits at most `diskCheckMillis` (50); its answer is cached for 60 s (5 s if it timed out) |
+| not generated, half generated, or being generated right now | **a barrier block, no fluid**, at once |
+
+**Why a barrier, not air:** nothing spawns, places blocks or flows into terrain that doesn't exist, and ray casts stop
+there.
+
+**Untouched:** player packets, commands, worldgen and other threads, and main-thread chunk tasks (promotion to a full
+chunk and its post-processing, via `ChunkTaskSuspendMixin`).
+
+**So the only difference from vanilla:** ungenerated terrain is never generated just because something ticking looked
+at it. That is generation the pre-generator (`spooky_pregen`) or a player's own chunk loading would do anyway, off the
+server thread.
+
+**Monitoring and escape hatches:**
+- **First reads are logged:** the first barrier read from each caller is logged with its stack (`chunk-safe ticking: … new caller`).
+- **`/tickfixes stats`** counts barriers, disk loads and memory loads.
+- **`/tickfixes probe <x> <z>`** performs one read at y 64 inside the next tick of your dimension and reports the path it took.
+- **`exemptCallers`** (class-name prefixes) lets a mod that really must generate on the spot keep doing so.
+- **`enabled = false`** restores vanilla.
+
+**Also in 1.3.4:**
+- `offThreadChunkLog` now hooks only the off-thread branch of `getChunk` (Canary's `getChunkOffThread`, or vanilla's
+  `supplyAsync`), so main-thread chunk lookups don't pay for it.
+- The Fragile Torches pre-check uses the non-waiting chunk lookup.
+
 ## Activation range (1.1.0) — `[activationRange]`
 
 This changes behaviour, for far mobs only. (The other behaviour change is the 1.2.0 Antlers day-counter fix.) Mobs more than `range` (48) blocks from every player

@@ -49,7 +49,7 @@ public final class TickFixesMixinPlugin implements IMixinConfigPlugin {
             Map.entry("anim.AntlersAnimationGateMixin", "antlers"));
 
     /** Patches on vanilla classes: always applied, but logged like the others. */
-    private static final Set<String> VANILLA_PATCHES = Set.of("VillagerSleepChunkMixin", "OffThreadChunkLogMixin");
+    private static final Set<String> VANILLA_PATCHES = Set.of("VillagerSleepChunkMixin", "OffThreadChunkLogMixin", "LevelReadGuardMixin", "ChunkTaskSuspendMixin");
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {

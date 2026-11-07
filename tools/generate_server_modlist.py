@@ -52,7 +52,8 @@ NOTES = """\
 >   is a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.
 > - **Pack-built** (category *Local Fixes*, source in `tools/`): `spooky_tick_fixes` holds the server-tick fixes, the
 >   activation range and the horror ray-cast guard (config `config/spooky_tick_fixes-common.toml`), on clients and the
->   server. `farsight_immptl_compat` is client-only. `immptl_dimthread_compat` is disabled together with DimThreads.
+>   server. `spooky_pregen` runs Chunky while the server is empty (config `config/spooky_pregen.json`, `/pregen`); it
+>   is inert on clients. `farsight_immptl_compat` is client-only. `immptl_dimthread_compat` is disabled with DimThreads.
 > - **DimThreads disabled 2026-11-06:** version 1.2.1 ticks every dimension under one global lock (no parallelism), and
 >   a 46-minute profile with it off was no slower. Its jar and `immptl_dimthread_compat` are `.jar.disabled` on both sides.
 > - **Server-side helpers added 2026-11-06:** Let Me Despawn (+ its library Almanac) lets mobs that picked up items

@@ -2,13 +2,13 @@
 
 **Server:** the live VM (`files/server` under the FTP login)  
 **Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10  
-**Active jars:** 281 · **Disabled on the server:** 3  
+**Active jars:** 282 · **Disabled on the server:** 3  
 **Generated:** 2026-11-07 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
 
 > The server is the client instance's `mods/` **minus the client-only list** below, kept in step by
 > `scripts/sync_server_mods.py`. Every jar here must match the client exactly, or players are refused at login.
 
-**Parity:** matches the client instance (306 active jars − 25 client-only = 281).
+**Parity:** matches the client instance (307 active jars − 25 client-only = 282).
 
 > **Notes** (hand-maintained in `tools/generate_server_modlist.py`; everything else here is generated):
 >
@@ -21,7 +21,8 @@
 >   is a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.
 > - **Pack-built** (category *Local Fixes*, source in `tools/`): `spooky_tick_fixes` holds the server-tick fixes, the
 >   activation range and the horror ray-cast guard (config `config/spooky_tick_fixes-common.toml`), on clients and the
->   server. `farsight_immptl_compat` is client-only. `immptl_dimthread_compat` is disabled together with DimThreads.
+>   server. `spooky_pregen` runs Chunky while the server is empty (config `config/spooky_pregen.json`, `/pregen`); it
+>   is inert on clients. `farsight_immptl_compat` is client-only. `immptl_dimthread_compat` is disabled with DimThreads.
 > - **DimThreads disabled 2026-11-06:** version 1.2.1 ticks every dimension under one global lock (no parallelism), and
 >   a 46-minute profile with it off was no slower. Its jar and `immptl_dimthread_compat` are `.jar.disabled` on both sides.
 > - **Server-side helpers added 2026-11-06:** Let Me Despawn (+ its library Almanac) lets mobs that picked up items
@@ -34,9 +35,10 @@
 
 ---
 
-## Local Fixes (1)
+## Local Fixes (2)
 
-- Spooky Dookie tick fixes — `spooky_tick_fixes-1.3.2.jar`
+- Spooky Dookie pre-generation scheduler — `spooky_pregen-1.1.0.jar`
+- Spooky Dookie tick fixes — `spooky_tick_fixes-1.3.4.jar`
 
 ## Core libraries & performance (68)
 
@@ -393,7 +395,7 @@ The groups and notes come from `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods
 - sound-physics-remastered-forge-1.20.1-1.5.1.jar
 
 **Client-only utilities:**
-- farsight_immptl_compat-1.0.0.jar — pack-built; source in `tools/farsight_immptl_compat/`, restores Farsight's chunk keeping under Immersive Portals
+- farsight_immptl_compat-1.0.1.jar — pack-built; source in `tools/farsight_immptl_compat/`, restores Farsight's chunk keeping under Immersive Portals
 - jei-1.20.1-forge-15.56.0.205.jar — recipe viewer
 - xaerominimap-forge-1.20.1-26.6.0.jar — minimap; the world map's server component is kept
 

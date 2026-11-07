@@ -33,6 +33,11 @@ public final class TickFixesConfig {
     private static final ForgeConfigSpec.BooleanValue OBSESSED_READS_LOADED_ONLY;
     private static final ForgeConfigSpec.BooleanValue VILLAGER_SLEEP_LOADED_ONLY;
     private static final ForgeConfigSpec.BooleanValue OFF_THREAD_CHUNK_LOG;
+    private static final ForgeConfigSpec.BooleanValue CS_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue CS_DISK_LOADS;
+    private static final ForgeConfigSpec.IntValue CS_DISK_MS;
+    private static final ForgeConfigSpec.BooleanValue CS_LOG;
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> CS_EXEMPT;
 
     private static final ForgeConfigSpec.BooleanValue AR_ENABLED;
     private static final ForgeConfigSpec.DoubleValue AR_RANGE;
@@ -68,6 +73,11 @@ public final class TickFixesConfig {
     public static volatile boolean obsessedReadsLoadedOnly = true;
     public static volatile boolean villagerSleepLoadedOnly = true;
     public static volatile boolean offThreadChunkLog = true;
+    public static volatile boolean chunkSafeTicking = true;
+    public static volatile boolean chunkSafeAllowDiskLoads = true;
+    public static volatile int chunkSafeDiskCheckMs = 50;
+    public static volatile boolean chunkSafeLog = true;
+    public static volatile List<String> chunkSafeExempt = List.of();
 
     public static volatile boolean activationEnabled = true;
     public static volatile double activationRangeBlocks = 48.0D;
@@ -150,6 +160,21 @@ public final class TickFixesConfig {
                 .define("offThreadChunkLog", true);
         b.pop();
 
+        b.comment("Chunk-safe ticking (1.3.4): while a dimension ticks, a block or fluid read on the server thread never makes it generate terrain.",
+                  "Loaded chunks, and chunks already generated on disk, behave as in vanilla. A read of terrain that doesn't exist yet (or is still",
+                  "being generated) answers with a barrier block and no fluid instead of waiting. This was the cause of every watchdog crash so far.").push("chunkSafeTicking");
+        CS_ENABLED = b.comment("Master switch.").define("enabled", true);
+        CS_DISK_LOADS = b.comment("Load chunks that are fully generated on disk, as vanilla would (milliseconds). False = barrier for every unloaded chunk.")
+                .define("allowDiskLoads", true);
+        CS_DISK_MS = b.comment("Longest wait for the on-disk status check before answering with a barrier (the answer is cached for 5 s).")
+                .defineInRange("diskCheckMillis", 50, 5, 1000);
+        CS_LOG = b.comment("Log the first barrier read from each caller, with its stack. Counts are in /tickfixes stats.")
+                .define("logCallers", true);
+        CS_EXEMPT = b.comment("Callers that may still generate terrain synchronously: class-name prefixes, matched against the first frame",
+                              "outside Minecraft/Forge, e.g. com.example.mod. or com.example.mod.SomeClass.someMethod")
+                .defineListAllowEmpty(List.of("exemptCallers"), List::of, o -> o instanceof String);
+        b.pop();
+
         b.comment("Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs",
                   "(slow motion); MineColonies, guards, scripted horror and bosses are excluded by default.").push("activationRange");
         AR_ENABLED = b.comment("Master switch.").define("enabled", true);
@@ -197,6 +222,11 @@ public final class TickFixesConfig {
         obsessedReadsLoadedOnly = OBSESSED_READS_LOADED_ONLY.get();
         villagerSleepLoadedOnly = VILLAGER_SLEEP_LOADED_ONLY.get();
         offThreadChunkLog = OFF_THREAD_CHUNK_LOG.get();
+        chunkSafeTicking = CS_ENABLED.get();
+        chunkSafeAllowDiskLoads = CS_DISK_LOADS.get();
+        chunkSafeDiskCheckMs = CS_DISK_MS.get();
+        chunkSafeLog = CS_LOG.get();
+        chunkSafeExempt = CS_EXEMPT.get().stream().map(String::valueOf).toList();
         activationEnabled = AR_ENABLED.get();
         activationRangeBlocks = AR_RANGE.get();
         activationInterval = AR_INTERVAL.get();
@@ -217,6 +247,7 @@ public final class TickFixesConfig {
                 + " rayLoadedOnly=" + rayLoadedOnly + " rayDedupe=" + rayDedupe
                 + " obsessedChunkWait=" + obsessedChunkWait + "(" + obsessedChunkRadius + ") obsessedReadsLoadedOnly=" + obsessedReadsLoadedOnly
                 + " villagerSleepLoadedOnly=" + villagerSleepLoadedOnly + " offThreadChunkLog=" + offThreadChunkLog
+                + " chunkSafeTicking=" + chunkSafeTicking + "(diskLoads=" + chunkSafeAllowDiskLoads + ", exempt=" + chunkSafeExempt.size() + ")"
                 + " | activationRange enabled=" + activationEnabled + " range=" + activationRangeBlocks
                 + " interval=" + activationInterval + " adaptive=" + activationAdaptive + "(" + activationEnableAboveMspt + "/"
                 + activationDisableBelowMspt + " ms)";

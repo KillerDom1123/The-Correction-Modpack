@@ -34,7 +34,10 @@ public final class SmallGates {
         if (!TickFixesConfig.fragileTorches || entity == null) return false;
         Level level = entity.m_9236_();
         BlockPos pos = entity.m_20183_();
-        LevelChunk chunk = level.m_46745_(pos);
+        // Never wait for a chunk here (it showed up in the chunk waits); one that isn't ready can't have a torch to break.
+        LevelChunk chunk = level instanceof net.minecraft.server.level.ServerLevel sl
+                ? sl.m_7726_().m_7131_(pos.m_123341_() >> 4, pos.m_123343_() >> 4) : level.m_46745_(pos);
+        if (chunk == null) return true;
         if (chunk.m_8055_(pos).m_204336_(FRAGILE)) return false;
         if (entity.m_20192_() >= 1.0F && chunk.m_8055_(pos.m_7494_()).m_204336_(FRAGILE)) return false;
         return true;

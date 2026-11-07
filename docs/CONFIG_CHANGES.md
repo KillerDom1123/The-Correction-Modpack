@@ -1322,7 +1322,7 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Removed, mod disabled on both sides:** TerraFirmaCraft (`tfc-client.toml`, `tfc-common.toml`, `defaultconfigs/tfc-server.toml`, and the OpenLoader packs `TFCFoodHunger`, `TFCLightItems`, `TFCVanillaCraftingTable`, `TFCHideInventoryTabs`, `TFCNoSizeTooltip`, `data-disabled/TFCModdedFood`), DimThreads (`dimthread-common.toml`) and The Man From The Fog (`man_config.toml`). Re-enabling one starts from its default config; the old files are in git history and the local `*.bak` copies.
 - **Left in place:** `kubejs/server_scripts/tfc_vanilla_food.js` still runs. Without TFC it only writes `tfc:` data that nothing reads.
 
-### Watchdog crash 01:44 (villager bed), `spooky_tick_fixes` 1.3.3 (2026-11-07) — *client instance; VM pending*
+### Watchdog crash 01:44 (villager bed), `spooky_tick_fixes` 1.3.3 (2026-11-07) — *client instance + VM*
 - **Crash:** `ServerHangWatchdog`: one tick took 120 s. The server thread was in vanilla `SleepInBed.checkExtraStartConditions`. It reads the block at a villager's remembered home bed *before* checking that the bed is within 2 blocks, and that bed's chunk wasn't loaded. The chunk still had to be generated. Finishing it needs a ring of neighbouring chunks generated too, and the thread dump shows the world-generation threads busy with noise and YUNG's Better Caves carving. It's not a deadlock, just more than 120 s of work on this CPU. ilovepuffles111 was online, probably exploring. Chunky had finished at 00:51. Canary and Observable are named as "suspected" only because they appear in the stack.
 - **1.3.3:**
   - `villagerSleepLoadedOnly`: the bed read answers air when the chunk isn't loaded. A ticking villager can't be within 2 blocks of a bed in an unloaded chunk, so the result is unchanged.
@@ -1334,6 +1334,76 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - No other mod in the pack patches `SleepInBed` or The Obsessed's `PlayerTickProcedure`.
   - Canary `@Overwrite`s `ServerChunkCache.getChunk`, so the logger's mixin has priority 1500 and applies after it.
   - Every Obsessed `isEmptyBlock` / `getBlockState` call site was read in bytecode to choose the safe stub value.
+
+### `spooky_pregen` 1.0.0: pre-generation while the server is empty (2026-11-07) — *client instance + VM*
+- **What:** a new pack-built mod (`tools/spooky_pregen/`, jar in `mods/` + `local/`).
+  - It drives Chunky through its API, and only on a dedicated server; on clients and in singleplayer it does nothing.
+  - Once the server has been empty for `emptyGraceMinutes` (5), it works through `jobs`. Each job grows a square around a point from `radius` to `maxRadius` in `step`s.
+  - Then it fills outward from the **edge** of the generated area, nearest to the centre first. The edge comes from the region files' 4 KB location tables, so chunks that already exist are never targeted.
+  - It pauses the moment a player logs in, and resumes after a restart.
+  - Guards: `minFreeDiskGb` (2.0) and `maxDiskGrowthMbPerDay` (1000).
+  - Commands: `/pregen status|next|hold|resume|skip|reload`.
+  - Full description: `tools/spooky_pregen/README.md`.
+- **Config:** `config/spooky_pregen.json`. Its first job widens the overworld square from ±2048 to ±3072 in 256-block steps; then the overworld edge rule fills within 4096 of 0,0. On the VM: the jar was uploaded with the sync (282 jars, parity verified) and the config to `config/` (read back identical). It takes effect at the next restart.
+- **Found while testing:** Chunky's `GenerationCompleteEvent` fires when a task's loop has *handed out* its last chunk. Up to 50 chunks can still be generating at that point, and the event also fires on pause and cancel. The first build trusted it, so tasks overlapped. Completion is now a progress event with `complete()` set, which Chunky raises once, when the finished count reaches the total.
+- **Tested** on the scratch test server (281 jars + 1.3.3 + this) with tiny squares and near-zero waits:
+  - the job grew 32 → 64 → 96;
+  - 48 edge windows followed, nearest first, and **0** of the 54 tasks across both boots overlapped;
+  - `hold` stopped new work, and `status` / `reload` worked;
+  - an unknown dimension was skipped with one warning;
+  - a task paused at shutdown resumed after a restart and finished.
+  - Untested headless: the pause on player login. It's the same `pause()` path as `hold`, and it runs at HIGHEST priority on `PlayerLoggedInEvent`.
+- **Limit:** a pause stops Chunky from handing out more chunks, but chunks already handed out (up to Chunky's 50 in flight) finish generating. On the VM that is roughly 10–15 s of extra generation right after someone logs in. `-Dchunky.maxWorkingCount=16` in `user_jvm_args.txt` would shorten it. Generation is serial anyway, so fewer chunks in flight shouldn't cost throughput.
+
+### Watchdog crash 03:08 (Immersive Weathering), `max-tick-time`, `spooky_tick_fixes` 1.3.4 "chunk-safe ticking" (2026-11-07) — *client instance + VM*
+- **Crash 03:08:58:** a 120 s tick. A fluid tick's neighbour update reached Immersive Weathering's fluid-generator check (`SelfFluidGenerator$AdjacentBlocks.isMet`), which read a block in a chunk that still had to be generated while ilovepuffles111 explored around x 6000–7000. The server stayed down until restarted.
+  - The 1.3.3 off-thread logger also caught **vanilla `Cat.finalizeSpawn`**: village cats placed during generation look up structures through the live world (`structure_references`). Cheap, but it confirms the logger works.
+  - Its other catches (Immersive Petroleum reservoirs, Guard Villagers' `getVariantFromBiome`, Alex's Caves) only read biomes.
+- **`max-tick-time` 120000 → 300000** in the VM's `server.properties`. The backup is `server.properties.bak-20261107-ticktime`, and the change applies at the next restart. A generation stall now freezes the server for up to 5 minutes instead of crashing it; a true deadlock still ends in a crash after 5 minutes.
+- **1.3.4, chunk-safe ticking (`[chunkSafeTicking]`, on by default):** one fix for the whole class instead of a patch per mod.
+  - **How:** while a dimension ticks, block and fluid reads on the server thread never generate terrain.
+    - loaded chunks: unchanged;
+    - chunks finished in memory or on disk: vanilla (a disk load, about 10 ms);
+    - terrain that doesn't exist yet or is still being generated: a **barrier** block at once.
+  - **Not affected:** player actions, commands, worldgen and chunk post-processing.
+  - **Monitoring:**
+    - the first barrier read per caller is logged with its stack;
+    - `/tickfixes stats` has the counts;
+    - `/tickfixes probe <x> <z>` tests a read;
+    - `exemptCallers` lets a mod keep generating on the spot, and `enabled = false` restores vanilla.
+  - **Also in 1.3.4:**
+    - the off-thread logger now hooks only the off-thread branch, so it costs nothing on the main thread;
+    - the Fragile Torches pre-check no longer waits for chunks.
+  - **Details:** `tools/spooky_tick_fixes/README.md`.
+- **Tested** on the scratch test server: 33 patches applied, with no mixin errors.
+  - `probe 0 0` (loaded): fast path, 8 µs.
+  - `probe 400 8` (generated but unloaded): real terrain (andesite) loaded from disk in 7–11 ms.
+  - `probe 300000 300000` (never generated): barrier with no generation; 4.3 ms the first time, 86 µs once cached.
+  - While `spooky_pregen` generated 29 squares under the guard, no other read was answered with a barrier.
+  - **On the VM:** uploaded with the sync (1.3.3 moved to `mods-removed/`; 282 jars, parity verified). It takes effect at the next restart.
+  - Not yet measured: the overhead on the VM under real load. Compare a spark profile after deploying with the median of about 40 ms before.
+
+### `spooky_pregen` 1.1.0: blob mode, players first (2026-11-07) — *client instance + VM*
+- **Why:** the pre-generator should work where people actually go. The generated overworld is 32 islands (from the region tables, 2026-11-07): the main area around spawn (88,091 chunks), a western island (9,734), two far-eastern ones (about 1,250 each) and 28 small specks left by fast travel.
+- **Blob mode** (the edge rule's new default):
+  - **Seed:** the edge chunk of any non-speck island that is nearest to an **anchor**, meaning a player's last logout position or bed.
+  - **Grow:** a square centred on it, from 256 to 1024 radius in 256 steps.
+  - **Repeat:** recompute the edge and pick again.
+  - **Anchors** are read once from `world/playerdata` and updated on every logout. Specks (under 64 chunks) are ignored unless an anchor is near them.
+  - **Full description:** `tools/spooky_pregen/README.md`.
+- **On the VM:**
+  - the jar was uploaded with the sync (1.0.0 moved to `mods-removed/`; 282 jars, parity verified);
+  - the config was uploaded and read back identical, with the 1.0.0 version kept as `spooky_pregen.json.bak-20261107-v100`;
+  - it takes effect at the next restart.
+- **Pack config:** the `spawn-3072` job was removed. Jobs run before edges, and it was about 80,000 chunks (roughly 4.5 h on the VM) away from where players are. The edge rule is now blob mode with no distance limit.
+- **On the VM's real data:**
+  - **Anchors:** ilovepuffles111 at (7130, −4859), and Milton___ at (−4197, −3432) with his bed beside it.
+  - **Simulation:** blob 1 at (−4136, −3176), Milton's area, 13,348 new chunks; blob 2 at (7352, −5096), ilovepuffles111's, 15,096; then alternating, about 7,500–8,600 each (25–50 min per blob at 5 chunks/s).
+- **Tested** on the scratch test server with tiny blobs and a test anchor at (700, 650):
+  - the first blob centred at (696, 760), 112 blocks from the anchor, and grew 32 → 64 → 96 before a new blob was picked;
+  - 15 tasks ran with 0 overlaps;
+  - `status` shows the blob, the reason it was picked and the anchors.
+- **Separate finding, nothing changed:** Better Chunk Loading's `ServerChunkCacheMixin` fails to apply on every boot ("@At INVOKE … cannot inject into m_7587_"), because Canary overwrites `ServerChunkCache.getChunk`. So its chunk-priority feature has never been active on the VM.
 
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)

@@ -6,9 +6,9 @@
 > *They fell because they found something they could not understand."*
 
 <!-- MODLIST:START -->
-> **At a glance** — Minecraft 1.20.1 · Forge · **306 mod jars (309 mods)** · full list in [modlist.md](modlist.md)
+> **At a glance** — Minecraft 1.20.1 · Forge · **307 mod jars (310 mods)** · full list in [modlist.md](modlist.md)
 >
-> Local Fixes (2) · Core libraries & performance (72) · Create & addons (23) · Tech — energy, automation, industry (19) · Magic (9) · Colony / civilisation (11) · Horror & atmosphere (25) · Mobs & world creatures (4) · Worldgen & structures (28) · Food & farming (7) · Decoration & building (30) · Storage, QoL & utility (57) · Security & protection (3) · Quests, loot, data & guides (16)
+> Local Fixes (3) · Core libraries & performance (72) · Create & addons (23) · Tech — energy, automation, industry (19) · Magic (9) · Colony / civilisation (11) · Horror & atmosphere (25) · Mobs & world creatures (4) · Worldgen & structures (28) · Food & farming (7) · Decoration & building (30) · Storage, QoL & utility (57) · Security & protection (3) · Quests, loot, data & guides (16)
 <!-- MODLIST:END -->
 
 ---
@@ -144,6 +144,7 @@ This repository tracks the pack's **configuration and custom content**, not the 
 - **Building:** each `tools/<mod>/build.py` uses the shared `tools/_javabuild.py` (JDK 17 plus the CurseForge install's libraries; no Gradle). The version lives in the mod's `mods.toml` and `MANIFEST.MF`. `--install` copies the jar into `mods/` and `local/` and removes older versions there.
 - **Built here, now disabled:** `immptl_dimthread_compat` — a one-mixin mod that let Immersive Portals and DimThreads run together. DimThreads was disabled on 2026-11-06: its 1.2.1 ticks every dimension under one global lock, so it gave no parallelism. Both jars are `.jar.disabled` on clients and the server; the source stays in `tools/immptl_dimthread_compat/` in case DimThreads returns.
 - **Built here:** `spooky_tick_fixes` — behaviour-preserving server-tick fixes (dormant mimics, TOWW follow range, The Obsessed sync, Whispering Spirits, Fragile Torches, Farm & Charm, MCreator animation handlers, Ad Astra Extra, Full Immersion, Alex's Caves, Citadel, TOWW's per-level sync, Antlers' day counter, and guards that stop the horror mods' look ray casts, The Obsessed's block reads and vanilla villagers' bed check from loading chunks on the main thread), plus an adaptive **activation range** (far mobs tick less often while the server is behind; MineColonies, guards and scripted horror are exempt; `/tickfixes stats` shows its status). Each patch has a switch in `config/spooky_tick_fixes-common.toml`. Build it with `python tools/spooky_tick_fixes/build.py --install`. It ships on clients and the server, but the server can run it alone. Details: `tools/spooky_tick_fixes/README.md` and `docs/SERVER_TICK_AUDIT_2026-11-06.md`.
+- **Built here:** `spooky_pregen` — pre-generates the world with Chunky while the dedicated server is empty and pauses the moment a player logs in. It works through a list of points in `config/spooky_pregen.json`, each grown from a start radius to a maximum, then fills outward from the edge of the generated area, nearest first. Guarded by free disk space and an optional daily growth cap. `/pregen status|next|hold|resume|skip|reload`. Inert on clients and in singleplayer. Details: `tools/spooky_pregen/README.md`.
 - **Built here:** `farsight_immptl_compat` — restores Farsight's client chunk keeping under Immersive Portals. Client-only; the sync never copies it to the server.
 - **Not tracked:** `mods/`, `saves/`, caches, logs, and machine-specific files (see `.gitignore`).
 

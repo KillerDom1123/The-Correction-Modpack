@@ -31,6 +31,8 @@ build(__file__, [
     lib("org/ow2/asm/asm-tree/9.8/asm-tree-9.8.jar"),
     lib("com/electronwill/night-config/core/*/core-*.jar"),
     lib("com/google/guava/guava/*/guava-*.jar"),
+    lib("it/unimi/dsi/fastutil/*/fastutil-*.jar"),
+    lib("com/mojang/datafixerupper/*/datafixerupper-*.jar"),
     lib("com/mojang/brigadier/*/brigadier-*.jar"),
     # Target mods whose types are referenced directly.
     mod("artifacts-forge-*.jar"),

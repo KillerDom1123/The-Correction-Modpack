@@ -3,12 +3,12 @@
 **Server:** the live VM (`files/server` under the FTP login)  
 **Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10  
 **Active jars:** 281 · **Disabled on the server:** 3  
-**Generated:** 2026-11-06 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
+**Generated:** 2026-11-07 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
 
 > The server is the client instance's `mods/` **minus the client-only list** below, kept in step by
 > `scripts/sync_server_mods.py`. Every jar here must match the client exactly, or players are refused at login.
 
-**Parity:** matches the client instance (304 active jars − 23 client-only = 281).
+**Parity:** matches the client instance (306 active jars − 25 client-only = 281).
 
 > **Notes** (hand-maintained in `tools/generate_server_modlist.py`; everything else here is generated):
 >
@@ -36,7 +36,7 @@
 
 ## Local Fixes (1)
 
-- Spooky Dookie tick fixes — `spooky_tick_fixes-1.3.0.jar`
+- Spooky Dookie tick fixes — `spooky_tick_fixes-1.3.2.jar`
 
 ## Core libraries & performance (68)
 
@@ -359,7 +359,7 @@
 
 ---
 
-## Client-only mods excluded from the server (23)
+## Client-only mods excluded from the server (25)
 Present in the client instance but deliberately **not** copied to the server. They set
 `IGNORE_SERVER_VERSION`, so clients keep them and are not refused for the server lacking them.
 The groups and notes come from `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods.py`.
@@ -378,10 +378,12 @@ The groups and notes come from `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods
 - blur-forge-3.1.1.jar
 - BorderlessWindow-1.20-1.6.0.jar
 - chat_heads-0.15.7-forge-1.20.jar
+- configured-forge-1.20.1-2.2.3.jar — in-game config screens (JEI's wrench); kept off the server so server configs can't be edited from the client; its channel accepts a missing peer
 - Controlling-forge-1.20.1-12.0.2.jar
 - LegendaryTooltips-1.20.1-forge-1.4.5.jar
 - moreoverlays-1.24.1-mc1.20.1-forge.jar
 - MouseTweaks-forge-mc1.20.1-2.25.1.jar
+- simplezoom-forge-1.20.1-1.0.1.jar — hold-to-zoom key (C); client mixins only
 
 **Client animation / audio:**
 - AmbientSounds_FORGE_v6.3.11_mc1.20.1.jar

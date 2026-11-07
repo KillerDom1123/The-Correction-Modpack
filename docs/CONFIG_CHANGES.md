@@ -1285,6 +1285,23 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **VM:** uploaded with the sync (1.3.1 moved to `mods-removed/`; 281 jars, parity verified). Takes effect on restart.
 - **Also advised:** a world border at the pre-generated edge (`/worldborder center 0 0`, `/worldborder set 4096`) until the world is pre-generated further out.
 
+### Simple Zoom added (2026-11-06, night) — *client instance only*
+- **Mod:** Simple Zoom 1.0.1 by MrRockis, `simplezoom-forge-1.20.1-1.0.1.jar` ([Modrinth](https://modrinth.com/project/zoom-simple)). It's an OptiFine-style zoom: hold **C** (rebindable under Controls → "Simple Zoom") to zoom 3×, and scroll while holding to change it, up to 50×. The only dependency is Forge 47.2.30+.
+- **Client-only:** both of its mixins (`GameRenderer`, `MouseHandler`) are in the mixin config's `client` list. It has no network code, so players without it can still join. Its `mods.toml` line `side = "CLIENT"` isn't a field Forge 1.20.1 recognises, so nothing stops it loading on a dedicated server. `simplezoom-` was added to `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods.py`. The sync dry run against the VM: 305 active − 24 client-only = 281, parity unchanged, nothing to upload.
+- **Docs:** `modlist.md`, `modlist.json` and the README at-a-glance block were regenerated. A `simplezoom` category rule was added to `tools/generate_modlist.py` (Storage, QoL & utility). `docs/SERVER_MODS.md` was regenerated from the VM.
+- **First jar removed:** a 2023 mod also called "Simple Zoom" (`simple_zoom-1.20.1-1.0.jar`, `com.anubis.simpleZoom`, an unedited Forge example `mods.toml`) was added first and then replaced by this one.
+- **Not yet in "The Correction"** (the instance actually played). Add it there through CurseForge.
+- **Untested:** zoom with Oculus + Hysteria (TAA) and zoom looking through Immersive Portals.
+- **Gameplay note:** free zoom makes long-range scouting easier than the spyglass or Hexerei's Reading Glasses. It doesn't extend any horror mob's server-side look check.
+
+### Configured added (2026-11-07) — *client instance only*
+- **Why:** JEI 15 has no settings screen of its own. Its wrench button looks for a screen another mod registers, and without one it prints *Install the "Configured" mod to access the in-game config*.
+- **Mod:** Configured 2.2.3 by MrCrayfish, `configured-forge-1.20.1-2.2.3.jar` (CurseForge only; the Modrinth project named "Configured" is an unrelated Fabric mod). The only required dependency is Forge 47.1.47+. JEI, Framework (already in the pack, 0.8.0) and Catalogue are optional links. It gives JEI a settings screen, and also gives one to every mod with Forge configs, through Mods → *mod* → Config.
+- **Client-only:** both of its mixins are in the mixin config's `client` list. Its `configured:play` channel accepts any version or a missing peer (both checks return true), so players without it can still join. `configured-` was added to `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods.py`, so it can't be used to edit the VM's server configs from a client. The sync dry run: 306 active − 25 client-only = 281, parity unchanged.
+- **Docs:** `modlist.md`, `modlist.json`, the README block and `docs/SERVER_MODS.md` were regenerated. A `configured` category rule was added to `tools/generate_modlist.py`.
+- **Note:** the pack's client-side config choices are now one click away for every player. They could always edit the files.
+- **Not yet in "The Correction".**
+
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).

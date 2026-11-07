@@ -38,6 +38,18 @@
 	antlersDayCounterOverworldOnly = true
 	#The One Who Watches: skip its per-tick world-variable sync for levels with no players (the packet goes nowhere); the data is still marked for saving.
 	towwEmptyLevelSyncSkip = true
+	#Horror look-checks (Creeping Woods, Rake, Whispering Spirits, John, The Obsessed): a ray cast that would touch a chunk
+	#that is not loaded returns 'nothing hit' instead of loading (or generating) that chunk on the server thread.
+	#Their creatures only exist in loaded chunks, so the result is the same. Stops the multi-second ticks seen while sailing.
+	horrorRayCastLoadedOnly = true
+	#Same procedures: reuse the result of an identical ray cast made just before in the same procedure run (they cast each ray three times).
+	horrorRayCastDedupe = true
+	#The Obsessed: skip its per-player tick while any chunk within obsessedChunkRadius of the player is still loading or
+	#generating. Its block reads around the player would otherwise make the server thread wait for those chunks.
+	obsessedWaitForChunks = true
+	#Chunks around the player that must be loaded. Its reads reach about 20 blocks from the player; 3 chunks = 48 blocks.
+	#Range: 1 ~ 8
+	obsessedChunkRadius = 3
 
 #Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs
 #(slow motion); MineColonies, guards, scripted horror and bosses are excluded by default.

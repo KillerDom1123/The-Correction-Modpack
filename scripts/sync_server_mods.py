@@ -63,6 +63,9 @@ CLIENT_ONLY_GROUPS = [
         ("legendarytooltips-", ""),
         ("moreoverlays-", ""),
         ("chat_heads-", ""),
+        ("simplezoom-", "hold-to-zoom key (C); client mixins only"),
+        ("configured-", "in-game config screens (JEI's wrench); kept off the server so server configs "
+                        "can't be edited from the client; its channel accepts a missing peer"),
     ]),
     ("Client animation / audio", [
         ("mobends-", ""),

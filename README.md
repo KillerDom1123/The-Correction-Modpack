@@ -136,6 +136,32 @@ Client-only tweaks (audio, video, personal options) stay on each player's client
 
 ---
 
+## Custom commands
+
+These are all the commands the pack adds itself; the mods bring their own. "Operator" means permission level 2. The server
+console counts as an operator and acts in the overworld.
+
+| Command | Arguments | Who | What it does |
+|---|---|---|---|
+| `/sanity` | none | any player | Shows your own sanity: `<name> — sanity 38.4/100  [Dread]`. Read-only. From the console, give a target. |
+| `/sanity <target>` | `target`: one player, by name or a selector that matches exactly one (`@p`, `@s`) | operator | The same for another player. |
+| `/tickfixes stats` | none | operator | One status line for `spooky_tick_fixes`: the activation range, portal and moving-block counts for your dimension, average tick time, horror ray-cast counters, chunk-guard counters (including off-thread chunk requests and their top callers), and chunk-safe ticking counters (barrier reads and their callers, disk and memory loads). Counts run from server start. |
+| `/tickfixes probe <x> <z>` | `x`, `z`: whole-number block coordinates in your dimension (y is always 64) | operator | At the start of your dimension's next tick, reads that block the way ticking code would. Replies with the block, how it was answered (loaded / from memory / from disk / barrier, with the reason) and how long it took. Probing ungenerated terrain doesn't generate it. |
+| `/pregen` or `/pregen status` | none | operator | `spooky_pregen`'s state: enabled, players, how long the server has been empty, hold, guards, free disk, the current Chunky task and its progress, the current blob and why it was picked, anchors, and each job's next radius. |
+| `/pregen next` | none | operator | A dry run: what it would generate next and why. |
+| `/pregen start` | none | operator | **Force-start**: begins (or resumes) work now, without waiting for an empty server, and keeps running with players online. It clears a hold. It lasts until `/pregen stop`, `/pregen hold` or a restart. |
+| `/pregen stop` | none | operator | Ends force mode: back to running only while the server is empty (it pauses at once if players are on). |
+| `/pregen hold` | none | operator | Stops all pre-generation (pausing the current task, and ending force mode) until `/pregen resume`. It persists across restarts. |
+| `/pregen resume` | none | operator | Allows work again. It restarts once the server has been empty for the grace time. |
+| `/pregen skip` | none | operator | Cancels the current task and moves on. A job or blob goes to its next radius; an edge square counts as done. |
+| `/pregen reload` | none | operator | Re-reads `config/spooky_pregen.json` (no restart needed). |
+
+Details: `docs/sanity_mechanic.md` §15.5, `tools/spooky_tick_fixes/README.md` (Commands) and `tools/spooky_pregen/README.md`
+(Commands). The pack's datapack functions (`wa_buff:tick` for the Weeping Angels buff, and the Incendium clock overrides)
+run on their own from tick tags and aren't meant to be run by hand.
+
+---
+
 ## Repository & Configuration
 
 This repository tracks the pack's **configuration and custom content**, not the mod binaries:
@@ -144,7 +170,7 @@ This repository tracks the pack's **configuration and custom content**, not the 
 - **Building:** each `tools/<mod>/build.py` uses the shared `tools/_javabuild.py` (JDK 17 plus the CurseForge install's libraries; no Gradle). The version lives in the mod's `mods.toml` and `MANIFEST.MF`. `--install` copies the jar into `mods/` and `local/` and removes older versions there.
 - **Built here, now disabled:** `immptl_dimthread_compat` — a one-mixin mod that let Immersive Portals and DimThreads run together. DimThreads was disabled on 2026-11-06: its 1.2.1 ticks every dimension under one global lock, so it gave no parallelism. Both jars are `.jar.disabled` on clients and the server; the source stays in `tools/immptl_dimthread_compat/` in case DimThreads returns.
 - **Built here:** `spooky_tick_fixes` — behaviour-preserving server-tick fixes (dormant mimics, TOWW follow range, The Obsessed sync, Whispering Spirits, Fragile Torches, Farm & Charm, MCreator animation handlers, Ad Astra Extra, Full Immersion, Alex's Caves, Citadel, TOWW's per-level sync, Antlers' day counter, and guards that stop the horror mods' look ray casts, The Obsessed's block reads and vanilla villagers' bed check from loading chunks on the main thread), plus an adaptive **activation range** (far mobs tick less often while the server is behind; MineColonies, guards and scripted horror are exempt; `/tickfixes stats` shows its status). Each patch has a switch in `config/spooky_tick_fixes-common.toml`. Build it with `python tools/spooky_tick_fixes/build.py --install`. It ships on clients and the server, but the server can run it alone. Details: `tools/spooky_tick_fixes/README.md` and `docs/SERVER_TICK_AUDIT_2026-11-06.md`.
-- **Built here:** `spooky_pregen` — pre-generates the world with Chunky while the dedicated server is empty and pauses the moment a player logs in. It works through a list of points in `config/spooky_pregen.json`, each grown from a start radius to a maximum, then fills outward from the edge of the generated area, nearest first. Guarded by free disk space and an optional daily growth cap. `/pregen status|next|hold|resume|skip|reload`. Inert on clients and in singleplayer. Details: `tools/spooky_pregen/README.md`.
+- **Built here:** `spooky_pregen` — pre-generates the world with Chunky while the dedicated server is empty and pauses the moment a player logs in. It works through a list of points in `config/spooky_pregen.json`, each grown from a start radius to a maximum, then fills outward from the edge of the generated area, nearest first. Guarded by free disk space and an optional daily growth cap. `/pregen status|next|start|stop|hold|resume|skip|reload`. Inert on clients and in singleplayer. Details: `tools/spooky_pregen/README.md`.
 - **Built here:** `farsight_immptl_compat` — restores Farsight's client chunk keeping under Immersive Portals. Client-only; the sync never copies it to the server.
 - **Not tracked:** `mods/`, `saves/`, caches, logs, and machine-specific files (see `.gitignore`).
 

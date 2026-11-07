@@ -37,7 +37,7 @@
 
 ## Local Fixes (2)
 
-- Spooky Dookie pre-generation scheduler — `spooky_pregen-1.1.0.jar`
+- Spooky Dookie pre-generation scheduler — `spooky_pregen-1.2.0.jar`
 - Spooky Dookie tick fixes — `spooky_tick_fixes-1.3.4.jar`
 
 ## Core libraries & performance (68)

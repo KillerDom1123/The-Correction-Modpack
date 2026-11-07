@@ -73,13 +73,24 @@ file watcher doesn't fire on the VM). A missing file is created with `enabled: f
 
 ## Commands (operators, level 2)
 
+None of the subcommands takes arguments. The server console works too.
+
+
 - `/pregen` or `/pregen status`: enabled, players, how long the server has been empty, hold, guards, free disk, the
   current task and Chunky's progress (percent, chunks, rate, ETA), the current blob and why it was picked, the anchors
   (count and newest), and each job's next radius.
 - `/pregen next`: what it would start next, including the edge search result. A dry run.
-- `/pregen hold` / `/pregen resume`: stop or allow all work. A hold persists across restarts.
-- `/pregen skip`: cancel the current task and move on (a job goes to its next radius).
-- `/pregen reload`: re-read the config.
+- `/pregen start`: **force-start**. Begins (or resumes) work immediately, without waiting for an empty server or the
+  check interval, and **keeps running with players online**. It clears a hold. It lasts until `/pregen stop`,
+  `/pregen hold` or a server restart; force mode is never saved. The disk guards still apply. Expect extra load while
+  players are on: generation competes with their chunk loading.
+- `/pregen stop`: ends force mode and returns to running only while the server is empty. If players are online, the
+  current task pauses at once.
+- `/pregen hold` / `/pregen resume`: stop or allow all work. A hold also ends force mode, and persists across restarts.
+- `/pregen skip`: cancel the current task and move on. A job or blob goes to its next radius (after its last radius,
+  the blob is finished and a new one is picked); an edge square counts as done for this session.
+- `/pregen reload`: re-read `config/spooky_pregen.json`. If it doesn't parse, the previous settings stay and the reply
+  gives the error.
 
 Chunky's progress line goes to the log every `updateInterval` seconds (`config/chunky/config.json`, default 1).
 Raise it (e.g. 60) if the log gets noisy.

@@ -403,6 +403,9 @@ function sanityReport(ctx, target) {
     return 1
   } catch (e) { warnOnce('sanity-report', e); return 0 }
 }
+// /sanity           — anyone: your own sanity ("<name> — sanity NN.N/100  [Band]"). Read-only.
+// /sanity <target>  — operators (level 2): another player's; target = one player (name or a one-player selector).
+// Documented in README.md (Custom commands) and docs/sanity_mechanic.md §15.5.
 try {
   ServerEvents.commandRegistry(event => {
     var Commands = event.commands

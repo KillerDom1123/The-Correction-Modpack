@@ -387,8 +387,8 @@ Only emitted when `CONFIG.debug = true`, all through `dlog()`:
 ### 15.5 On-demand introspection — the `/sanity` command
 Because the stat is invisible, inspecting it otherwise means reading raw NBT. A KubeJS-registered command exposes it directly (registered in `ServerEvents.commandRegistry`, wrapped in `try/catch` so a command-API mismatch degrades to "command absent" rather than breaking load):
 
-- **`/sanity`** — replies to the caller with their own state: `<name> — sanity 38.4/100  [Dread]`.
-- **`/sanity <target>`** — the same for another player; gated `requires(src => src.hasPermission(2))` so only operators can read someone else's mind.
+- **`/sanity`** — no arguments; replies to the caller with their own state: `<name> — sanity 38.4/100  [Dread]`. Anyone can run it. From the console (no player) it replies `no target player.`, so give a target there.
+- **`/sanity <target>`** — `target` is one player: a name, or a selector that matches exactly one player (`@p`, `@s`). The same report for that player; gated `requires(src => src.hasPermission(2))` so only operators can read someone else's mind.
 
 It is **always available** (not debug-gated) — it's the intended way to check/verify a player's level in-game, for tuning and for admins. It only *reads* state (band is computed from the current value against the player's stored band for hysteresis), never mutates it, so using it can't perturb the mechanic. Player replies use the `player.tell(...)` styling already in `signal_device`/`audio_log`; console/command-block callers get `sendSystemMessage`.
 

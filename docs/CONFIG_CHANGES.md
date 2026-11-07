@@ -1405,6 +1405,22 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - `status` shows the blob, the reason it was picked and the anchors.
 - **Separate finding, nothing changed:** Better Chunk Loading's `ServerChunkCacheMixin` fails to apply on every boot ("@At INVOKE … cannot inject into m_7587_"), because Canary overwrites `ServerChunkCache.getChunk`. So its chunk-priority feature has never been active on the VM.
 
+### `spooky_pregen` 1.2.0: `/pregen start` and `/pregen stop` (2026-11-07) — *client instance + VM*
+- **`/pregen start` (force-start):** begins or resumes work immediately, without waiting for an empty server, the grace time or the check interval, and **keeps running with players online**. It clears a hold.
+  - **Lasts until** `/pregen stop`, `/pregen hold` or a restart. Force mode is never saved, so it can't keep generating under players by accident after a reboot.
+  - **Guards:** the disk guards still apply.
+  - **Expect extra load while players are on:** generation competes with their chunk loading. 1.3.4's chunk-safe ticking still stops their ticking code from waiting on it.
+- **On the VM:** uploaded with the sync (1.1.0 moved to `mods-removed/`; 282 jars, parity verified). It takes effect at the next restart; the blob in progress carries on after it.
+- **`/pregen stop`:** ends force mode and returns to running only while the server is empty. With players online, the current task pauses at once.
+- **`/pregen hold`** now also ends force mode. `/pregen status` shows `FORCED by /pregen start N min ago` while it's active.
+- **Docs:** README (Custom commands), `tools/spooky_pregen/README.md` (Commands) and the `PregenCommand` Javadoc.
+- **Tested** on the scratch test server with a 10-minute grace, so the normal path couldn't start anything:
+  - `/pregen stop` without force mode replied "not in force mode";
+  - `/pregen hold`, then `/pregen start`: the hold was cleared and the paused blob resumed in the same second;
+  - `status` showed `FORCED`, and blobs kept chaining;
+  - `/pregen stop` ended force mode. With nobody online, the running square continued, as the normal rules allow.
+  - Not testable headless: running with players online. Force mode only bypasses the player check, and the login pause is the same check.
+
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).

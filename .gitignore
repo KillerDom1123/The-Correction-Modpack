@@ -94,6 +94,9 @@ user-prefs.json
 /tools/immptl_dimthread_compat/build/
 /tools/farsight_immptl_compat/build/
 /tools/spooky_tick_fixes/build/
+/tools/spooky_pregen/build/
+# generated pages (tools/pregen_map.py)
+/tools/build/
 
 # Python bytecode (tools/_javabuild.py is imported by the build scripts)
 __pycache__/

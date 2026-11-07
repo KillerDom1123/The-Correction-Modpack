@@ -1874,8 +1874,8 @@
     {
       "name": "Spooky Dookie pre-generation scheduler",
       "modid": "spooky_pregen",
-      "version": "1.1.0",
-      "file": "spooky_pregen-1.1.0.jar",
+      "version": "1.2.0",
+      "file": "spooky_pregen-1.2.0.jar",
       "category": "Local Fixes"
     },
     {

@@ -332,7 +332,7 @@ FTB Library · FTB Quests · FTB Quests Entity Visualization · FTB Teams · FTB
 | Sounds of the Forest | `1.0.2` | `sounds_of_the_forest` | `sounds_of_the_forest-1.0.2-forge-1.20.1.jar` |
 | spark | `1.10.53` | `spark` | `spark-1.10.53-forge.jar` |
 | Spooky Campsite | `1.0.2` | `spooky_campsite` | `spooky_campsite-1.0.2-forge-1.20.1.jar` |
-| Spooky Dookie pre-generation scheduler | `1.1.0` | `spooky_pregen` | `spooky_pregen-1.1.0.jar` |
+| Spooky Dookie pre-generation scheduler | `1.2.0` | `spooky_pregen` | `spooky_pregen-1.2.0.jar` |
 | Spooky Dookie tick fixes | `1.3.4` | `spooky_tick_fixes` | `spooky_tick_fixes-1.3.4.jar` |
 | Storage Drawers | `12.15.1` | `storagedrawers` | `StorageDrawers-forge-1.20.1-12.15.1.jar` |
 | Structory | `1.3.5` | `structory` | `Structory_1.20.x_v1.3.5.jar` |

@@ -163,6 +163,34 @@ an immune (ridden) one; dormant mimics still slept.
 Not yet done (see the audit doc): Alex's Caves' per-entity magnetism check, Slice & Dice wet air, the watcher despawn
 rule (§5.5.2).
 
+## Commands
+
+Operators only (permission level 2). The server console works too, and acts in the overworld.
+
+- **`/tickfixes stats`**: no arguments. Replies with one line; all counts run from server start:
+  - **activation range:** enabled, active, the adaptive thresholds, range, interval, and far mobs skipped last tick;
+  - **your dimension:** loaded Immersive Portals portals and Alex's Caves moving blocks;
+  - the server's **average tick time**;
+  - **horror ray casts:** guarded, duplicates reused, stopped at unloaded chunks, and Obsessed ticks deferred;
+  - **chunk guards (1.3.3):** villager bed reads and Obsessed block reads answered without loading, and off-thread
+    chunk requests with the top callers;
+  - **chunk-safe ticking (1.3.4):** reads answered with a barrier and their top callers, disk loads, memory loads, and
+    disk checks that timed out.
+- **`/tickfixes probe <x> <z>`**: tests chunk-safe ticking at one position.
+  - **`x`, `z`:** whole-number block coordinates in your dimension. y is always 64.
+  - **What it does:** queues one `getBlockState` read for the start of your dimension's next tick, inside the guarded
+    window. It replies `probe queued…`, then `probe x, 64, z in <dimension>: <block> via <path> (<µs>)`, where the path
+    is one of:
+    - `fast path (chunk loaded)`;
+    - `loaded from memory`;
+    - `loaded from disk`;
+    - `barrier (chunk is not generated / is being generated / could not be checked in time)`;
+    - `exempt caller …, vanilla`.
+  - **Side effects:** probing ungenerated terrain doesn't generate it. Probing a generated but unloaded chunk loads it
+    briefly, as any read would.
+  - **One at a time:** only one probe is pending; a new one replaces a probe that hasn't run yet.
+  - **When `[chunkSafeTicking] enabled = false`:** the reply says so, and the read takes vanilla's path.
+
 ## Design
 
 - **Fail-soft per target mod.** `TickFixesMixinPlugin` applies a patch only when its target mod is installed and logs

@@ -62,6 +62,9 @@ final class Scheduler {
     private static final Set<String> warned = new HashSet<>();
 
     private static long emptySince = -1, lastPick, lastGuard, lastError;
+    /** /pregen start: run now and keep running with players online, until /pregen stop, a hold or a restart. */
+    private static boolean forced;
+    private static long forcedSince;
     private static String blocked;       // guard reason while a guard trips
     private static String idle = "";     // why nothing runs, for /pregen status (logged on change)
     private static long lastFreeBytes = -1, lastGrowthBytes;
@@ -109,6 +112,7 @@ final class Scheduler {
             LOG.info(P + "will resume once the server has been empty for {} min: {}", cfg.emptyGraceMinutes, state.task.describe());
         }
         emptySince = System.currentTimeMillis();
+        forced = false; // force mode never survives a restart
         lastPick = 0;
         lastGuard = 0;
         blocked = null;
@@ -128,7 +132,7 @@ final class Scheduler {
         emptySince = -1;
         if (!active()) return;
         PregenState.Task t = state.task;
-        if (t != null && !t.paused) pause(t, name + " joined");
+        if (t != null && !t.paused && !forced) pause(t, name + " joined");
     }
 
     private static boolean active() {
@@ -165,12 +169,15 @@ final class Scheduler {
         }
         if (server.m_7416_() > 0) {
             emptySince = -1;
-            if (t != null && !t.paused) pause(t, "players online");
-            return;
+            if (!forced) { // force mode (/pregen start) keeps going with players online
+                if (t != null && !t.paused) pause(t, "players online");
+                return;
+            }
+        } else if (emptySince < 0) {
+            emptySince = now;
         }
-        if (emptySince < 0) emptySince = now;
         if (state.held) return;
-        if (now - emptySince < millis(cfg.emptyGraceMinutes)) return;
+        if (!forced && now - emptySince < millis(cfg.emptyGraceMinutes)) return;
 
         if (lastGuard == 0 || now - lastGuard >= 60_000L) {
             lastGuard = now;
@@ -481,6 +488,8 @@ final class Scheduler {
         if (!dedicated) return sb.append("inactive (not a dedicated server)").toString();
         if (api == null) return sb.append("inactive (Chunky API unavailable)").toString();
         sb.append(cfg.enabled ? "enabled" : "DISABLED in config");
+        if (forced) sb.append(" | FORCED by /pregen start ").append((System.currentTimeMillis() - forcedSince) / 60_000L)
+                      .append(" min ago (runs with players online; /pregen stop to end)");
         if (configError != null) sb.append(" | config error: ").append(configError);
         long now = System.currentTimeMillis();
         int players = server.m_7416_();
@@ -537,8 +546,35 @@ final class Scheduler {
         }
     }
 
+    static String forceStart() {
+        if (!active()) return status();
+        if (!cfg.enabled) return "not started: spooky_pregen is disabled in config/spooky_pregen.json (set \"enabled\": true, then /pregen reload)";
+        boolean wasHeld = state.held;
+        state.held = false;
+        forced = true;
+        forcedSince = System.currentTimeMillis();
+        lastPick = 0;   // pick (or resume) on the next check, a second from now
+        lastGuard = 0;  // and re-check the guards first
+        save();
+        LOG.info(P + "force-started by command{}", wasHeld ? " (hold cleared)" : "");
+        return "force-started: generating from the next second, even with players online, until /pregen stop, /pregen hold or a restart"
+                + (wasHeld ? " (hold cleared)" : "") + ". The disk guards still apply.";
+    }
+
+    static String forceStop() {
+        if (!active()) return status();
+        if (!forced) return "not in force mode; nothing to stop (/pregen hold stops all work)";
+        forced = false;
+        PregenState.Task t = state.task;
+        boolean online = server.m_7416_() > 0;
+        if (online && t != null && !t.paused) pause(t, "force mode ended, players online");
+        LOG.info(P + "force mode ended by command");
+        return "force mode ended: back to running only while the server is empty" + (online && t != null ? " (task paused, players online)" : "");
+    }
+
     static String hold() {
         if (!active()) return status();
+        forced = false;
         state.held = true;
         PregenState.Task t = state.task;
         if (t != null && !t.paused) pause(t, "held by command");

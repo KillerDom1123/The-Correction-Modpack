@@ -39,6 +39,7 @@ public final class TickFixesMixinPlugin implements IMixinConfigPlugin {
             Map.entry("ray.JohnRayMixin", "john_mod_reborn"),
             Map.entry("ray.ObsessedRayMixin", "the_obsessed"),
             Map.entry("ray.ObsessedChunkWaitMixin", "the_obsessed"),
+            Map.entry("ray.ObsessedBlockReadMixin", "the_obsessed"),
             Map.entry("anim.BornInChaosAnimationGateMixin", "born_in_chaos_v1"),
             Map.entry("anim.ObsessedAnimationGateMixin", "the_obsessed"),
             Map.entry("anim.CreepingWoodsAnimationGateMixin", "creepingwoods"),
@@ -47,11 +48,18 @@ public final class TickFixesMixinPlugin implements IMixinConfigPlugin {
             Map.entry("anim.RakeAnimationGateMixin", "rake_the_arrival"),
             Map.entry("anim.AntlersAnimationGateMixin", "antlers"));
 
+    /** Patches on vanilla classes: always applied, but logged like the others. */
+    private static final Set<String> VANILLA_PATCHES = Set.of("VillagerSleepChunkMixin", "OffThreadChunkLogMixin");
+
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         String name = mixinClassName.startsWith(PACKAGE) ? mixinClassName.substring(PACKAGE.length()) : mixinClassName;
         String mod = REQUIRED_MOD.get(name);
-        if (mod == null) return true; // the accessor and other unconditional mixins
+        if (VANILLA_PATCHES.contains(name)) {
+            LOGGER.info("[spooky_tick_fixes] {} -> applying (vanilla)", name);
+            return true;
+        }
+        if (mod == null) return true; // the accessors and the activation-range hook
         LoadingModList mods = LoadingModList.get();
         boolean present = mods != null && mods.getModFileById(mod) != null;
         LOGGER.info("[spooky_tick_fixes] {} -> {} ({})", name, present ? "applying" : "skipped, mod not installed", mod);

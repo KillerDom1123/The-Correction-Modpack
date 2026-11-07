@@ -72,7 +72,17 @@ chunk whose load has finished.
 - **The problem:** its `PlayerTickProcedure` also reads single blocks (`isEmptyBlock`, `getBlockState`) at random offsets of up to about 20 blocks around the player. A read can't be answered without the chunk, so these blocked on chunks still being generated: 19 s in one minute while a player was in fresh terrain (22:17).
 - **The fix:** the whole procedure is skipped for that player on any tick where a chunk within 3 chunks (48 blocks) isn't finished yet (`getChunkNow`, which never waits). It resumes once the area has loaded. This only happens on login or while moving into ungenerated terrain.
 - **Monitoring:** `/tickfixes stats` counts the deferred ticks.
-- **Radius 6 in the pack config (2026-11-07).** 3 turned out too small. The reads that stalled come from its stalker spawn search, at a scan point that wanders about 37–80 blocks from the player (at most 5 chunks). The code default is still 3 until the next build.
+- **Radius 6 (2026-11-07; the default from 1.3.3).** 3 turned out too small. The reads that stalled come from its stalker spawn search, at a scan point that wanders about 37–80 blocks from the player (at most 5 chunks).
+
+## Patches added in 1.3.3 — single-block reads that loaded chunks
+
+| Switch | Target | What it does | Why it's safe |
+|---|---|---|---|
+| `villagerSleepLoadedOnly` | Vanilla `SleepInBed#checkExtraStartConditions` (`m_6114_`), the `getBlockState` of the villager's home | If the home's chunk isn't a finished, loaded chunk (`getChunkNow`), answer air instead of loading it | Vanilla reads the bed *before* checking that it is within 2 blocks. A ticking villager is in an entity-ticking chunk, and every chunk next to one is loaded, so a home in an unloaded chunk is always further than 2 blocks away, where vanilla returns false anyway. Air also gives false. Crash 2026-11-07 01:44: the watchdog stopped the server after this read waited 120 s for a chunk that still had to be generated |
+| `obsessedReadsLoadedOnly` | The Obsessed `PlayerTickProcedure#execute`: all `isEmptyBlock` (33) and `getBlockState` (24) calls | A read in an unloaded chunk answers "not empty" / air | Its stalker spawn search reads at a scan point stored in the player's data. That point can sit near *another* player, or stay at the old location after a teleport, both outside `obsessedChunkRadius`. Every check that acts needs "empty", or a specific block (cobweb, cobweb stone, glass), or comes after an "empty" check on the same column. So the stub sends it down its own "no space here, move on" path, and it only spawns its stalker in loaded terrain |
+| `offThreadChunkLog` (diagnostic) | Vanilla `ServerChunkCache#getChunk` (`m_7587_`), HEAD, priority 1500 (after Canary's overwrite) | When the caller isn't the server thread, logs the first request from each distinct caller with a 30-frame stack. The rest are counted (sampled 1 in 64 after 2000). Only observes | Vanilla runs those requests on the server thread between ticks. They caused the "Can't keep up! 21 s behind" warnings of 2026-11-06 23:03–23:11 without any long tick, and the server-thread profile can't show who asked. Grep the log for `off-thread chunk request (new caller)`. Turn it off once the caller is known |
+
+`/tickfixes stats` adds the counts: villager bed reads skipped, Obsessed reads stubbed, and off-thread requests with the top callers. The plugin now also logs the two vanilla patches (`-> applying (vanilla)`): **31** applying lines in total.
 
 ## Activation range (1.1.0) — `[activationRange]`
 

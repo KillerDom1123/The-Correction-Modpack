@@ -30,6 +30,9 @@ public final class TickFixesConfig {
     private static final ForgeConfigSpec.BooleanValue RAY_DEDUPE;
     private static final ForgeConfigSpec.BooleanValue OBSESSED_CHUNK_WAIT;
     private static final ForgeConfigSpec.IntValue OBSESSED_CHUNK_RADIUS;
+    private static final ForgeConfigSpec.BooleanValue OBSESSED_READS_LOADED_ONLY;
+    private static final ForgeConfigSpec.BooleanValue VILLAGER_SLEEP_LOADED_ONLY;
+    private static final ForgeConfigSpec.BooleanValue OFF_THREAD_CHUNK_LOG;
 
     private static final ForgeConfigSpec.BooleanValue AR_ENABLED;
     private static final ForgeConfigSpec.DoubleValue AR_RANGE;
@@ -61,7 +64,10 @@ public final class TickFixesConfig {
     public static volatile boolean rayLoadedOnly = true;
     public static volatile boolean rayDedupe = true;
     public static volatile boolean obsessedChunkWait = true;
-    public static volatile int obsessedChunkRadius = 3;
+    public static volatile int obsessedChunkRadius = 6;
+    public static volatile boolean obsessedReadsLoadedOnly = true;
+    public static volatile boolean villagerSleepLoadedOnly = true;
+    public static volatile boolean offThreadChunkLog = true;
 
     public static volatile boolean activationEnabled = true;
     public static volatile double activationRangeBlocks = 48.0D;
@@ -130,8 +136,18 @@ public final class TickFixesConfig {
         OBSESSED_CHUNK_WAIT = b.comment("The Obsessed: skip its per-player tick while any chunk within obsessedChunkRadius of the player is still loading or",
                                         "generating. Its block reads around the player would otherwise make the server thread wait for those chunks.")
                 .define("obsessedWaitForChunks", true);
-        OBSESSED_CHUNK_RADIUS = b.comment("Chunks around the player that must be loaded. Its reads reach about 20 blocks from the player; 3 chunks = 48 blocks.")
-                .defineInRange("obsessedChunkRadius", 3, 1, 8);
+        OBSESSED_CHUNK_RADIUS = b.comment("Chunks around the player that must be loaded. Its stalker spawn search reads blocks up to about 80 blocks from the player; 6 chunks = 96 blocks.")
+                .defineInRange("obsessedChunkRadius", 6, 1, 8);
+        OBSESSED_READS_LOADED_ONLY = b.comment("The Obsessed: a block read (isEmptyBlock / getBlockState) in an unloaded chunk answers 'not empty' / air instead of loading the chunk.",
+                                               "Covers its spawn-search scan point wherever it is (near another player, or left behind after a teleport). It then takes its own 'no space here' path.")
+                .define("obsessedReadsLoadedOnly", true);
+        VILLAGER_SLEEP_LOADED_ONLY = b.comment("Vanilla villagers: the sleep check reads the home bed's block before checking that the bed is within 2 blocks.",
+                                               "A bed in an unloaded chunk is always further than that, so answer air instead of loading (or generating) the chunk. Crash 2026-11-07 01:44.")
+                .define("villagerSleepLoadedOnly", true);
+        OFF_THREAD_CHUNK_LOG = b.comment("Diagnostic: log the first chunk request from each caller on a thread other than the server thread, with its stack.",
+                                         "Vanilla runs those requests on the server thread between ticks, so they show up as 'Can't keep up' without a long tick.",
+                                         "Only observes. Counts are in /tickfixes stats.")
+                .define("offThreadChunkLog", true);
         b.pop();
 
         b.comment("Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs",
@@ -178,6 +194,9 @@ public final class TickFixesConfig {
         rayDedupe = RAY_DEDUPE.get();
         obsessedChunkWait = OBSESSED_CHUNK_WAIT.get();
         obsessedChunkRadius = OBSESSED_CHUNK_RADIUS.get();
+        obsessedReadsLoadedOnly = OBSESSED_READS_LOADED_ONLY.get();
+        villagerSleepLoadedOnly = VILLAGER_SLEEP_LOADED_ONLY.get();
+        offThreadChunkLog = OFF_THREAD_CHUNK_LOG.get();
         activationEnabled = AR_ENABLED.get();
         activationRangeBlocks = AR_RANGE.get();
         activationInterval = AR_INTERVAL.get();
@@ -196,6 +215,8 @@ public final class TickFixesConfig {
                 + " adAstraExtraGate=" + adAstraExtraGate + " fullImmersionGate=" + fullImmersionGate + " alexsCavesGate=" + alexsCavesGate
                 + " citadelCache=" + citadelCache + " antlersDayCounter=" + antlersDayCounter + " towwSyncGate=" + towwSyncGate
                 + " rayLoadedOnly=" + rayLoadedOnly + " rayDedupe=" + rayDedupe
+                + " obsessedChunkWait=" + obsessedChunkWait + "(" + obsessedChunkRadius + ") obsessedReadsLoadedOnly=" + obsessedReadsLoadedOnly
+                + " villagerSleepLoadedOnly=" + villagerSleepLoadedOnly + " offThreadChunkLog=" + offThreadChunkLog
                 + " | activationRange enabled=" + activationEnabled + " range=" + activationRangeBlocks
                 + " interval=" + activationInterval + " adaptive=" + activationAdaptive + "(" + activationEnableAboveMspt + "/"
                 + activationDisableBelowMspt + " ms)";

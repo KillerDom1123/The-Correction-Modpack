@@ -15,7 +15,8 @@ final class TickFixesCommand {
                     CommandSourceStack src = ctx.getSource();
                     ServerLevel level = src.m_81372_();
                     String line = ActivationRange.stats() + " | " + (level == null ? "" : EntityCounters.summary(level))
-                            + " | avg tick " + String.format("%.1f", src.m_81377_().m_129903_()) + " ms | " + RayGuard.stats();
+                            + " | avg tick " + String.format("%.1f", src.m_81377_().m_129903_()) + " ms | " + RayGuard.stats()
+                            + " | " + ChunkGuards.stats();
                     src.m_288197_(() -> Component.m_237113_(line), false);
                     return 1;
                 })));

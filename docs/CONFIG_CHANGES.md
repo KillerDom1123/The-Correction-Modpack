@@ -1322,6 +1322,19 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Removed, mod disabled on both sides:** TerraFirmaCraft (`tfc-client.toml`, `tfc-common.toml`, `defaultconfigs/tfc-server.toml`, and the OpenLoader packs `TFCFoodHunger`, `TFCLightItems`, `TFCVanillaCraftingTable`, `TFCHideInventoryTabs`, `TFCNoSizeTooltip`, `data-disabled/TFCModdedFood`), DimThreads (`dimthread-common.toml`) and The Man From The Fog (`man_config.toml`). Re-enabling one starts from its default config; the old files are in git history and the local `*.bak` copies.
 - **Left in place:** `kubejs/server_scripts/tfc_vanilla_food.js` still runs. Without TFC it only writes `tfc:` data that nothing reads.
 
+### Watchdog crash 01:44 (villager bed), `spooky_tick_fixes` 1.3.3 (2026-11-07) — *client instance; VM pending*
+- **Crash:** `ServerHangWatchdog`: one tick took 120 s. The server thread was in vanilla `SleepInBed.checkExtraStartConditions`. It reads the block at a villager's remembered home bed *before* checking that the bed is within 2 blocks, and that bed's chunk wasn't loaded. The chunk still had to be generated. Finishing it needs a ring of neighbouring chunks generated too, and the thread dump shows the world-generation threads busy with noise and YUNG's Better Caves carving. It's not a deadlock, just more than 120 s of work on this CPU. ilovepuffles111 was online, probably exploring. Chunky had finished at 00:51. Canary and Observable are named as "suspected" only because they appear in the stack.
+- **1.3.3:**
+  - `villagerSleepLoadedOnly`: the bed read answers air when the chunk isn't loaded. A ticking villager can't be within 2 blocks of a bed in an unloaded chunk, so the result is unchanged.
+  - `obsessedReadsLoadedOnly`: all 57 of The Obsessed's block reads answer "not empty" / air in unloaded chunks. This closes the two-player and after-teleport gaps left by the radius check.
+  - `obsessedChunkRadius` now defaults to 6.
+  - `offThreadChunkLog` (diagnostic) logs the first chunk request from each caller on another thread, with its stack, to name the mod behind the between-tick stalls.
+  - Details are in `tools/spooky_tick_fixes/README.md`.
+- **Checked before building:**
+  - No other mod in the pack patches `SleepInBed` or The Obsessed's `PlayerTickProcedure`.
+  - Canary `@Overwrite`s `ServerChunkCache.getChunk`, so the logger's mixin has priority 1500 and applies after it.
+  - Every Obsessed `isEmptyBlock` / `getBlockState` call site was read in bytecode to choose the safe stub value.
+
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).

@@ -69,11 +69,11 @@ file watcher doesn't fire on the VM). A missing file is created with `enabled: f
 | `maxDiskGrowthMbPerDay` | 0 | Daily growth cap for the world folder, 0 = off |
 | `shape`, `pattern` | `square`, `region` | Passed to Chunky |
 | `jobs[]` | — | `name` (required, the progress key), `dimension`, `x`, `z`, `radius`, `maxRadius` (0 = only `radius`), `step` (default 512) |
-| `edges[]` | — | `enabled`, `dimension`, `mode` (`blob` or `nearest`), `centerX`, `centerZ` (spawn anchor / nearest-mode centre), `maxDistance` (0 = no limit), `windowRadius` (nearest mode, 256); blob mode: `blobStartRadius` (256), `blobMaxRadius` (1024), `blobStep` (256), `minIslandChunks` (64), `playerAnchors` (true), `anchorMaxAgeDays` (30), `extraAnchors` (`[{name, x, z}]`) |
+| `edges[]` | — | `enabled`, `dimension`, `mode` (`blob` or `nearest`), `centerX`, `centerZ` (spawn anchor / nearest-mode centre), `maxDistance` (0 = no limit), `windowRadius` (nearest mode, 256); blob mode: `blobStartRadius` (256), `blobMaxRadius` (1024; the pack sets 512; `/pregen radius` overrides it), `blobStep` (256), `minIslandChunks` (64), `playerAnchors` (true), `anchorMaxAgeDays` (30), `extraAnchors` (`[{name, x, z}]`) |
 
 ## Commands (operators, level 2)
 
-None of the subcommands takes arguments. The server console works too.
+Only `radius` takes an argument. The server console works too.
 
 
 - `/pregen` or `/pregen status`: enabled, players, how long the server has been empty, hold, guards, free disk, the
@@ -81,14 +81,24 @@ None of the subcommands takes arguments. The server console works too.
   (count and newest), and each job's next radius.
 - `/pregen next`: what it would start next, including the edge search result. A dry run.
 - `/pregen start`: **force-start**. Begins (or resumes) work immediately, without waiting for an empty server or the
-  check interval, and **keeps running with players online**. It clears a hold. It lasts until `/pregen stop`,
-  `/pregen hold` or a server restart; force mode is never saved. The disk guards still apply. Expect extra load while
-  players are on: generation competes with their chunk loading.
+  check interval, alongside any players already online (an operator running it in game keeps it running). It clears a
+  hold. **The next player to join pauses the task and ends force mode**, as do `/pregen stop`, `/pregen hold` and a
+  server restart; force mode is never saved. The disk guards still apply. Expect extra load while players are on:
+  generation competes with their chunk loading.
 - `/pregen stop`: ends force mode and returns to running only while the server is empty. If players are online, the
   current task pauses at once.
 - `/pregen hold` / `/pregen resume`: stop or allow all work. A hold also ends force mode, and persists across restarts.
 - `/pregen skip`: cancel the current task and move on. A job or blob goes to its next radius (after its last radius,
   the blob is finished and a new one is picked); an edge square counts as done for this session.
+- `/pregen radius`: show the blob size, which is the largest radius a blob grows to (the square is twice that across),
+  and whether it comes from the config or from the command.
+- `/pregen radius <blocks>` (16–8192): set the blob size at once.
+  - It applies to the blob in progress too. If that blob is already larger, its running square is cancelled (what it
+    generated stays) and a new blob is picked.
+  - It's kept in the state file, so it survives restarts, and it overrides `blobMaxRadius`.
+  - Example: `/pregen radius 256` gives 512 × 512-block blobs.
+- `/pregen radius reset`: go back to the config's `blobMaxRadius`. A config edit plus `/pregen reload` also resizes the
+  blob in progress.
 - `/pregen reload`: re-read `config/spooky_pregen.json`. If it doesn't parse, the previous settings stay and the reply
   gives the error.
 

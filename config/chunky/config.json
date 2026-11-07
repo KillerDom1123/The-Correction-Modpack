@@ -3,6 +3,6 @@
   "language": "en",
   "continueOnRestart": false,
   "forceLoadExistingChunks": false,
-  "silent": false,
+  "silent": true,
   "updateInterval": 1
 }

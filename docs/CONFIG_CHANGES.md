@@ -1421,6 +1421,113 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - `/pregen stop` ended force mode. With nobody online, the running square continued, as the normal rules allow.
   - Not testable headless: running with players online. Force mode only bypasses the player check, and the login pause is the same check.
 
+### `spooky_pregen` 1.3.0: blob size as a command and a smaller default (2026-11-07) — *client instance + VM*
+- **Smaller default:** the pack's `blobMaxRadius` went from 1024 to **512**, so blobs grow 256 → 512 and cover 1,024 × 1,024 blocks. That's about a quarter of the old size per blob, finished in roughly a quarter of the time, and placed closer to where players are.
+- **`/pregen radius [<blocks> | reset]`:** shows or sets the blob size on the fly (16–8192).
+  - The setting is kept in the state file, so it survives restarts, and it overrides the config until `reset`.
+  - It applies to the blob in progress. If that blob is already larger, its running square is cancelled (what it generated stays) and a new blob is picked.
+- **Config edits now apply to the blob in progress too:** a changed `blobMaxRadius` takes effect after `/pregen reload`. Before 1.3.0, a blob kept the size it was picked with.
+- **Status:** `/pregen status` shows the blob radius and whether it comes from the config or the command.
+- **On the VM:** the jar was uploaded with the sync (1.2.0 moved to `mods-removed/`; 282 jars, parity verified), and the config with radius 512 was uploaded and read back identical (the old one is `spooky_pregen.json.bak-20261107-r1024`). Both take effect at the next restart.
+- **VM at the time:** the first blob, at (6920, −4616) near ilovepuffles111, was already on its last step (radius 1024), started 05:07.
+
+### `spooky_pregen` 1.3.1: a join always pauses; blob size applied at startup (2026-11-07) — *client instance + VM*
+- **Problem 1, generating with a player online:** `/pregen start` was run at 05:28. ilovepuffles111 joined at 05:37:44, and generation carried on: force mode skipped the join pause by design (1.2.0). That contradicted the mod's purpose.
+- **Fix:** force mode now means "start now, without waiting for the server to be empty". It still runs alongside whoever is online when it starts, so an operator in game can use it. **The next player to join pauses the task and ends force mode**, logged as `force mode ended: <name> joined`. `/pregen stop`, `/pregen hold` and a restart still end it too.
+- **Problem 2, old size after a restart:** after the 1.3.0 restart, the paused blob square resumed at radius 1024 although the config said 512. The size was applied only by `/pregen radius`.
+- **Fix:** the blob size in force is now applied at startup, on `/pregen reload` and by `/pregen radius`, through one routine. A paused or running square larger than the size is cancelled (what it generated stays), and a blob that already covers the size is done, so a new one is picked.
+- **Tested headless** on the scratch server:
+  - A paused radius-128 square with the config at 96 was cancelled at boot, logged as `blob size from the config applied; ... now grows to radius 96 (was 128); cancelled its radius-128 square`.
+  - `/pregen start` then ran seven squares back to back, and `/pregen hold` stopped the work.
+  - Not testable headless: the join pause itself. It is the same pause call the normal empty-server rule uses, now without the force-mode exception.
+- **On the VM:** the jar was uploaded with the sync (1.3.0 moved to `mods-removed/`; 282 jars, parity verified). It takes effect at the next restart.
+
+### Chunky: silent by default (2026-11-07) — *client instance + VM*
+- `config/chunky/config.json`: `"silent": true` (was `false`).
+- **What it hides:**
+  - the progress boss bar that Chunky shows every operator while a task runs;
+  - the `[Chunky] Task running for …` console line, about one a second while generating. These lines made up most of the VM's `latest.log`.
+- **Still available:** `/chunky progress` and `/pregen status` show progress on demand, and `Task finished` lines are still logged.
+- **spooky_pregen is unaffected:** Chunky posts the progress event that spooky_pregen uses for completion before its silent check. Tested: seven squares completed in a row with no `Task running` lines.
+- **When it applies:** Chunky reads the file only at startup (and writes it back then; task progress is saved separately, so a shutdown doesn't overwrite it). In game, `/chunky silent` toggles it at once, but only until the next restart.
+- **On the VM:** uploaded and read back identical; the old file is `config/chunky/config.json.bak-20261107-silent`. It takes effect at the next restart.
+
+### `spooky_pregen`: no daily growth cap (2026-11-07) — *client instance + VM*
+- `config/spooky_pregen.json`: `maxDiskGrowthMbPerDay` 1000 → **0 (off)**. At the user's request, pre-generation now runs for as long as the server is empty, with no daily limit.
+- **What still stops it:**
+  - `minFreeDiskGb` 2.0: it holds while the world's disk has less than 2 GB free, and continues if space is freed;
+  - a player joining;
+  - `/pregen hold`.
+- `maxDistance` was already 0 (unlimited), so blobs keep spreading outward from the edges nearest the players.
+- **Why:** the cap tripped on the VM at 08:20 ("the world grew 1006 MB today (limit 1000 MB)") and held pregen for the rest of the day.
+- **On the VM:** uploaded and read back identical; the old file is `config/spooky_pregen.json.bak-20261107-nocap`. It applies at `/pregen reload` or the next restart.
+- **Disk:** the VM disk is 12.6 GB. At the morning's rate (about 1 GB in 2 hours), pregen will reach the 2 GB floor and hold there. That leaves 2 GB for logs, backups and player growth. `/pregen status` shows the free space.
+
+### JEI on the server (2026-11-07) — *sync script + VM*
+- **Symptom:** JEI's recipe "+" button (move a recipe's ingredients into a crafting table) failed with *Server must have JEI installed*.
+- **Cause:** since the sync script was first written (July, commit `b034083`), `jei-` was in `CLIENT_ONLY_GROUPS` as a "client-only utility", so the VM never had it. No crash or reason was recorded. JEI is a two-sided mod. The client asks the server, over JEI's channel, to move the items (`PacketRecipeTransfer`), and the server does the move.
+- **Change:** `jei-` was removed from `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods.py`, with a comment saying why. Sync dry run against the VM: 307 active − 24 client-only = 283, and the only change is `copy + jei-1.20.1-forge-15.56.0.205.jar`.
+- **Server side of JEI:** recipe transfer, plus the cheat-mode give/delete buttons. Its server config defaults (read from the jar) are `enableCheatModeForOp = true`, `enableCheatModeForCreative = true` and `enableCheatModeForGive = false`, so survival non-ops get recipe transfer and nothing more. It adds no ticking work.
+- **On the VM:** uploaded with the sync, and parity was verified (283 jars). `docs/SERVER_MODS.md` was regenerated from the VM. JEI loads at the next restart, and the button works after that.
+
+### Antlers Wendigo: keeps away, attacks only when provoked — `spooky_tick_fixes` 1.4.0 (2026-11-07) — *client instance + VM*
+- **Why:** two players were attacked without warning, one inside their base. The second time it was hunting another player, who logged off; it then switched to the next nearest player, in a `terralith:glacial_chasm`. They also heard a "loud roar" that several players got at the same moment. The user wants a creature that a player provokes, knowingly or not.
+- **What the mod does (read from antlers-1.0.0 bytecode):**
+  - **Night hunt:** about every 25 ticks it targets the **nearest** player within ±300 blocks, with no line of sight needed. It then sprints, with Speed III within ±150. Its player target goal also picks any survival player it can see within 60 blocks.
+  - **Sounds:** a stalking roar at volume 100, sent to the nearest player within ±355 blocks (heard up to 1,600 blocks) about once a minute. When it targets a survival player within ~12 blocks: a 12.5 s freeze and an "I see you" scream at volume 40 on the **Master** channel, which everyone within 640 blocks hears at once.
+  - **Lifecycle:** it never despawns (`removeWhenFarAway` is false). At dawn it swaps to a daytime form and back at dusk, as fresh mobs that bypass the sanity spawn gate. It spawns in any Overworld biome on a non-stone floor in the dark, one per 1,000 blocks, weight 2 (already lowered by `HorrorSpawnRarity`).
+- **Change (user's choices):** aggressive when provoked, but otherwise it actively keeps away from people.
+  - **Calm:** it moves away from any player it can see within 16 blocks (its daytime form already ran from players).
+  - **Provoked by:**
+    - hitting it, at any time;
+    - at night, being within 8 blocks in its sight (4 while sneaking). Because it keeps away, that means surprising it, cornering it or running it down;
+    - at night, a 5 s continuous stare within 24 blocks, with your crosshair on it, clear sight both ways, and the Wendigo not walking away at the time. The first version used 2 s within 32 blocks.
+  - **Once provoked:** it chases only that player, and calms down when that player leaves, dies, changes dimension or gets 32+ blocks away. The first version used 64.
+  - **After calming down:** it retreats from everyone within 48 blocks; only a hit re-provokes it. It vanishes once nobody is within 24 blocks and nobody within 64 can see it, or after 60 s once nobody is within 16.
+  - **Sounds:** no stalking roar. It roars every 15–30 s only while provoked, and the roar and the scream are both capped at 128 blocks.
+  - **Despawning:** it and its daytime form now despawn like other monsters.
+  - **Unchanged:** the freeze, the scream and the hit-and-run removal after an attack.
+  - Details are in `tools/spooky_tick_fixes/README.md` (1.4.0) and `config/spooky_tick_fixes-common.toml` `[antlersWendigo]`.
+- **Tested on the scratch server (no player can join headless):**
+  - all five patches log `-> applying (antlers)`, with no injection errors after a Wendigo was summoned (that's when its goal classes load);
+  - the `[antlersWendigo]` section is generated with its defaults;
+  - summoned Wendigos show as `calm` in `/tickfixes wendigo` (the per-tick hook runs), and at daybreak they still turned into the daytime form.
+  - **Not tested:** the provocation itself, the calm-down and despawning, because all three need a player. Check them in game.
+- **On the VM:** uploaded with the sync (1.3.4 moved to `mods-removed/`; 283 jars, parity verified). Live from the next restart, when Forge adds `[antlersWendigo]` with these defaults to the VM's `config/spooky_tick_fixes-common.toml`.
+- **Installed:** `mods/` and `local/` (1.3.4 removed). The new config section was added to `config/spooky_tick_fixes-common.toml`, and `modlist.md`/`modlist.json` were regenerated. On the VM, Forge adds the section with these defaults on first start.
+- **Check in game:** `/tickfixes wendigo` lists the loaded Wendigos and who provoked each. The server log has a `wendigo at x y z provoked by …` line for each provocation and a `… calmed down: …` line for each calm-down.
+- **Revert:** `[antlersWendigo] enabled = false` (and `despawnNormally = false`), or go back to the 1.3.4 jar.
+- **Also found, not changed:** CANTBREATHE plays a cave noise to **every** survival player in the Overworld on the same tick, every 12–22 min once its spawn timer is past half (VM `world/serverconfig/cant_breathe-server.toml`: any height, any light, surface allowed, all biomes, `only_play_noise_to_target = false`). Each player gets a random clip. Setting `only_play_noise_to_target = true` would make it the chosen victim only.
+
+### Wendigo loot — `WendigoTrophies` datapack (2026-11-07) — *client instance + VM*
+- **Why:** Antlers ships no loot table for the Wendigo or its daytime form, and neither has custom drop code. Killing a 300-health Wendigo gave 30 XP and nothing else. The user wanted something exotic and forest-themed.
+- **Change:** OpenLoader pack `config/openloader/data/WendigoTrophies/`, with `data/antlers/loot_tables/entities/wendigo.json` and an identical `wendigomad.json`. Both apply only when a player gets the kill (`killed_by_player`):
+  - **Always:** 1–2 Moose Antlers (`alexsmobs:moose_antler`), up to +1 per Looting level. Two antlers, an iron ingot and 2 string craft Alex's Mobs' Antler Headdress.
+  - **1 in 3 kills** (+10% per Looting level): exactly one forest relic, picked by weight:
+
+    | Item | Mod | Weight | Chance per kill (no Looting) |
+    |---|---|---|---|
+    | Antler Headdress (`alexsmobs:moose_headgear`) | Alex's Mobs | 2 | 7.3% |
+    | Rooted Boots: slowly refill hunger while walking on grass | Artifacts | 2 | 7.3% |
+    | Thorn Pendant: chance to damage attackers | Artifacts | 2 | 7.3% |
+    | Whirlisprig Charm: summons a forest sprite that produces natural materials | Ars Nouveau | 2 | 7.3% |
+    | Druidic Tome: nature-school spellbook | Iron's Spellbooks | 1 | 3.7% |
+- **Not affected:** a Wendigo that vanishes (after calming down, its hit-and-run, or the dawn/dusk swap) is removed, not killed, so it drops nothing.
+- **Item IDs** were checked against the jars' item models.
+- **Tested on the scratch server:** both tables load with no loot warnings. A test copy without the kill condition, rolled 25 times, gave the antlers plus one relic every time. The real table dropped nothing without a player killer, as intended.
+- **On the VM:** the pack folder was uploaded to `config/openloader/data/WendigoTrophies/` and read back identical. It loads at the next restart.
+
+### `tools/pregen_map.py --serve`: a live pregen map (2026-11-07) — *this PC only*
+- **What it does:** `python tools/pregen_map.py --serve [--interval 10] [--port 8765] [--no-browser]` runs a small web server bound to 127.0.0.1. It re-reads the VM every `--interval` seconds (default 10, minimum 5), and the page repaints in place, keeping its zoom, position and hover.
+- **Page status:** the eyebrow shows "live · read HH:MM:SS". It says so when the VM can't be read (the last map stays) or when the server has stopped.
+- **Reads only what changed:**
+  - region headers of unchanged files are reused;
+  - rotated logs are read once, and `latest.log` from where the last read stopped (FTP `REST`);
+  - terrain is held in memory, and a region file being written is downloaded again at most every 30 s;
+  - relief shading is recomputed only around chunks that changed.
+- **Measured against the VM while generating:** first read 8.7 s; each 10 s cycle took 8–12 s, including a terrain refresh every 30 s. A 204 means nothing changed; new data is about 5 MB to localhost.
+- **Not published:** the published Claude artifact stays a static snapshot (`--fragment`), because its sandbox can't reach the LAN.
+
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).

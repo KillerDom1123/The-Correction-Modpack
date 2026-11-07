@@ -25,6 +25,9 @@ import net.minecraftforge.event.RegisterCommandsEvent;
  *       <li>chunk-safe ticking: reads answered with a barrier and their top callers, disk loads, memory loads, and disk
  *           checks that timed out.</li>
  *     </ul></li>
+ *   <li>{@code /tickfixes wendigo}: no arguments. Lists every loaded Antlers Wendigo (night form) with its position, its
+ *       distance from the sender, and whether it is calm or provoked (by whom, and how), plus the provoke/calm counts
+ *       since server start (see WendigoTemper).</li>
  *   <li>{@code /tickfixes probe <x> <z>}: tests what chunk-safe ticking does at a position.
  *     <ul>
  *       <li><b>x</b>, <b>z</b>: whole-number block coordinates in the sender's dimension; y is always 64.</li>
@@ -48,6 +51,11 @@ final class TickFixesCommand {
                             + " | avg tick " + String.format("%.1f", src.m_81377_().m_129903_()) + " ms | " + RayGuard.stats()
                             + " | " + ChunkGuards.stats() + " | " + ChunkSafeTicking.stats();
                     src.m_288197_(() -> Component.m_237113_(line), false);
+                    return 1;
+                }))
+                .then(Commands.m_82127_("wendigo").executes(ctx -> {
+                    CommandSourceStack src = ctx.getSource();
+                    for (String line : WendigoTemper.describe(src.m_230896_())) src.m_288197_(() -> Component.m_237113_(line), false);
                     return 1;
                 }))
                 // probe <x> <z>: block coordinates in the sender's dimension (y = 64); runs at the start of its next tick

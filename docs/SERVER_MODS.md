@@ -2,13 +2,13 @@
 
 **Server:** the live VM (`files/server` under the FTP login)  
 **Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10  
-**Active jars:** 282 · **Disabled on the server:** 3  
+**Active jars:** 283 · **Disabled on the server:** 3  
 **Generated:** 2026-11-07 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
 
 > The server is the client instance's `mods/` **minus the client-only list** below, kept in step by
 > `scripts/sync_server_mods.py`. Every jar here must match the client exactly, or players are refused at login.
 
-**Parity:** matches the client instance (307 active jars − 25 client-only = 282).
+**Parity:** matches the client instance (307 active jars − 24 client-only = 283).
 
 > **Notes** (hand-maintained in `tools/generate_server_modlist.py`; everything else here is generated):
 >
@@ -37,8 +37,8 @@
 
 ## Local Fixes (2)
 
-- Spooky Dookie pre-generation scheduler — `spooky_pregen-1.2.0.jar`
-- Spooky Dookie tick fixes — `spooky_tick_fixes-1.3.4.jar`
+- Spooky Dookie pre-generation scheduler — `spooky_pregen-1.3.1.jar`
+- Spooky Dookie tick fixes — `spooky_tick_fixes-1.4.0.jar`
 
 ## Core libraries & performance (68)
 
@@ -341,7 +341,7 @@
 - SC CRT — `scfilters-1.0.0.jar`
 - SecurityCraft — `[1.20.1] SecurityCraft v1.10.2.1.jar`
 
-## Quests, loot, data & guides (15)
+## Quests, loot, data & guides (16)
 
 - FTB Library — `ftb-library-forge-2001.2.13.jar`
 - FTB Quests — `ftb-quests-forge-2001.4.22.jar`
@@ -349,6 +349,7 @@
 - FTB Teams — `ftb-teams-forge-2001.3.2.jar`
 - FTB Ultimine — `ftb-ultimine-forge-2001.1.8.jar`
 - FTBQuestsOptimizer — `FTBQuestsOptimizer-forge-2.1.0-1.20.1.jar`
+- Just Enough Items — `jei-1.20.1-forge-15.56.0.205.jar`
 - KubeJS — `kubejs-forge-2001.6.5-build.26.jar`
 - lootintegration_wda mod — `lootintegration_wda-1.8.jar`
 - Lootintegrations mod — `lootintegrations-1.20.1-4.7.jar`
@@ -361,7 +362,7 @@
 
 ---
 
-## Client-only mods excluded from the server (25)
+## Client-only mods excluded from the server (24)
 Present in the client instance but deliberately **not** copied to the server. They set
 `IGNORE_SERVER_VERSION`, so clients keep them and are not refused for the server lacking them.
 The groups and notes come from `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods.py`.
@@ -396,7 +397,6 @@ The groups and notes come from `CLIENT_ONLY_GROUPS` in `scripts/sync_server_mods
 
 **Client-only utilities:**
 - farsight_immptl_compat-1.0.1.jar — pack-built; source in `tools/farsight_immptl_compat/`, restores Farsight's chunk keeping under Immersive Portals
-- jei-1.20.1-forge-15.56.0.205.jar — recipe viewer
 - xaerominimap-forge-1.20.1-26.6.0.jar — minimap; the world map's server component is kept
 
 ## Disabled jars

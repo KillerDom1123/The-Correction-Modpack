@@ -100,3 +100,5 @@ user-prefs.json
 
 # Python bytecode (tools/_javabuild.py is imported by the build scripts)
 __pycache__/
+
+/screenshots/

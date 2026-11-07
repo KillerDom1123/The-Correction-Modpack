@@ -62,7 +62,8 @@ final class Scheduler {
     private static final Set<String> warned = new HashSet<>();
 
     private static long emptySince = -1, lastPick, lastGuard, lastError;
-    /** /pregen start: run now and keep running with players online, until /pregen stop, a hold or a restart. */
+    /** /pregen start: run now, without waiting for the server to be empty, alongside whoever is already online. The next
+     *  player to join ends it (and pauses the task), as do /pregen stop, /pregen hold and a restart. */
     private static boolean forced;
     private static long forcedSince;
     private static String blocked;       // guard reason while a guard trips
@@ -106,6 +107,11 @@ final class Scheduler {
             });
             listenersOn = api;
         }
+        String clamp = clampBlob(null); // the blob size may have changed in the config while the server was down
+        if (!clamp.isEmpty()) {
+            save();
+            LOG.info(P + "blob size from the config applied{}", clamp);
+        }
         if (state.task != null) {
             state.task.paused = true;
             save();
@@ -131,8 +137,12 @@ final class Scheduler {
     static void onPlayerJoin(String name) {
         emptySince = -1;
         if (!active()) return;
+        if (forced) {
+            forced = false;
+            LOG.info(P + "force mode ended: {} joined", name);
+        }
         PregenState.Task t = state.task;
-        if (t != null && !t.paused && !forced) pause(t, name + " joined");
+        if (t != null && !t.paused) pause(t, name + " joined");
     }
 
     private static boolean active() {
@@ -169,7 +179,7 @@ final class Scheduler {
         }
         if (server.m_7416_() > 0) {
             emptySince = -1;
-            if (!forced) { // force mode (/pregen start) keeps going with players online
+            if (!forced) { // force mode (/pregen start) keeps going with the players online when it started; a join ends it
                 if (t != null && !t.paused) pause(t, "players online");
                 return;
             }
@@ -362,9 +372,22 @@ final class Scheduler {
     }
 
     /** The current blob's next step, or a new blob at the edge chunk nearest to a player (see BlobFinder). */
+    /** The blob size in force: /pregen radius if set (kept in the state file), otherwise the rule's blobMaxRadius. */
+    static int blobMax(PregenConfig.Edge ed) {
+        return Math.max(16, state.blobMaxRadius != null ? state.blobMaxRadius : ed.blobMaxRadius);
+    }
+
     private static Target blobTarget(ServerLevel level, PregenConfig.Edge ed) throws IOException {
         PregenState.Blob b = state.blob;
         if (b != null && !b.dimension.equals(ed.dimension)) return null; // another rule's blob comes first
+        if (b != null && b.max != blobMax(ed)) { // the size changed (config reload or /pregen radius): the blob follows
+            b.max = blobMax(ed);
+            if (b.radius > b.max) {
+                LOG.info(P + "blob at ({}, {}) already covers the new size {}, done", b.x, b.z, b.max);
+                state.blob = b = null;
+            }
+            save();
+        }
         if (b == null) {
             List<Anchors.Ref> anchors = Anchors.forDimension(state, ed, System.currentTimeMillis());
             BlobFinder.Result r = BlobFinder.find(level, worldRoot, ed, doneWindows.getOrDefault(ed.dimension, List.of()), anchors);
@@ -373,8 +396,8 @@ final class Scheduler {
             b.dimension = ed.dimension;
             b.x = r.chunkX() * 16 + 8;
             b.z = r.chunkZ() * 16 + 8;
-            b.radius = Math.max(16, ed.blobStartRadius);
-            b.max = Math.max(b.radius, ed.blobMaxRadius);
+            b.max = blobMax(ed);
+            b.radius = Math.min(Math.max(16, ed.blobStartRadius), b.max);
             b.step = ed.blobStep > 0 ? ed.blobStep : 256;
             b.why = String.format("edge nearest %s, %d blocks from it; %d islands (%d specks ignored), %d edge chunks, %d chunks generated",
                     r.anchor(), r.distanceBlocks(), r.islands(), r.specks(), r.edgeChunks(), r.storedChunks());
@@ -474,7 +497,9 @@ final class Scheduler {
             configError = null;
             warned.clear();
             lastGuard = 0;
-            return "config loaded: enabled=" + cfg.enabled + ", " + cfg.jobs.size() + " job(s), " + cfg.edges.size() + " edge rule(s)";
+            String clamp = active() ? clampBlob(null) : ""; // at startup the server applies it once the state is loaded
+            if (!clamp.isEmpty()) save();
+            return "config loaded: enabled=" + cfg.enabled + ", " + cfg.jobs.size() + " job(s), " + cfg.edges.size() + " edge rule(s)" + clamp;
         } catch (IOException e) {
             configError = e.getMessage();
             LOG.error(P + "{} not loaded, keeping the previous settings: {}", configPath, e.getMessage());
@@ -489,7 +514,7 @@ final class Scheduler {
         if (api == null) return sb.append("inactive (Chunky API unavailable)").toString();
         sb.append(cfg.enabled ? "enabled" : "DISABLED in config");
         if (forced) sb.append(" | FORCED by /pregen start ").append((System.currentTimeMillis() - forcedSince) / 60_000L)
-                      .append(" min ago (runs with players online; /pregen stop to end)");
+                      .append(" min ago (runs alongside the players already online; the next join or /pregen stop ends it)");
         if (configError != null) sb.append(" | config error: ").append(configError);
         long now = System.currentTimeMillis();
         int players = server.m_7416_();
@@ -529,6 +554,8 @@ final class Scheduler {
             sb.append(" ").append(j.name).append(state.doneJobs.contains(j.name)
                     ? "=done" : "=r" + state.jobRadius.getOrDefault(j.name, j.radius) + "/" + j.max());
         }
+        cfg.edges.stream().filter(e -> e.enabled && e.blob()).findFirst().ifPresent(e -> sb.append(" | blob radius ").append(blobMax(e))
+                .append(state.blobMaxRadius != null ? " (/pregen radius)" : " (config)"));
         sb.append(" | edge rules: ").append(cfg.edges.stream().filter(e -> e.enabled).count())
           .append(" | edge windows done this session: ").append(doneWindows.values().stream().mapToInt(List::size).sum());
         return sb.toString();
@@ -557,8 +584,9 @@ final class Scheduler {
         lastGuard = 0;  // and re-check the guards first
         save();
         LOG.info(P + "force-started by command{}", wasHeld ? " (hold cleared)" : "");
-        return "force-started: generating from the next second, even with players online, until /pregen stop, /pregen hold or a restart"
-                + (wasHeld ? " (hold cleared)" : "") + ". The disk guards still apply.";
+        return "force-started: generating from the next second, without waiting for the server to be empty. The next player to join"
+                + " pauses it and ends force mode (as do /pregen stop, /pregen hold and a restart)"
+                + (wasHeld ? "; hold cleared" : "") + ". The disk guards still apply.";
     }
 
     static String forceStop() {
@@ -570,6 +598,58 @@ final class Scheduler {
         if (online && t != null && !t.paused) pause(t, "force mode ended, players online");
         LOG.info(P + "force mode ended by command");
         return "force mode ended: back to running only while the server is empty" + (online && t != null ? " (task paused, players online)" : "");
+    }
+
+    /** /pregen radius: the blob size in force and where it comes from. */
+    static String radius() {
+        if (!active()) return status();
+        PregenConfig.Edge ed = cfg.edges.stream().filter(e -> e.enabled && e.blob()).findFirst().orElse(null);
+        if (ed == null) return "no blob rule is enabled in config/spooky_pregen.json";
+        return "blob size: radius " + blobMax(ed) + " (" + (2 * blobMax(ed)) + " x " + (2 * blobMax(ed)) + " blocks), "
+                + (state.blobMaxRadius != null ? "set by /pregen radius; the config says " + ed.blobMaxRadius : "from the config")
+                + "; grows from " + Math.min(ed.blobStartRadius, blobMax(ed)) + " in steps of " + ed.blobStep;
+    }
+
+    /**
+     * /pregen radius <blocks> (or reset, with null): sets the blob size and applies it to the blob in progress. If that
+     * blob is already larger, its running square is cancelled (what it generated stays) and the next pick finds a new
+     * edge. The setting is kept in the state file, so it survives restarts.
+     */
+    static String setRadius(Integer blocks) {
+        if (!active()) return status();
+        state.blobMaxRadius = blocks;
+        String extra = clampBlob(blocks);
+        lastPick = 0;
+        save();
+        LOG.info(P + "blob size {} by command{}", blocks == null ? "reset to the config" : "set to radius " + blocks, extra);
+        return radius() + extra;
+    }
+
+    /**
+     * Applies the blob size in force (/pregen radius, else the config) to the blob in progress. A square of it that is
+     * larger, running or paused, is cancelled (what it generated stays); a blob that already covers the size is done and
+     * the next pick finds a new edge. Called by /pregen radius, /pregen reload and at startup, so a paused square from
+     * before a size change never resumes at the old size. Returns what changed ("" for nothing); the caller saves.
+     */
+    private static String clampBlob(Integer fallback) {
+        PregenState.Blob b = state.blob;
+        if (b == null) return "";
+        int max = cfg.edges.stream().filter(e -> e.enabled && e.blob() && e.dimension.equals(b.dimension)).findFirst()
+                .map(Scheduler::blobMax).orElse(fallback != null ? Math.max(16, fallback) : b.max);
+        String extra = b.max == max ? "" : "; blob at (" + b.x + ", " + b.z + ") now grows to radius " + max + " (was " + b.max + ")";
+        b.max = max;
+        PregenState.Task t = state.task;
+        if (t != null && "blob".equals(t.kind) && t.requested > max) {
+            api.cancelTask(t.dimension);
+            progress.remove(t.dimension);
+            state.task = null;
+            extra += "; cancelled its radius-" + t.requested + " square (what it generated stays)";
+        }
+        if (b.radius > max) {
+            state.blob = null;
+            extra += "; it already covers this size, so a new one is picked next";
+        }
+        return extra;
     }
 
     static String hold() {

@@ -47,9 +47,19 @@
 	#The Obsessed: skip its per-player tick while any chunk within obsessedChunkRadius of the player is still loading or
 	#generating. Its block reads around the player would otherwise make the server thread wait for those chunks.
 	obsessedWaitForChunks = true
-	#Chunks around the player that must be loaded. Its reads reach about 20 blocks from the player; 3 chunks = 48 blocks.
+	#Chunks around the player that must be loaded. Its stalker spawn search reads blocks up to about 80 blocks from the player; 6 chunks = 96 blocks.
 	#Range: 1 ~ 8
 	obsessedChunkRadius = 6
+	#The Obsessed: a block read (isEmptyBlock / getBlockState) in an unloaded chunk answers 'not empty' / air instead of loading the chunk.
+	#Covers its spawn-search scan point wherever it is (near another player, or left behind after a teleport). It then takes its own 'no space here' path.
+	obsessedReadsLoadedOnly = true
+	#Vanilla villagers: the sleep check reads the home bed's block before checking that the bed is within 2 blocks.
+	#A bed in an unloaded chunk is always further than that, so answer air instead of loading (or generating) the chunk. Crash 2026-11-07 01:44.
+	villagerSleepLoadedOnly = true
+	#Diagnostic: log the first chunk request from each caller on a thread other than the server thread, with its stack.
+	#Vanilla runs those requests on the server thread between ticks, so they show up as 'Can't keep up' without a long tick.
+	#Only observes. Counts are in /tickfixes stats.
+	offThreadChunkLog = true
 
 #Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs
 #(slow motion); MineColonies, guards, scripted horror and bosses are excluded by default.
@@ -77,3 +87,51 @@
 	#Mod namespaces whose entities always tick at full rate.
 	alwaysTickNamespaces = ["minecolonies", "guardvillagers", "the_one_who_watches", "rake_the_arrival", "the_obsessed", "cave_dweller", "weeping_angels", "pale_hound", "cant_breathe", "themimic_er", "whispering_spirits", "antlers", "john_mod_reborn", "creepingwoods", "man", "mahoutsukai"]
 
+#Chunk-safe ticking (1.3.4): while a dimension ticks, a block or fluid read on the server thread never makes it generate terrain.
+#Loaded chunks, and chunks already generated on disk, behave as in vanilla. A read of terrain that doesn't exist yet (or is still
+#being generated) answers with a barrier block and no fluid instead of waiting. This was the cause of every watchdog crash so far.
+[chunkSafeTicking]
+	#Master switch.
+	enabled = true
+	#Load chunks that are fully generated on disk, as vanilla would (milliseconds). False = barrier for every unloaded chunk.
+	allowDiskLoads = true
+	#Longest wait for the on-disk status check before answering with a barrier (the answer is cached for 5 s).
+	#Range: 5 ~ 1000
+	diskCheckMillis = 50
+	#Log the first barrier read from each caller, with its stack. Counts are in /tickfixes stats.
+	logCallers = true
+	#Callers that may still generate terrain synchronously: class-name prefixes, matched against the first frame
+	#outside Minecraft/Forge, e.g. com.example.mod. or com.example.mod.SomeClass.someMethod
+	exemptCallers = []
+
+[antlersWendigo]
+	#Master switch. false = the mod's own hunting, stalking roar (1,600 blocks) and scream range (640 blocks).
+	enabled = true
+	#Blocks. While calm it moves away from any player it can see within this range. 0 = off (it wanders as the mod made it).
+	#Range: 0.0 ~ 32.0
+	keepAwayRange = 16.0
+	#Blocks. At night, a survival/adventure player this close, in its line of sight, provokes it. 0 = off.
+	#Keep it below keepAwayRange: it then only happens when a player surprises it, corners it or runs it down.
+	#Range: 0.0 ~ 32.0
+	provokeRange = 8.0
+	#Blocks. The same while sneaking. 0 = sneaking players never provoke it by coming close.
+	#Range: 0.0 ~ 32.0
+	provokeRangeSneaking = 4.0
+	#Blocks. At night, staring at it from this far or closer for stareSeconds provokes it: your crosshair on its body,
+	#a clear line of sight both ways, and it is not walking away from someone at the time. 0 = off.
+	#Range: 0.0 ~ 64.0
+	stareRange = 24.0
+	#Seconds of continuous staring. Looking away resets it.
+	#Range: 0.5 ~ 20.0
+	stareSeconds = 5.0
+	#Blocks. It calms down when its provoker gets further away than this.
+	#Range: 16.0 ~ 256.0
+	calmRange = 32.0
+	#After calming down it retreats from every player within 48 blocks (only a hit provokes it again) and vanishes once
+	#no player is within 24 blocks and none within 64 can see it, or after 60 s once none is within 16. false = it stays, calm.
+	vanishAfterCalm = true
+	#Blocks. Range of its roar (only while provoked, every 15-30 s) and of its 'I see you' scream (was 640, on the Master channel).
+	#Range: 16.0 ~ 640.0
+	soundRange = 128.0
+	#Let the Wendigo and its daytime form despawn like other monsters (the mod never despawns them). Works without 'enabled'.
+	despawnNormally = true

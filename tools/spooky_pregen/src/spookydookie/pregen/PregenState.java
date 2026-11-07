@@ -26,6 +26,8 @@ final class PregenState {
     long dayStartBytes;
     /** The blob being grown (blob mode), so a restart carries on with it. */
     Blob blob;
+    /** Set by /pregen radius <blocks>: overrides the edge rules' blobMaxRadius until /pregen radius reset. */
+    Integer blobMaxRadius;
     /** Where players were: key "<uuid>/logout" or "<uuid>/bed". */
     Map<String, Anchor> anchors = new LinkedHashMap<>();
     boolean anchorsBootstrapped;

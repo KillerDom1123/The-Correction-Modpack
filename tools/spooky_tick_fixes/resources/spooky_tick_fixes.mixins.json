@@ -39,7 +39,12 @@
     "anim.FoesAnimationGateMixin",
     "anim.TowwAnimationGateMixin",
     "anim.RakeAnimationGateMixin",
-    "anim.AntlersAnimationGateMixin"
+    "anim.AntlersAnimationGateMixin",
+    "wendigo.WendigoHuntMixin",
+    "wendigo.WendigoPlayerTargetGoalMixin",
+    "wendigo.WendigoEntityMixin",
+    "wendigo.WendigomadEntityMixin",
+    "wendigo.WendigoScreamRangeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

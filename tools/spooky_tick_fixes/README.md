@@ -1,7 +1,8 @@
 # spooky_tick_fixes
 
 A small Forge 1.20.1 mod of behaviour-preserving server-tick fixes for the Spooky Dookie pack. Each patch skips work
-that provably cannot change the outcome; none changes what a mod does. Evidence, measurements and the full proposal
+that provably cannot change the outcome. Two parts change gameplay on purpose, each with its own switch:
+`antlersDayCounterOverworldOnly` (a bug fix) and `[antlersWendigo]` (1.4.0, the Wendigo only attacks when provoked). Evidence, measurements and the full proposal
 list: `docs/SERVER_TICK_AUDIT_2026-11-06.md` (§5.3). Applied changes: `docs/CONFIG_CHANGES.md`.
 
 ## Patches (first pass)
@@ -134,6 +135,69 @@ server thread.
   `supplyAsync`), so main-thread chunk lookups don't pay for it.
 - The Fragile Torches pre-check uses the non-waiting chunk lookup.
 
+## 1.4.0 — the Wendigo keeps away, and attacks only when provoked (`[antlersWendigo]`)
+
+**Changes gameplay.** Antlers' Wendigo (night form, `antlers:wendigo`) hunted on its own. Two players were attacked
+without warning on 2026-11-07, one in their base. It also never despawned.
+
+| Mod behaviour (antlers-1.0.0) | With `enabled = true` |
+|---|---|
+| Tick procedure, at night: about every 25 ticks, target the **nearest** player within a 600-block box (±300), no line of sight needed, sprint, Speed III within ±150. A player who logs off hands the hunt to the next nearest | Removed. A Wendigo only targets the player who provoked it |
+| Player target goal (`WendigoEntity$3`, night): any survival player it can see within its 60-block follow range | Never runs |
+| Stalking roar: `playsound antlers:wendigo_calls_out hostile @p ~ ~ ~ 100 1` (the nearest player within ±355, heard up to 1,600 blocks), about once a minute | Removed. It roars only while provoked: every 15–30 s, from where it is, heard within `soundRange` |
+| "I see you" (`SetstargetProcedure`): volume 40 on the **Master** channel, everyone within 640 blocks | Capped to `soundRange` (128 blocks) |
+| `removeWhenFarAway` always false for the Wendigo and its daytime form | `despawnNormally = true`: despawn like any monster (instantly past 128 blocks from every player, randomly past 32) |
+
+**The idea:** aggressive when provoked, but it keeps away from people.
+
+**Calm:** `WendigoKeepAwayGoal` moves it away from any player it can see within `keepAwayRange` (16). This mirrors its
+daytime form, which already runs from players. The goal picks a random spot up to 16 blocks away that is further from
+the player, moves at 1.5× (1.9× within 7 blocks), and re-paths once a second while followed. It sits at goal priority 1,
+ahead of the mod's stroll, look-at-player and melee goals, and holds MOVE and LOOK, so it doesn't stand watching a
+player it is leaving.
+
+**What provokes it** (survival/adventure players only):
+- **Hitting it**, by hand or with a projectile the player shot, day or night. The newest attacker becomes its target.
+- **At night, being within `provokeRange` (8) blocks** where it can see you; `provokeRangeSneaking` (4) while sneaking.
+  Below the keep-away range this only happens when a player surprises it (round a corner, through a door), corners
+  it, or runs it down.
+- **At night, staring at it** for `stareSeconds` (5, continuous) from up to `stareRange` (24) blocks. Your crosshair has
+  to be on its body, the line of sight has to be clear both ways, and it must not be walking away from someone at the
+  time. It stops to watch players from afar (the mod's 70-block look goal), so holding its gaze is the provocation.
+
+**Once provoked** it chases only that player. Setting the target runs the mod's own reaction: within ~12 blocks of a
+survival player, once per Wendigo, it freezes for 12.5 s (Slowness 101) and screams, then charges. It sprints, so the
+mod gives it Speed III. It **calms down** when the provoker leaves the game or the dimension, dies, switches to
+creative/spectator, or gets further than `calmRange` (32).
+
+**After calming down** (`vanishAfterCalm`), it retreats from every player within 48 blocks, seen or not. Only a hit
+provokes it again. It vanishes once no player is within 24 blocks and none within 64 can see it, or after 60 s once none
+is within 16.
+
+The mod's other rules are unchanged:
+- after its scream it removes itself once no player is within ~30 blocks (hit and run);
+- at dawn it turns into its daytime form, which runs from players and only fights back;
+- at dusk it turns back. Each swap creates a fresh, calm mob.
+
+**Hooks:**
+- `WendigoHuntMixin`: three `@Redirect`s in `WendigoOnEntityTickUpdateProcedure#execute`, on `Mob.setTarget`,
+  `Entity.setSprinting` and `Commands.performPrefixedCommand`. Each call appears once in the method.
+- `WendigoPlayerTargetGoalMixin`: `WendigoEntity$3` `canUse` and `canContinueToUse` return false.
+- `WendigoEntityMixin`:
+  - `baseTick` HEAD runs `WendigoTemper.tick`;
+  - `registerGoals` TAIL adds `WendigoKeepAwayGoal` at priority 1;
+  - `removeWhenFarAway` returns true.
+- `WendigomadEntityMixin`: the same despawn rule for the daytime form.
+- `WendigoScreamRangeMixin`: `@ModifyArg` on the two `Level.playSound` volumes in `SetstargetProcedure`.
+
+The state is in memory only. Nothing is written to the world, and a Wendigo that unloads comes back calm.
+`/tickfixes wendigo` lists the loaded Wendigos and their states: calm, keeping away, provoked by whom and how, or
+retreating. The log gets one line per event: `wendigo at x y z provoked by <player>: <reason>`,
+`... calmed down: ...; retreating` and `... vanished after calming down`.
+
+**Revert:** `enabled = false` restores the hunting and the sound ranges, and turns off the keep-away and the vanishing.
+`despawnNormally = false` restores permanence.
+
 ## Activation range (1.1.0) — `[activationRange]`
 
 This changes behaviour, for far mobs only. (The other behaviour change is the 1.2.0 Antlers day-counter fix.) Mobs more than `range` (48) blocks from every player
@@ -176,6 +240,9 @@ Operators only (permission level 2). The server console works too, and acts in t
     chunk requests with the top callers;
   - **chunk-safe ticking (1.3.4):** reads answered with a barrier and their top callers, disk loads, memory loads, and
     disk checks that timed out.
+- **`/tickfixes wendigo`** (1.4.0): no arguments. One line for the patch (on/off, `despawnNormally`, provocations and
+  calm-downs and vanishings since start), then one line per loaded Wendigo: dimension and position, distance from you,
+  and its state: `calm`, `calm, keeping away from a player`, `provoked by <player> (<how>)` or `calmed down, retreating`.
 - **`/tickfixes probe <x> <z>`**: tests chunk-safe ticking at one position.
   - **`x`, `z`:** whole-number block coordinates in your dimension. y is always 64.
   - **What it does:** queues one `getBlockState` read for the start of your dimension's next tick, inside the guarded

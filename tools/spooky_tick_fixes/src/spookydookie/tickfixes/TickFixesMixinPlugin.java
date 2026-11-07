@@ -46,7 +46,12 @@ public final class TickFixesMixinPlugin implements IMixinConfigPlugin {
             Map.entry("anim.FoesAnimationGateMixin", "foes"),
             Map.entry("anim.TowwAnimationGateMixin", "the_one_who_watches"),
             Map.entry("anim.RakeAnimationGateMixin", "rake_the_arrival"),
-            Map.entry("anim.AntlersAnimationGateMixin", "antlers"));
+            Map.entry("anim.AntlersAnimationGateMixin", "antlers"),
+            Map.entry("wendigo.WendigoHuntMixin", "antlers"),
+            Map.entry("wendigo.WendigoPlayerTargetGoalMixin", "antlers"),
+            Map.entry("wendigo.WendigoEntityMixin", "antlers"),
+            Map.entry("wendigo.WendigomadEntityMixin", "antlers"),
+            Map.entry("wendigo.WendigoScreamRangeMixin", "antlers"));
 
     /** Patches on vanilla classes: always applied, but logged like the others. */
     private static final Set<String> VANILLA_PATCHES = Set.of("VillagerSleepChunkMixin", "OffThreadChunkLogMixin", "LevelReadGuardMixin", "ChunkTaskSuspendMixin");

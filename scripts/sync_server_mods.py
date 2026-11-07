@@ -74,8 +74,9 @@ CLIENT_ONLY_GROUPS = [
         ("sound-physics-remastered-", ""),
         ("presencefootsteps-", ""),
     ]),
+    # JEI is NOT client-only: its server half moves the items for the recipe "+" button (and gives items to
+    # ops/creative). Without it on the server the button fails with "Server must have JEI installed".
     ("Client-only utilities", [
-        ("jei-", "recipe viewer"),
         ("xaerominimap-", "minimap; the world map's server component is kept"),
         ("farsight_immptl_compat-", "pack-built; source in `tools/farsight_immptl_compat/`, restores Farsight's "
                                     "chunk keeping under Immersive Portals"),

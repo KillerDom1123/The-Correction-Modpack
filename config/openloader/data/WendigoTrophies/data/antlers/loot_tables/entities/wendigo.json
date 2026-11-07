@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "conditions": [
+        { "condition": "minecraft:killed_by_player" }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "alexsmobs:moose_antler",
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 1, "max": 2 } },
+            { "function": "minecraft:looting_enchant", "count": { "type": "minecraft:uniform", "min": 0, "max": 1 } }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        { "condition": "minecraft:killed_by_player" },
+        { "condition": "minecraft:random_chance_with_looting", "chance": 0.33, "looting_multiplier": 0.1 }
+      ],
+      "entries": [
+        { "type": "minecraft:item", "name": "alexsmobs:moose_headgear", "weight": 2 },
+        { "type": "minecraft:item", "name": "artifacts:rooted_boots", "weight": 2 },
+        { "type": "minecraft:item", "name": "artifacts:thorn_pendant", "weight": 2 },
+        { "type": "minecraft:item", "name": "ars_nouveau:whirlisprig_charm", "weight": 2 },
+        { "type": "minecraft:item", "name": "irons_spellbooks:druidic_spell_book", "weight": 1 }
+      ]
+    }
+  ]
+}

@@ -39,6 +39,17 @@ public final class TickFixesConfig {
     private static final ForgeConfigSpec.BooleanValue CS_LOG;
     private static final ForgeConfigSpec.ConfigValue<List<? extends String>> CS_EXEMPT;
 
+    private static final ForgeConfigSpec.BooleanValue WENDIGO_ENABLED;
+    private static final ForgeConfigSpec.DoubleValue WENDIGO_PROVOKE_RANGE;
+    private static final ForgeConfigSpec.DoubleValue WENDIGO_PROVOKE_RANGE_SNEAKING;
+    private static final ForgeConfigSpec.DoubleValue WENDIGO_STARE_RANGE;
+    private static final ForgeConfigSpec.DoubleValue WENDIGO_STARE_SECONDS;
+    private static final ForgeConfigSpec.DoubleValue WENDIGO_CALM_RANGE;
+    private static final ForgeConfigSpec.BooleanValue WENDIGO_VANISH_AFTER_CALM;
+    private static final ForgeConfigSpec.DoubleValue WENDIGO_KEEP_AWAY_RANGE;
+    private static final ForgeConfigSpec.DoubleValue WENDIGO_SOUND_RANGE;
+    private static final ForgeConfigSpec.BooleanValue WENDIGO_DESPAWN;
+
     private static final ForgeConfigSpec.BooleanValue AR_ENABLED;
     private static final ForgeConfigSpec.DoubleValue AR_RANGE;
     private static final ForgeConfigSpec.IntValue AR_INTERVAL;
@@ -78,6 +89,17 @@ public final class TickFixesConfig {
     public static volatile int chunkSafeDiskCheckMs = 50;
     public static volatile boolean chunkSafeLog = true;
     public static volatile List<String> chunkSafeExempt = List.of();
+
+    public static volatile boolean wendigoProvokedOnly = true;
+    public static volatile double wendigoProvokeRange = 8.0D;
+    public static volatile double wendigoProvokeRangeSneaking = 4.0D;
+    public static volatile double wendigoStareRange = 24.0D;
+    public static volatile double wendigoStareSeconds = 5.0D;
+    public static volatile double wendigoCalmRange = 32.0D;
+    public static volatile boolean wendigoVanishAfterCalm = true;
+    public static volatile double wendigoKeepAwayRange = 16.0D;
+    public static volatile double wendigoSoundRange = 128.0D;
+    public static volatile boolean wendigoDespawnNormally = true;
 
     public static volatile boolean activationEnabled = true;
     public static volatile double activationRangeBlocks = 48.0D;
@@ -175,6 +197,35 @@ public final class TickFixesConfig {
                 .defineListAllowEmpty(List.of("exemptCallers"), List::of, o -> o instanceof String);
         b.pop();
 
+        b.comment("Antlers' Wendigo (1.4.0): keeps away from people and attacks only a player who provoked it, instead of hunting the",
+                  "nearest player within ~300 blocks. Changes behaviour. Provoking it: hitting it (any time), or at night being too close where it",
+                  "can see you (surprising or cornering it), or staring at it. It then chases only that player, until that player leaves, dies,",
+                  "changes dimension or gets further than calmRange; then it retreats and vanishes (vanishAfterCalm).").push("antlersWendigo");
+        WENDIGO_ENABLED = b.comment("Master switch. false = the mod's own hunting, stalking roar (1,600 blocks) and scream range (640 blocks).")
+                .define("enabled", true);
+        WENDIGO_KEEP_AWAY_RANGE = b.comment("Blocks. While calm it moves away from any player it can see within this range. 0 = off (it wanders as the mod made it).")
+                .defineInRange("keepAwayRange", 16.0D, 0.0D, 32.0D);
+        WENDIGO_PROVOKE_RANGE = b.comment("Blocks. At night, a survival/adventure player this close, in its line of sight, provokes it. 0 = off.",
+                                          "Keep it below keepAwayRange: it then only happens when a player surprises it, corners it or runs it down.")
+                .defineInRange("provokeRange", 8.0D, 0.0D, 32.0D);
+        WENDIGO_PROVOKE_RANGE_SNEAKING = b.comment("Blocks. The same while sneaking. 0 = sneaking players never provoke it by coming close.")
+                .defineInRange("provokeRangeSneaking", 4.0D, 0.0D, 32.0D);
+        WENDIGO_STARE_RANGE = b.comment("Blocks. At night, staring at it from this far or closer for stareSeconds provokes it: your crosshair on its body,",
+                                        "a clear line of sight both ways, and it is not walking away from someone at the time. 0 = off.")
+                .defineInRange("stareRange", 24.0D, 0.0D, 64.0D);
+        WENDIGO_STARE_SECONDS = b.comment("Seconds of continuous staring. Looking away resets it.")
+                .defineInRange("stareSeconds", 5.0D, 0.5D, 20.0D);
+        WENDIGO_CALM_RANGE = b.comment("Blocks. It calms down when its provoker gets further away than this.")
+                .defineInRange("calmRange", 32.0D, 16.0D, 256.0D);
+        WENDIGO_VANISH_AFTER_CALM = b.comment("After calming down it retreats from every player within 48 blocks (only a hit provokes it again) and vanishes once",
+                                              "no player is within 24 blocks and none within 64 can see it, or after 60 s once none is within 16. false = it stays, calm.")
+                .define("vanishAfterCalm", true);
+        WENDIGO_SOUND_RANGE = b.comment("Blocks. Range of its roar (only while provoked, every 15-30 s) and of its 'I see you' scream (was 640, on the Master channel).")
+                .defineInRange("soundRange", 128.0D, 16.0D, 640.0D);
+        WENDIGO_DESPAWN = b.comment("Let the Wendigo and its daytime form despawn like other monsters (the mod never despawns them). Works without 'enabled'.")
+                .define("despawnNormally", true);
+        b.pop();
+
         b.comment("Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs",
                   "(slow motion); MineColonies, guards, scripted horror and bosses are excluded by default.").push("activationRange");
         AR_ENABLED = b.comment("Master switch.").define("enabled", true);
@@ -227,6 +278,16 @@ public final class TickFixesConfig {
         chunkSafeDiskCheckMs = CS_DISK_MS.get();
         chunkSafeLog = CS_LOG.get();
         chunkSafeExempt = CS_EXEMPT.get().stream().map(String::valueOf).toList();
+        wendigoProvokedOnly = WENDIGO_ENABLED.get();
+        wendigoProvokeRange = WENDIGO_PROVOKE_RANGE.get();
+        wendigoProvokeRangeSneaking = WENDIGO_PROVOKE_RANGE_SNEAKING.get();
+        wendigoStareRange = WENDIGO_STARE_RANGE.get();
+        wendigoStareSeconds = WENDIGO_STARE_SECONDS.get();
+        wendigoCalmRange = WENDIGO_CALM_RANGE.get();
+        wendigoVanishAfterCalm = WENDIGO_VANISH_AFTER_CALM.get();
+        wendigoKeepAwayRange = WENDIGO_KEEP_AWAY_RANGE.get();
+        wendigoSoundRange = WENDIGO_SOUND_RANGE.get();
+        wendigoDespawnNormally = WENDIGO_DESPAWN.get();
         activationEnabled = AR_ENABLED.get();
         activationRangeBlocks = AR_RANGE.get();
         activationInterval = AR_INTERVAL.get();
@@ -248,6 +309,10 @@ public final class TickFixesConfig {
                 + " obsessedChunkWait=" + obsessedChunkWait + "(" + obsessedChunkRadius + ") obsessedReadsLoadedOnly=" + obsessedReadsLoadedOnly
                 + " villagerSleepLoadedOnly=" + villagerSleepLoadedOnly + " offThreadChunkLog=" + offThreadChunkLog
                 + " chunkSafeTicking=" + chunkSafeTicking + "(diskLoads=" + chunkSafeAllowDiskLoads + ", exempt=" + chunkSafeExempt.size() + ")"
+                + " | antlersWendigo enabled=" + wendigoProvokedOnly + " provoke=" + wendigoProvokeRange + "/" + wendigoProvokeRangeSneaking
+                + " keepAway=" + wendigoKeepAwayRange + " stare=" + wendigoStareRange + "@" + wendigoStareSeconds + "s calm=" + wendigoCalmRange
+                + " vanishAfterCalm=" + wendigoVanishAfterCalm + " sound=" + wendigoSoundRange
+                + " despawnNormally=" + wendigoDespawnNormally
                 + " | activationRange enabled=" + activationEnabled + " range=" + activationRangeBlocks
                 + " interval=" + activationInterval + " adaptive=" + activationAdaptive + "(" + activationEnableAboveMspt + "/"
                 + activationDisableBelowMspt + " ms)";

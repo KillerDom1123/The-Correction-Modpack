@@ -12,8 +12,8 @@
   // Never generate while the world's disk has less free space than this (GB). The VM disk is 12.6 GB in total.
   "minFreeDiskGb": 2.0,
   // Pause for the rest of the day once the world folder has grown this much since midnight (MB). 0 = no cap.
-  // About 4-7 MB per finished region (32x32 chunks).
-  "maxDiskGrowthMbPerDay": 1000,
+  // About 4-7 MB per finished region (32x32 chunks). Off: generation runs on until minFreeDiskGb is reached.
+  "maxDiskGrowthMbPerDay": 0,
 
   "shape": "square",
   "pattern": "region",
@@ -27,6 +27,7 @@
   // generated ones, on every island except specks smaller than minIslandChunks), pick the edge chunk nearest to where
   // players are (their last logout position and bed, read from playerdata and updated on every logout; spawn when none
   // is known), grow a square there from blobStartRadius to blobMaxRadius in blobStep steps, then pick again.
+  // /pregen radius <blocks> overrides blobMaxRadius on the fly (kept across restarts; /pregen radius reset undoes it).
   // extraAnchors adds fixed points (e.g. a base): [{ "name": "base", "x": 392, "z": -84 }].
   "edges": [
     {
@@ -37,7 +38,7 @@
       "centerZ": 0,
       "maxDistance": 0,
       "blobStartRadius": 256,
-      "blobMaxRadius": 1024,
+      "blobMaxRadius": 512,
       "blobStep": 256,
       "minIslandChunks": 64,
       "playerAnchors": true,

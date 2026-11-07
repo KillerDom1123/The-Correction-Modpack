@@ -31,8 +31,9 @@ import qouteall.imm_ptl.core.ducks.IEClientPlayNetworkHandler;
 public final class HeldUnloads {
     private static final Logger LOGGER = LogManager.getLogger(FarsightImmPtlCompat.MOD_ID);
 
-    /** Upper bound on the hold radius whatever the render distance, to bound client memory. */
-    static final int MAX_HOLD_RADIUS = Integer.getInteger("farsight_immptl_compat.maxHoldRadius", 32);
+    /** Upper bound on the hold radius. 64 matches Farsight's maxRenderDistance (the slider maximum), so by default the
+     *  hold radius follows the client's render distance. Lower it with the JVM flag to bound memory on a small client heap. */
+    static final int MAX_HOLD_RADIUS = Integer.getInteger("farsight_immptl_compat.maxHoldRadius", 64);
     /** One ring past the render distance, so the outermost visible sections still have neighbours to mesh against. */
     private static final int HOLD_MARGIN = 1;
     /** Hysteresis: a held chunk is only released once it is this many chunks past the hold radius. */

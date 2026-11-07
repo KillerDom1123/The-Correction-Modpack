@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Implementation-Title: farsight_immptl_compat
-Implementation-Version: 1.0.0
+Implementation-Version: 1.0.1
 MixinConfigs: farsight_immptl_compat.mixins.json
 

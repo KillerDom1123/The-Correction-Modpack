@@ -810,8 +810,8 @@
     {
       "name": "Farsight x Immersive Portals compat (Spooky Dookie)",
       "modid": "farsight_immptl_compat",
-      "version": "1.0.0",
-      "file": "farsight_immptl_compat-1.0.0.jar",
+      "version": "1.0.1",
+      "file": "farsight_immptl_compat-1.0.1.jar",
       "category": "Local Fixes"
     },
     {

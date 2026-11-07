@@ -184,7 +184,7 @@ FTB Library · FTB Quests · FTB Quests Entity Visualization · FTB Teams · FTB
 | FallingTree | `4.3.6` | `fallingtree` | `FallingTree-1.20.1-4.3.6.jar` |
 | Farmer's Delight | `1.20.1-1.3.4` | `farmersdelight` | `FarmersDelight-1.20.1-1.3.4.jar` |
 | Farsight mod | `1.20.1-5.1` | `farsight_view` | `farsight-1.20.1-5.1.jar` |
-| Farsight x Immersive Portals compat (Spooky Dookie) | `1.0.0` | `farsight_immptl_compat` | `farsight_immptl_compat-1.0.0.jar` |
+| Farsight x Immersive Portals compat (Spooky Dookie) | `1.0.1` | `farsight_immptl_compat` | `farsight_immptl_compat-1.0.1.jar` |
 | Fast Leaf Decay | `32` | `fastleafdecay` | `FastLeafDecay-32.jar` |
 | Fast Workbench | `8.0.4` | `fastbench` | `FastWorkbench-1.20.1-8.0.4.jar` |
 | fastasyncworldsave mod | `1.20.1-2.6` | `fastasyncworldsave` | `fastasyncworldsave-1.20.1-2.6.jar` |

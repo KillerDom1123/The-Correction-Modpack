@@ -49,7 +49,7 @@
 	obsessedWaitForChunks = true
 	#Chunks around the player that must be loaded. Its reads reach about 20 blocks from the player; 3 chunks = 48 blocks.
 	#Range: 1 ~ 8
-	obsessedChunkRadius = 3
+	obsessedChunkRadius = 6
 
 #Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs
 #(slow motion); MineColonies, guards, scripted horror and bosses are excluded by default.

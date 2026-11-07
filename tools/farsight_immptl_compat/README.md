@@ -19,7 +19,7 @@ drops client chunks, so only the hold-and-release half is missing.
 **Fix.** Two client mixins and one helper class (`HeldUnloads`):
 - `ClientPacketListener.handleForgetLevelChunk` (`m_5729_`) HEAD: in the dimension the player stands
   in, when the chunk map is Immersive Portals' and the chunk is within
-  `min(render distance, 32) + 1` chunks of the player, the packet is stored and the handler cancelled.
+  `min(render distance, 64) + 1` chunks of the player, the packet is stored and the handler cancelled.
   Other dimensions (the far side of portals) unload as before.
 - `ClientPacketListener.handleLevelChunkWithLight` (`m_183388_`) HEAD: when the server sends a chunk
   again, any held unload for it is dropped, so a stale unload can never punch a hole in live terrain.
@@ -33,9 +33,9 @@ drops client chunks, so only the hold-and-release half is missing.
 come back, and mobs there disappear because the server removes entities separately. Only terrain you
 have already received is kept; nothing new is fetched. Farsight's disk preview stays off.
 
-**Tuning.** JVM flags on the client: `-Dfarsight_immptl_compat.maxHoldRadius=N` (default 32) caps the
+**Tuning.** JVM flags on the client: `-Dfarsight_immptl_compat.maxHoldRadius=N` (default 64, Farsight's slider maximum, so the render distance is followed in full) caps the
 hold radius to bound memory; `-Dfarsight_immptl_compat.debug=true` logs held and released counts every
-30 seconds.
+30 seconds. A render distance of 64 holds about 16,600 chunks, four times as many as 32, in client memory and as GPU meshes; on a client with a small heap set `maxHoldRadius=32` (the 1.0.0 default).
 
 **Build.** `python tools/farsight_immptl_compat/build.py --install` (needs the JDK 17 at
 `E:\Program Files\Java\jdk-17`, the CurseForge install's libraries and the Immersive Portals jar in

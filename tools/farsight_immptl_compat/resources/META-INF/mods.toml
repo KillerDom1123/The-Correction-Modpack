@@ -5,7 +5,7 @@ clientSideOnly = true
 
 [[mods]]
 modId = "farsight_immptl_compat"
-version = "1.0.0"
+version = "1.0.1"
 displayName = "Farsight x Immersive Portals compat (Spooky Dookie)"
 authors = "Spooky Dookie pack"
 displayTest = "IGNORE_ALL_VERSION"

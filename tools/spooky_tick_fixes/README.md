@@ -72,6 +72,7 @@ chunk whose load has finished.
 - **The problem:** its `PlayerTickProcedure` also reads single blocks (`isEmptyBlock`, `getBlockState`) at random offsets of up to about 20 blocks around the player. A read can't be answered without the chunk, so these blocked on chunks still being generated: 19 s in one minute while a player was in fresh terrain (22:17).
 - **The fix:** the whole procedure is skipped for that player on any tick where a chunk within 3 chunks (48 blocks) isn't finished yet (`getChunkNow`, which never waits). It resumes once the area has loaded. This only happens on login or while moving into ungenerated terrain.
 - **Monitoring:** `/tickfixes stats` counts the deferred ticks.
+- **Radius 6 in the pack config (2026-11-07).** 3 turned out too small. The reads that stalled come from its stalker spawn search, at a scan point that wanders about 37–80 blocks from the player (at most 5 chunks). The code default is still 3 until the next build.
 
 ## Activation range (1.1.0) — `[activationRange]`
 
@@ -108,7 +109,7 @@ rule (§5.5.2).
   one line per patch (`... -> applying (modid)`). Applied patches keep `defaultRequire: 1`, so a target that changed
   shape fails loudly at startup.
 - **Switch per patch.** Each switch is read on the hot path, so a misbehaving patch can be turned off in the config
-  without a rebuild. A config reload applies, except the watcher type default, which is set at startup.
+  without a rebuild. A config reload applies, except the watcher type default, which is set at startup. In practice Forge's file watcher hasn't fired on the VM or the test server, so expect config edits to apply on restart.
 - **No network channels, no registry entries.** `displayTest = "IGNORE_ALL_VERSION"`: it can sit on the server only,
   but the pack ships it on both sides, which also speeds up singleplayer.
 - **SRG names** are used directly with `remap = false`, as in `immptl_dimthread_compat`, so no refmap is needed.

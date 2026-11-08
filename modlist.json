@@ -3,11 +3,11 @@
   "minecraft": "1.20.1",
   "loader": "forge",
   "counts": {
-    "enabled": 308,
+    "enabled": 309,
     "disabled": 8
   },
   "categories": {
-    "Local Fixes": 3,
+    "Local Fixes": 4,
     "Core libraries & performance": 72,
     "Create & addons": 23,
     "Tech — energy, automation, industry": 19,
@@ -1883,6 +1883,13 @@
       "modid": "spooky_tick_fixes",
       "version": "1.4.0",
       "file": "spooky_tick_fixes-1.4.0.jar",
+      "category": "Local Fixes"
+    },
+    {
+      "name": "Spooky Dookie Ultimine shapes",
+      "modid": "spooky_ultimine_shapes",
+      "version": "1.0.0",
+      "file": "spooky_ultimine_shapes-1.0.0.jar",
       "category": "Local Fixes"
     },
     {

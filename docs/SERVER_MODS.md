@@ -2,13 +2,13 @@
 
 **Server:** the live VM (`files/server` under the FTP login)  
 **Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10  
-**Active jars:** 284 · **Disabled on the server:** 3  
+**Active jars:** 285 · **Disabled on the server:** 3  
 **Generated:** 2026-11-08 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
 
 > The server is the client instance's `mods/` **minus the client-only list** below, kept in step by
 > `scripts/sync_server_mods.py`. Every jar here must match the client exactly, or players are refused at login.
 
-**Parity:** matches the client instance (308 active jars − 24 client-only = 284).
+**Parity:** matches the client instance (309 active jars − 24 client-only = 285).
 
 > **Notes** (hand-maintained in `tools/generate_server_modlist.py`; everything else here is generated):
 >
@@ -38,10 +38,11 @@
 
 ---
 
-## Local Fixes (2)
+## Local Fixes (3)
 
 - Spooky Dookie pre-generation scheduler — `spooky_pregen-1.3.1.jar`
 - Spooky Dookie tick fixes — `spooky_tick_fixes-1.4.0.jar`
+- Spooky Dookie Ultimine shapes — `spooky_ultimine_shapes-1.0.0.jar`
 
 ## Core libraries & performance (68)
 

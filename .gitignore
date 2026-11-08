@@ -95,6 +95,7 @@ user-prefs.json
 /tools/farsight_immptl_compat/build/
 /tools/spooky_tick_fixes/build/
 /tools/spooky_pregen/build/
+/tools/spooky_ultimine_shapes/build/
 # generated pages (tools/pregen_map.py)
 /tools/build/
 

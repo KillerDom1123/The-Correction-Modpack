@@ -1,0 +1,37 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "MIT"
+
+[[mods]]
+modId = "spooky_ultimine_shapes"
+version = "1.0.0"
+displayName = "Spooky Dookie Ultimine shapes"
+authors = "Spooky Dookie pack"
+# No network channels or registry entries, so a client without it can still join (shape labels would be wrong).
+displayTest = "IGNORE_ALL_VERSION"
+description = '''
+Face-oriented FTB Ultimine shapes: Square (2x2), Square (5x5) and Rectangle (5x3, 5 wide and 3 tall).
+Each is one layer on the face of the block you hit, like FTB's Small Square (3x3). Needed on client and server.
+'''
+
+[[dependencies.spooky_ultimine_shapes]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.spooky_ultimine_shapes]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,1.20.2)"
+ordering = "NONE"
+side = "BOTH"
+
+# Pinned: ShapeRegistry and ShapeContext are outside FTB Ultimine's api package. Rebuild and re-check after an update.
+[[dependencies.spooky_ultimine_shapes]]
+modId = "ftbultimine"
+mandatory = true
+versionRange = "[2001.1.8]"
+ordering = "AFTER"
+side = "BOTH"

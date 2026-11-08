@@ -1677,6 +1677,23 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Docs:** `modlist.md`, `modlist.json` and the README block were regenerated. An `ultimineshapes` rule was added to `tools/generate_modlist.py` (Storage, QoL & utility; FTB Ultimine itself lands in Quests, loot, data & guides through the `ftb` rule). `docs/SERVER_MODS.md` was regenerated from the VM.
 - **On the VM:** the jar was uploaded with the sync (284 jars, parity verified). The jar, the three example shapes (created on the server's first start) and the new block limit all take effect at the next restart.
 
+### Face-oriented Ultimine shapes: 2x2, 5x5, 5x3 (2026-11-08) — *client instance + VM*
+- **What:** a new local mod, `spooky_ultimine_shapes-1.0.0.jar`. Source, build and README are in `tools/spooky_ultimine_shapes/`; the jar is in `mods/` and `local/`. It adds **Square (2x2)**, **Square (5x5)** and **Rectangle (5x3)** (5 wide, 3 tall). Each is one layer laid flat on the face of the block you hit, so it turns with you.
+- **The 3x3 already existed:** FTB Ultimine's own **Small Square (3x3)** is exactly 9 blocks, one layer, facing the side you hit. **Large Tunnel (3x3)** is the shape that keeps going deeper (up to `max_blocks`).
+- **Why a mod, not Ultimine Shapes+ JSON:** Ultimine Shapes+ offsets are fixed to world axes. Its `wall` type is always along X or Z and never turns to face the side you hit, so it can't make shapes that face you.
+- **Layout:**
+  - **Odd sizes** are centred on the hit block.
+  - **Even sizes** put the extra block to your right, forward on floors and ceilings, and towards eye level on walls. A 2x2 aimed at either the head-height or the foot-height block clears the same 2-tall walkway.
+  - **Order:** nearest blocks are taken first.
+  - **Matching:** the same rules as FTB's shaped modes (`merge_tags_shaped`, default any block). Air is skipped.
+  - **Block limit:** fits inside `max_blocks` 81.
+- **Shape order:** FTB Ultimine links client and server shape lists by index. This mod registers in the parallel part of common setup, after FTB's constructor-registered built-ins (0–5) and before Ultimine Shapes+'s `enqueueWork` (Flatten, now 9–11). That gives the same order on every start. A scan of every jar in `mods/` found no other mod that registers shapes. The log line `[spooky_ultimine_shapes] registered 3 shapes at indices 6..8` confirms the order.
+- **Both sides:** a client without the jar can still join, because the mod has no network channel. That client would show the wrong names from index 6 onward, including the Flatten shapes. So the server and the players' pack should update together. Sync dry run against the VM: 309 active − 24 client-only = 285, and the only change is `copy + spooky_ultimine_shapes-1.0.0.jar`.
+- **On the VM (2026-11-08, at the user's request):** uploaded with `scripts/sync_server_mods.py --yes`; the script verified parity (285 jars). Takes effect at the next restart. `docs/SERVER_MODS.md` was regenerated from the VM.
+- **Tested:** the shape layout offline: 14 cases (every wall direction, floor, ceiling, and head- and foot-height aims), all pass. Not yet tested in game.
+- **Docs:** `modlist.md`, `modlist.json` and the README block were regenerated. `spooky_ultimine_shapes` was added to the Local Fixes rule in `tools/generate_modlist.py`.
+- **Revert:** delete the jar from `mods/` on both sides.
+
 ### JEI colour search on, with a palette for building blocks (2026-11-08) — *client only*
 - **Why:** finding blocks that suit a build's colour scheme. With 30 decoration mods, searching by name doesn't help.
 - **What JEI does** (read from the 15.56.0.205 jar):

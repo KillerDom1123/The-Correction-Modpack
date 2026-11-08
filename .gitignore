@@ -39,6 +39,8 @@ DUMP.txt
 # ── Personal build tools / scans (player-specific) ──
 /blueprints/
 /schematics/
+# Glacier Spire build guide, renders and reference images (contain base coordinates)
+/Glacier Spire*
 
 # ── Launcher / instance / player metadata (machine-specific, contains local paths & names) ──
 /minecraftinstance.json
@@ -104,3 +106,4 @@ __pycache__/
 
 /screenshots/
 /Glacier Spire Renders/
+

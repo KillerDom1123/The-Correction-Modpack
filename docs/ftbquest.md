@@ -14,6 +14,29 @@ The chapters below are therefore **parallel investigations**, not a campaign ord
 
 ---
 
+## How the quest book checks progress (2026-11-08)
+
+Every quest checks something real; none can be completed by clicking a checkmark. The requirements below are the design.
+For each quest's actual task, see `CONFIG_CHANGES.md` ("Quest book: real checks instead of click-to-complete").
+
+- **Built-in tasks:** items, advancements, dimensions, biomes and structures. Biome and structure tasks also use tags
+  from the OpenLoader pack `QuestChecks`: `#oldcivilisation:abandoned_places`, `#oldcivilisation:creeping_woods` and
+  `#oldcivilisation:dense_forests`.
+- **Script-checked tasks:** anything FTB Quests can't express (counting nights, "any one of" several mods, casting a
+  spell) is a *stage* task. Without a stage mod, FTB Quests reads stages from vanilla player tags, so
+  `kubejs/server_scripts/oc_quest_checks.js` and `kubejs/startup_scripts/oc_quest_spellcast.js` add an `oc_q_*` tag
+  when the player has done it.
+- **Where the implementation differs from the design below:**
+  - **"The Silent Nights":** 5 whole nights at least 256 blocks from spawn, *awake* on each counted night (rather than
+    "sleep in fewer than half").
+  - **"The Watchers":** the pack has no chunk-claim mod, so "away from claimed chunks" means 256+ blocks from spawn
+    and from your bed, and outside any MineColonies colony.
+  - **"People Return":** 25 citizens, MineColonies' nearest population milestone (it has none at 20).
+  - **"Knowledge, Power, Shelter":** no task of its own. Its dependencies already require one quest from each path,
+    and it completes when they do.
+
+---
+
 # QUESTBOOK ROOT
 
 # "The Broken World"

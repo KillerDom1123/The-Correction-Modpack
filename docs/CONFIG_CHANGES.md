@@ -1535,8 +1535,38 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Tested on the scratch server:** both tables load with no loot warnings. A test copy without the kill condition, rolled 25 times, gave the antlers plus one relic every time. The real table dropped nothing without a player killer, as intended.
 - **On the VM:** the pack folder was uploaded to `config/openloader/data/WendigoTrophies/` and read back identical. It loads at the next restart.
 
+### Quest book: real checks instead of click-to-complete (2026-11-08) — *client instance; VM upload pending*
+- **Why:** 15 of the 186 tasks were FTB Quests "checkmark" tasks, which complete when the player clicks them. They were concentrated in the chapters players see first: The Broken World (6 of 8 tasks), The Second Civilisation (3 of 3) and Field Reports (4 of 10). The other 171 tasks (items, advancements, dimensions) already check something, and every item, advancement, dimension, reward and icon they name exists in the pack.
+- **What FTB Quests can check here** (read from the 2001.4.22 jar):
+  - item (exact item only; there's no filter mod for tags), advancement, dimension, biome and structure (both accept `#tags`), stat (vanilla custom stats), kill, location and observation;
+  - "stage" tasks, which here read vanilla **player tags**: no stage mod is installed, so FTB Library falls back to its entity-tag provider. A KubeJS script can therefore complete one with `player.addTag(...)`. There's no KubeJS bridge mod for FTB Quests (FTB XMod Compat) in the pack.
+  - A quest with **no tasks** counts as complete once its dependencies are.
+- **Changes**, following the design doc (`docs/ftbquest.md`):
+
+  | Quest | Was | Now |
+  |---|---|---|
+  | The Broken World / A World Left Behind | click | structure `#oldcivilisation:abandoned_places` (179 ruins, dungeons and abandoned buildings from 21 mods and vanilla) |
+  | The Broken World / The First Survey | 3 clicks | 5 biome tasks (forest, plains, river, mountain, taiga), 3 structure tasks (village, mineshaft, ruined portal), 1 biome `#forge:is_underground` |
+  | The Broken World / The Silent Nights | click | stage `oc_q_silent_nights`: 5 whole nights at least 256 blocks from spawn without sleeping |
+  | The Broken World / The First Night | click | stage `oc_q_first_night`: a whole night survived under a roof for at least 75% of it, or slept through |
+  | Field Reports / Into The Dark | click | biome `#forge:is_underground`, structure `#oldcivilisation:abandoned_places`, biome `#oldcivilisation:dense_forests` |
+  | Field Reports / The Forest Does Not Forget | click | structure `#oldcivilisation:creeping_woods` (all 24 Creeping Woods sites) |
+  | Field Reports / Below | click | biome `#alexscaves:alexs_caves_biomes`, and `minecraft:deep_dark` |
+  | Field Reports / The Watchers | click | stage `oc_q_watchers`: 10 whole nights 256+ blocks from spawn and your bed, outside any MineColonies colony |
+  | The Machines That Remain / The Power Question | click | stage `oc_q_power`: any one of Create's water wheel, windmill or steam engine advancements (each needs real torque); IE's windmill, kinetic dynamo or diesel generator; or PneumaticCraft's air or liquid compressor |
+  | The Other Science / A Different Kind of Power | click | item `ars_nouveau:source_gem` ("Generate Source"), and stage `oc_q_cast_spell`: actually casting an Ars Nouveau spell |
+  | The Second Civilisation / People Return | click | advancement `minecolonies:minecolonies/colony_population_25`. MineColonies has milestones at 10 and 25, none at 20 |
+  | The Second Civilisation / Secure The Future | click | items: Security Camera, Keypad Door, Sentry |
+  | The Second Civilisation / Knowledge, Power, Shelter | click | no task: it completes once its six dependencies do, which already cover the design doc's "one from each" path |
+- **New files:**
+  - `kubejs/server_scripts/oc_quest_checks.js` sets the night and power tags. It checks each player every 2 s. A "whole night" means seen at or before 14000 and at or after 22000 (night is 13000–23000), alive, and in the Overworld throughout. Players get a short line after each counted night ("Night 2 of 5…").
+  - `kubejs/startup_scripts/oc_quest_spellcast.js` sets `oc_q_cast_spell` from Ars Nouveau's `SpellCastEvent`. `ForgeEvents` only exists in startup scripts.
+  - OpenLoader pack `QuestChecks`: the tags `oldcivilisation:abandoned_places` and `creeping_woods` (structures) and `dense_forests` (biomes). Every entry is `required: false`, so removing a mod can't break the tag.
+- **Progress kept:** each replaced checkmark's task ID is reused for its first replacement, so players who already clicked one keep it. Added tasks have new IDs in their chapter's range.
+- **Check a player's tags:** `/tag <player> list`. Grant one by hand: `/tag <player> add oc_q_power`.
+
 ## Appendix A — OpenLoader packs created
-`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `WendigoTrophies` (2026-11-07; Wendigo loot), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
+`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `WendigoTrophies` (2026-11-07; Wendigo loot), `QuestChecks` (2026-11-08; structure and biome tags for the quest book), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).
 (All `TFC*` packs above, data and resources, were deleted from this instance and the repo on 2026-11-07, with TFC disabled on both sides. The VM still has the three data packs `TFCFoodHunger`, `TFCLightItems` and `TFCVanillaCraftingTable`. Without TFC they do nothing: the first two hold only `tfc:` data, and the third re-states vanilla's own crafting-table recipe.)
 

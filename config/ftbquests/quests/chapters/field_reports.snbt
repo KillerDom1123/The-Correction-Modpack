@@ -31,11 +31,11 @@
 			shape: "hexagon"
 			size: 1.5d
 			subtitle: "Into The Dark"
-			tasks: [{
-				id: "7A05000000000201"
-				title: "Venture into deep caves, ancient structures and dense forests"
-				type: "checkmark"
-			}]
+			tasks: [
+				{ biome: "#forge:is_underground", id: "7A05000000000201", title: "Go down into a cave biome", type: "biome" }
+				{ id: "7A05000000000200", structure: "#oldcivilisation:abandoned_places", title: "Stand inside an old structure: a ruin, a dungeon or an abandoned building", type: "structure" }
+				{ biome: "#oldcivilisation:dense_forests", id: "7A0500000000020B", title: "Walk into a dense forest: a dark forest, an old-growth taiga or a jungle", type: "biome" }
+			]
 			x: 0.0d
 			y: 0.0d
 		}
@@ -84,11 +84,9 @@
 				{ count: 16, id: "7A0500000000030E", item: "minecraft:torch", type: "item" }
 			]
 			subtitle: "The Forest Does Not Forget"
-			tasks: [{
-				id: "7A05000000000203"
-				title: "Reach the Creeping Woods and record what you find"
-				type: "checkmark"
-			}]
+			tasks: [
+				{ id: "7A05000000000203", structure: "#oldcivilisation:creeping_woods", title: "Find one of the Creeping Woods' sites: its church, graveyard, fire towers, camps, or worse", type: "structure" }
+			]
 			x: 4.5d
 			y: -1.5d
 		}
@@ -112,11 +110,10 @@
 				{ count: 32, id: "7A05000000000313", item: "minecraft:torch", type: "item" }
 			]
 			subtitle: "Below"
-			tasks: [{
-				id: "7A05000000000204"
-				title: "Explore Alex's Caves and the deep underground"
-				type: "checkmark"
-			}]
+			tasks: [
+				{ biome: "#alexscaves:alexs_caves_biomes", id: "7A05000000000204", title: "Enter one of Alex's Caves' biomes", type: "biome" }
+				{ biome: "minecraft:deep_dark", id: "7A0500000000020C", title: "Enter the Deep Dark", type: "biome" }
+			]
 			x: 4.5d
 			y: 1.5d
 		}
@@ -168,11 +165,9 @@
 				{ count: 4, id: "7A0500000000031A", item: "farmersdelight:vegetable_soup", type: "item" }
 			]
 			subtitle: "The Watchers"
-			tasks: [{
-				id: "7A05000000000206"
-				title: "Survive 10 nights away from claimed chunks"
-				type: "checkmark"
-			}]
+			tasks: [
+				{ id: "7A05000000000206", stage: "oc_q_watchers", title: "Survive ten whole nights away from home: 256+ blocks from spawn and from your bed, outside any colony", type: "gamestage" }
+			]
 			x: 2.5d
 			y: 2.0d
 		}

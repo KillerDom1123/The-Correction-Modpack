@@ -29,11 +29,9 @@
 			shape: "hexagon"
 			size: 1.5d
 			subtitle: "People Return"
-			tasks: [{
-				id: "7A06000000000201"
-				title: "Grow a colony to a population of 20 or more"
-				type: "checkmark"
-			}]
+			tasks: [
+				{ advancement: "minecolonies:minecolonies/colony_population_25", criterion: "", id: "7A06000000000201", title: "Grow a colony to 25 citizens", type: "advancement" }
+			]
 			x: 0.0d
 			y: 0.0d
 		}
@@ -54,11 +52,11 @@
 				{ count: 8, id: "7A06000000000309", item: "securitycraft:reinforced_iron_block", type: "item" }
 			]
 			subtitle: "Secure The Future"
-			tasks: [{
-				id: "7A06000000000202"
-				title: "Install security cameras, reinforced doors and defences"
-				type: "checkmark"
-			}]
+			tasks: [
+				{ id: "7A06000000000202", item: "securitycraft:security_camera", type: "item" }
+				{ id: "7A06000000000200", item: "securitycraft:keypad_door_item", type: "item" }
+				{ id: "7A06000000000204", item: "securitycraft:sentry", type: "item" }
+			]
 			x: 2.5d
 			y: 0.0d
 		}
@@ -88,11 +86,7 @@
 			shape: "diamond"
 			size: 1.5d
 			subtitle: "Knowledge, Power, Shelter"
-			tasks: [{
-				id: "7A06000000000203"
-				title: "Technology, Knowledge, Understanding, Observation — all four, together"
-				type: "checkmark"
-			}]
+			tasks: [ ]
 			x: 1.25d
 			y: 2.0d
 		}

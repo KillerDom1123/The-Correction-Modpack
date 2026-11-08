@@ -36,11 +36,9 @@
 			shape: "hexagon"
 			size: 1.5d
 			subtitle: "A World Left Behind"
-			tasks: [{
-				id: "7A01000000000201"
-				title: "Stand inside a place someone abandoned"
-				type: "checkmark"
-			}]
+			tasks: [
+				{ id: "7A01000000000201", structure: "#oldcivilisation:abandoned_places", title: "Stand inside an abandoned place: a ruin, a dungeon or an empty building", type: "structure" }
+			]
 			x: 0.0d
 			y: 0.0d
 		}
@@ -65,9 +63,15 @@
 			]
 			subtitle: "The First Survey"
 			tasks: [
-				{ id: "7A01000000000202", title: "Log 5 different biomes", type: "checkmark" }
-				{ id: "7A01000000000203", title: "Log 3 generated structures", type: "checkmark" }
-				{ id: "7A01000000000204", title: "Log 1 underground location", type: "checkmark" }
+				{ biome: "#minecraft:is_forest", id: "7A01000000000202", title: "Survey a forest", type: "biome" }
+				{ biome: "#forge:is_plains", id: "7A01000000000200", title: "Survey the plains", type: "biome" }
+				{ biome: "#minecraft:is_river", id: "7A01000000000206", title: "Survey a river", type: "biome" }
+				{ biome: "#minecraft:is_mountain", id: "7A01000000000207", title: "Survey the mountains", type: "biome" }
+				{ biome: "#minecraft:is_taiga", id: "7A01000000000208", title: "Survey a taiga", type: "biome" }
+				{ id: "7A01000000000203", structure: "#minecraft:village", title: "Survey a village", type: "structure" }
+				{ id: "7A0100000000020C", structure: "#minecraft:mineshaft", title: "Survey a mineshaft", type: "structure" }
+				{ id: "7A0100000000020D", structure: "#minecraft:ruined_portal", title: "Survey a ruined portal", type: "structure" }
+				{ biome: "#forge:is_underground", id: "7A01000000000204", title: "Survey a cave biome underground", type: "biome" }
 			]
 			x: 2.5d
 			y: 0.0d
@@ -97,11 +101,9 @@
 				{ count: 4, id: "7A0100000000030F", item: "farmersdelight:glow_berry_custard", type: "item" }
 			]
 			subtitle: "The Silent Nights"
-			tasks: [{
-				id: "7A01000000000205"
-				title: "Spend five nights away from spawn. Do not sleep through them."
-				type: "checkmark"
-			}]
+			tasks: [
+				{ id: "7A01000000000205", stage: "oc_q_silent_nights", title: "Spend five whole nights at least 256 blocks from spawn without sleeping (not necessarily in a row)", type: "gamestage" }
+			]
 			x: 2.5d
 			y: 2.0d
 		}
@@ -134,7 +136,7 @@
 				""
 				"&7The first survivors did not build to last. They built to see morning. At the start, that is enough.&r"
 				""
-				"&8Objective: get through a full night behind walls and a door of your own making.&r"
+				"&8Objective: get through a whole night under a roof of your own making.&r"
 			]
 			icon: "comforts:sleeping_bag_red"
 			id: "7A01000000000106"
@@ -144,11 +146,9 @@
 				{ count: 8, id: "7A01000000000318", item: "minecraft:torch", type: "item" }
 			]
 			subtitle: "The First Night"
-			tasks: [{
-				id: "7A0100000000020B"
-				title: "Survive your first night behind walls you built"
-				type: "checkmark"
-			}]
+			tasks: [
+				{ id: "7A0100000000020B", stage: "oc_q_first_night", title: "Survive a whole night under a roof (or sleep through it indoors)", type: "gamestage" }
+			]
 			x: -3.0d
 			y: 3.0d
 		}

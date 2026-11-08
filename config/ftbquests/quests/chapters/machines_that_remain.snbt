@@ -147,11 +147,9 @@
 				{ id: "7A02000000000316", item: "mekanism:energy_tablet", type: "item" }
 			]
 			subtitle: "The Power Question"
-			tasks: [{
-				id: "7A02000000000210"
-				title: "Run a working power source (Create / Immersive / Pneumatic — your choice)"
-				type: "checkmark"
-			}]
+			tasks: [
+				{ id: "7A02000000000210", stage: "oc_q_power", title: "Generate power: a Create water wheel, windmill or steam engine; an Immersive Engineering windmill, kinetic dynamo or diesel generator; or a PneumaticCraft air or liquid compressor", type: "gamestage" }
+			]
 			x: 5.0d
 			y: 2.0d
 		}

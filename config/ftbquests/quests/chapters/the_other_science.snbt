@@ -59,7 +59,8 @@
 			subtitle: "A Different Kind of Power"
 			tasks: [
 				{ id: "7A03000000000204", item: "ars_nouveau:enchanting_apparatus", type: "item" }
-				{ id: "7A03000000000205", title: "Generate Source and cast a spell of your own making", type: "checkmark" }
+				{ id: "7A03000000000205", item: "ars_nouveau:source_gem", title: "Generate Source: imbue a Source Gem", type: "item" }
+				{ id: "7A03000000000200", stage: "oc_q_cast_spell", title: "Cast a spell of your own from a spell book", type: "gamestage" }
 			]
 			x: 2.5d
 			y: 0.0d

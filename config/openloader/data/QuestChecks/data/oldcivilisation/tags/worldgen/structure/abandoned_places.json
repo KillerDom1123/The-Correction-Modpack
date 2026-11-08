@@ -1,0 +1,721 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "abandoned_watchtower_refurnished:abandoned_watchtower",
+      "required": false
+    },
+    {
+      "id": "spooky_campsite:spooky_campsite",
+      "required": false
+    },
+    {
+      "id": "lost_architects:artificers_workshop",
+      "required": false
+    },
+    {
+      "id": "lost_architects:brawlers_guild",
+      "required": false
+    },
+    {
+      "id": "ad_astra_more_structures:abandoned_base",
+      "required": false
+    },
+    {
+      "id": "alexscaves:abyssal_ruins",
+      "required": false
+    },
+    {
+      "id": "alexscaves:underground_cabin",
+      "required": false
+    },
+    {
+      "id": "weeping_angels:catacombs",
+      "required": false
+    },
+    {
+      "id": "incendium:abandoned_tower",
+      "required": false
+    },
+    {
+      "id": "incendium:ruined_lab",
+      "required": false
+    },
+    {
+      "id": "irons_spellbooks:ancient_battleground",
+      "required": false
+    },
+    {
+      "id": "irons_spellbooks:catacombs",
+      "required": false
+    },
+    {
+      "id": "irons_spellbooks:impaled_icebreaker",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:abandoned_temple",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:aviary",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:bandit_towers",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:bandit_village",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:bathhouse",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:ceryneian_hind",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:coliseum",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:fishing_hut",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:foundry",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:giant_mushroom",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:greenwood_pub",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:heavenly_challenger",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:heavenly_conqueror",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:heavenly_rider",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:illager_campsite",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:illager_corsair",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:illager_fort",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:illager_galley",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:illager_windmill",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:infested_temple",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:jungle_tree_house",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:keep_kayra",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:lighthouse",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:mechanical_nest",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:merchant_campsite",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:mining_system",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:monastery",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:mushroom_house",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:mushroom_mines",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:mushroom_village",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:plague_asylum",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:scorched_mines",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:shiraz_palace",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:small_blimp",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:small_prairie_house",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:thornborn_towers",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:typhon",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:undead_pirate_ship",
+      "required": false
+    },
+    {
+      "id": "dungeons_arise:wishing_well",
+      "required": false
+    },
+    {
+      "id": "betterdungeons:skeleton_dungeon",
+      "required": false
+    },
+    {
+      "id": "betterdungeons:small_dungeon",
+      "required": false
+    },
+    {
+      "id": "betterdungeons:spider_dungeon",
+      "required": false
+    },
+    {
+      "id": "betterdungeons:zombie_dungeon",
+      "required": false
+    },
+    {
+      "id": "betterdeserttemples:desert_temple",
+      "required": false
+    },
+    {
+      "id": "betterjungletemples:jungle_temple",
+      "required": false
+    },
+    {
+      "id": "betterstrongholds:stronghold",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_acacia",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_desert",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_dripstone",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_ice",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_jungle",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_lush",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_mesa",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_mushroom",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_oak",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_overgrown",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_red_desert",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_spruce",
+      "required": false
+    },
+    {
+      "id": "bettermineshafts:mineshaft_spruce_snowy",
+      "required": false
+    },
+    {
+      "id": "structory:abandoned_camp",
+      "required": false
+    },
+    {
+      "id": "structory:abandoned_chapel",
+      "required": false
+    },
+    {
+      "id": "structory:dense_forest_ruin",
+      "required": false
+    },
+    {
+      "id": "structory:firetower",
+      "required": false
+    },
+    {
+      "id": "structory:graveyard",
+      "required": false
+    },
+    {
+      "id": "structory:jungle_ruin",
+      "required": false
+    },
+    {
+      "id": "structory:northern_ruin",
+      "required": false
+    },
+    {
+      "id": "structory:old_manor",
+      "required": false
+    },
+    {
+      "id": "structory:ruin_grassy",
+      "required": false
+    },
+    {
+      "id": "structory:swamp_ruin",
+      "required": false
+    },
+    {
+      "id": "structory:taiga_ruin_surface",
+      "required": false
+    },
+    {
+      "id": "structory:taiga_ruin_underground",
+      "required": false
+    },
+    {
+      "id": "idas:abandoned_lighthouse",
+      "required": false
+    },
+    {
+      "id": "idas:abandoned_vineyard",
+      "required": false
+    },
+    {
+      "id": "idas:abandonedhouse",
+      "required": false
+    },
+    {
+      "id": "idas:ancient_mines",
+      "required": false
+    },
+    {
+      "id": "idas:desert_ruins",
+      "required": false
+    },
+    {
+      "id": "idas:dig_site/dig_site",
+      "required": false
+    },
+    {
+      "id": "idas:dig_site/dig_site_desert",
+      "required": false
+    },
+    {
+      "id": "idas:frozen_crypt",
+      "required": false
+    },
+    {
+      "id": "idas:haunted_manor",
+      "required": false
+    },
+    {
+      "id": "idas:labyrinth",
+      "required": false
+    },
+    {
+      "id": "idas:ruined_church",
+      "required": false
+    },
+    {
+      "id": "idas:ruined_fort",
+      "required": false
+    },
+    {
+      "id": "idas:ruined_well",
+      "required": false
+    },
+    {
+      "id": "idas:ruins_of_the_deep",
+      "required": false
+    },
+    {
+      "id": "idas:sunken_ship/sunken_ship_ruins",
+      "required": false
+    },
+    {
+      "id": "idas:train_ruins",
+      "required": false
+    },
+    {
+      "id": "terralith:rubble_desert",
+      "required": false
+    },
+    {
+      "id": "terralith:rubble_forest",
+      "required": false
+    },
+    {
+      "id": "terralith:rubble_jungle",
+      "required": false
+    },
+    {
+      "id": "terralith:rubble_mesa",
+      "required": false
+    },
+    {
+      "id": "terralith:rubble_mountain",
+      "required": false
+    },
+    {
+      "id": "terralith:rubble_taiga",
+      "required": false
+    },
+    {
+      "id": "terralith:underground/frosted_dungeon",
+      "required": false
+    },
+    {
+      "id": "terralith:underground/old_refinery",
+      "required": false
+    },
+    {
+      "id": "terralith:underground/sunken_tower",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:ruins_land_cold",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:ruins_land_hot",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:ruins_land_icy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:ruins_land_warm",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:temple_ocean",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:temple_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_birch",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_dark_forest",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_desert",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_icy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_jungle",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_ocean",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_savanna",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_stone",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_swamp",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_badlands",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_dark_forest",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_flower_forest",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_giant_tree_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_icy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_jungle",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_mushroom",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_ocean",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_snowy",
+      "required": false
+    },
+    {
+      "id": "minecraft:mineshaft",
+      "required": false
+    },
+    {
+      "id": "minecraft:mineshaft_mesa",
+      "required": false
+    },
+    {
+      "id": "minecraft:ruined_portal",
+      "required": false
+    },
+    {
+      "id": "minecraft:ruined_portal_desert",
+      "required": false
+    },
+    {
+      "id": "minecraft:ruined_portal_jungle",
+      "required": false
+    },
+    {
+      "id": "minecraft:ruined_portal_mountain",
+      "required": false
+    },
+    {
+      "id": "minecraft:ruined_portal_ocean",
+      "required": false
+    },
+    {
+      "id": "minecraft:ruined_portal_swamp",
+      "required": false
+    },
+    {
+      "id": "minecraft:ocean_ruin_cold",
+      "required": false
+    },
+    {
+      "id": "minecraft:ocean_ruin_warm",
+      "required": false
+    },
+    {
+      "id": "minecraft:shipwreck",
+      "required": false
+    },
+    {
+      "id": "minecraft:shipwreck_beached",
+      "required": false
+    },
+    {
+      "id": "minecraft:trail_ruins",
+      "required": false
+    },
+    {
+      "id": "minecraft:ancient_city",
+      "required": false
+    },
+    {
+      "id": "minecraft:desert_pyramid",
+      "required": false
+    },
+    {
+      "id": "minecraft:jungle_pyramid",
+      "required": false
+    },
+    {
+      "id": "minecraft:stronghold",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:blackskyscraper",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:redskyscraper",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:tallskyscraper",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:ruinedblackskyscraper",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:ruindedredskyscraper",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:ruinedskyscraper",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:powerplant",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:warehouse",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:house_1",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:house_2",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:house_3",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:store_1",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:ferriswheel",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:tent_1",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:tent_2",
+      "required": false
+    },
+    {
+      "id": "big_lost_city:tent_3",
+      "required": false
+    },
+    {
+      "id": "horror_element_mod:deathcamp",
+      "required": false
+    },
+    {
+      "id": "horror_element_mod:devastatedfarm",
+      "required": false
+    },
+    {
+      "id": "horror_element_mod:laststandhouse",
+      "required": false
+    },
+    {
+      "id": "horror_element_mod:laboratory",
+      "required": false
+    },
+    {
+      "id": "horror_element_mod:psycho_house",
+      "required": false
+    },
+    {
+      "id": "horror_element_mod:fortified_church",
+      "required": false
+    },
+    {
+      "id": "horror_element_mod:graveyard",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:church",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:graveyard",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:wooden_hut",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:firewatch_tower_1",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:firewatch_tower_2",
+      "required": false
+    }
+  ]
+}

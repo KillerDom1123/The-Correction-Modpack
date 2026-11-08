@@ -1,0 +1,101 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "creepingwoods:animal_skeleton",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:birch_with_puppets",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:blood_camp",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:church",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:dead_body_at_birch",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:dead_body_at_oak",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:dead_body_at_spruce",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:fallen_birch",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:fallen_oak",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:fallen_spruce",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:firewatch_tower_1",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:firewatch_tower_2",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:grave",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:graveyard",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:mysterious_door",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:oak_with_hanging_bodies",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:oak_with_puppets",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:ritual_monument",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:sign",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:spruce_with_hanging_bodies",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:spruce_with_puppets",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:statue_place",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:well",
+      "required": false
+    },
+    {
+      "id": "creepingwoods:wooden_hut",
+      "required": false
+    }
+  ]
+}

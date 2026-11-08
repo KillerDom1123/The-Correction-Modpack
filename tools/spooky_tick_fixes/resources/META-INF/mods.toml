@@ -10,7 +10,8 @@ authors = "Spooky Dookie pack"
 # No network channels or registry entries, so a client without it can still join a server that has it.
 displayTest = "IGNORE_ALL_VERSION"
 description = '''
-Behaviour-preserving server-tick fixes for the Spooky Dookie pack (docs/SERVER_TICK_AUDIT_2026-11-06.md §5.3).
+Server-tick fixes for the Spooky Dookie pack (docs/SERVER_TICK_AUDIT_2026-11-06.md §5.3), plus three deliberate
+behaviour changes: the activation range, the Antlers day-counter fix and the Wendigo rework (1.4.0).
 Each patch only applies when its target mod is installed and has its own switch in
 config/spooky_tick_fixes-common.toml.
 '''

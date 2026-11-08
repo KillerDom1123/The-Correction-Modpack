@@ -1026,6 +1026,8 @@ All other values, including the guard multipliers, raid frequency and the other 
 
 **Not changed:** existing singleplayer worlds in `saves/` (each keeps its own `serverconfig/`), the "The Correction" instance, and the July `Servers/spookydookie`. Server v2 picks up the change on its next start.
 
+**Live VM, checked 2026-11-07: not applied.** The VM's `defaultconfigs/minecolonies-server.toml` is the new file, but its world's `world/serverconfig/minecolonies-server.toml` still has the old values for all 10 settings above. `defaultconfigs/` only seeds new worlds. To apply it, copy the file over the world's copy and restart, bearing in mind the load note. The VM world's other per-world configs (`cant_breathe`, `cave_dweller`, `create`, `mahoutsukai`, `pale_hound`, `themimic_er`) match `defaultconfigs/`.
+
 ### Server tick audit — phases 0–1 (2026-11-06) — *VM server + client instances*
 Plan, findings and estimates: `SERVER_TICK_AUDIT_2026-11-06.md`.
 
@@ -1258,7 +1260,7 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - moved `spooky_tick_fixes-1.2.0` to `mods-removed/`.
 - 281 jars, parity verified. It takes effect on the next start.
 
-### Watchdog crashes 21:56 and 22:05, `spooky_tick_fixes` 1.3.1 (2026-11-06, night) — *client instance; VM pending*
+### Watchdog crashes 21:56 and 22:05, `spooky_tick_fixes` 1.3.1 (2026-11-06, night) — *client instance + VM*
 **Both crashes were the same failure.** In each, the watchdog killed the server after one tick ran past `max-tick-time` (120 s). The Server thread was inside `ServerChunkCache.getChunkBlocking`, called from a horror look-check ray cast while a player moved faster than chunks loaded. One world-generation thread was busy with terrain noise; the others were idle.
 - **21:56, old instance (1.2.0, no guard):** Creeping Woods' `CreatureFromTheWoodsRaytracingProcedure` called vanilla `clip`. The restart loop then hit the missing Almanac four times (21:56–21:58) until the sync.
 - **22:05, new instance (1.3.0):** Rake's `RakeRaytracingProcedure` called `RayGuard.clip`. The guard judged the span loaded and called vanilla `clip`, which blocked.
@@ -1269,7 +1271,7 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 
 **Testing.** 1.3.1 boots on the scratch server: 27 patches applied, no errors. It's installed in this instance (`mods/` and `local/`).
 
-**VM.** The automated upload was refused by the session's permission check. Run `python scripts/sync_server_mods.py` (swaps 1.3.0 for 1.3.1), then restart. Until then the live server can hit the same hang.
+**VM.** The automated upload was refused by the session's permission check. Run `python scripts/sync_server_mods.py` (swaps 1.3.0 for 1.3.1), then restart. Until then the live server can hit the same hang. **Later that night** 1.3.1 was deployed, and 1.3.2 (below) then replaced it on the VM.
 
 **Seen in passing.** The long-standing Better Chunk Loading mixin failure is a conflict with Canary's `chunk_access.ServerChunkCacheMixin`.
 
@@ -1318,7 +1320,8 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 ### Repo cleanup: personal files purged from git history, orphaned configs removed (2026-11-07) — *repo only; no gameplay change*
 - **Purged from every commit and tag** (history rewritten and force-pushed, so every commit ID changed; commits now use the GitHub noreply email): `servers.dat`, `servers.dat_old`, `config/jei/world/`, `config/embeddium-fingerprint.json`, `config/chunky/tasks/`, `config/xaeropatreon.txt`, `config/oculus.properties`, `config/spark/`, `config/crash_assistant/`, `rhino.local.properties`, `.qmenu_opened.marker`, `observable_announce`, `win_event1783619581648.txt`, `user-prefs.json`. The files are still on disk and are now in `.gitignore`. The v1–v13 release zips were repacked without them, except `oculus.properties`, which still turns Hysteria on by default.
 - **Removed, stray copies:** `minecolonies-serverNEW.toml` (identical to `defaultconfigs/minecolonies-server.toml`), `config/chunksending.json.v41`, `XaeroWaypoints_BACKUP240807/`, `config/ftb-quests-entity-vis/` (the mod reads `config/ftbquestsentityvis/`).
-- **Removed, mod not installed:** `config/coldsweat/`, `mobdismemberment-client.toml`, `theforgotten-common.toml`, `jeioptimizer-client.toml`, `firstperson.json`, `transition.json`, `trender.json`.
+- **Removed, mod not installed:** `config/coldsweat/`, `mobdismemberment-client.toml`, `theforgotten-common.toml`, `jeioptimizer-client.toml`, `firstperson.json`.
+- **Correction (2026-11-07, later):** `transition.json` and `trender.json` were also removed here as orphans, but they aren't. They belong to tr7zw's TRansition and TRender libraries, bundled inside Entity Culling 1.11.3 and Not Enough Animations 1.12.7. The game wrote them again at the next start, and they are tracked again.
 - **Removed, mod disabled on both sides:** TerraFirmaCraft (`tfc-client.toml`, `tfc-common.toml`, `defaultconfigs/tfc-server.toml`, and the OpenLoader packs `TFCFoodHunger`, `TFCLightItems`, `TFCVanillaCraftingTable`, `TFCHideInventoryTabs`, `TFCNoSizeTooltip`, `data-disabled/TFCModdedFood`), DimThreads (`dimthread-common.toml`) and The Man From The Fog (`man_config.toml`). Re-enabling one starts from its default config; the old files are in git history and the local `*.bak` copies.
 - **Left in place:** `kubejs/server_scripts/tfc_vanilla_food.js` still runs. Without TFC it only writes `tfc:` data that nothing reads.
 
@@ -1410,6 +1413,7 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - **Lasts until** `/pregen stop`, `/pregen hold` or a restart. Force mode is never saved, so it can't keep generating under players by accident after a reboot.
   - **Guards:** the disk guards still apply.
   - **Expect extra load while players are on:** generation competes with their chunk loading. 1.3.4's chunk-safe ticking still stops their ticking code from waiting on it.
+  - **Changed in 1.3.1 (below):** force mode now starts alongside the players already online, but the next player to join pauses the task and ends force mode.
 - **On the VM:** uploaded with the sync (1.1.0 moved to `mods-removed/`; 282 jars, parity verified). It takes effect at the next restart; the blob in progress carries on after it.
 - **`/pregen stop`:** ends force mode and returns to running only while the server is empty. With players online, the current task pauses at once.
 - **`/pregen hold`** now also ends force mode. `/pregen status` shows `FORCED by /pregen start N min ago` while it's active.
@@ -1431,11 +1435,24 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **On the VM:** the jar was uploaded with the sync (1.2.0 moved to `mods-removed/`; 282 jars, parity verified), and the config with radius 512 was uploaded and read back identical (the old one is `spooky_pregen.json.bak-20261107-r1024`). Both take effect at the next restart.
 - **VM at the time:** the first blob, at (6920, −4616) near ilovepuffles111, was already on its last step (radius 1024), started 05:07.
 
+### `tools/pregen_map.py --serve`: a live pregen map (2026-11-07) — *this PC only*
+- **Background:** `tools/pregen_map.py` (added with `spooky_pregen` 1.2.0) reads the VM over FTP and writes a static map, `tools/build/pregen_map.html`. It shows what is generated, the selected blob, the square generating now and what is still to come.
+- **What it does:** `python tools/pregen_map.py --serve [--interval 10] [--port 8765] [--no-browser]` runs a small web server bound to 127.0.0.1. It re-reads the VM every `--interval` seconds (default 10, minimum 5), and the page repaints in place, keeping its zoom, position and hover.
+- **Polling:** the page asks the local server every half interval (2–10 s), and not while its tab is hidden.
+- **Page status:** the eyebrow shows "live · read HH:MM:SS". It says so when the VM can't be read (the last map stays) or when the server has stopped.
+- **Reads only what changed:**
+  - region headers of unchanged files are reused;
+  - rotated logs are read once, and `latest.log` from where the last read stopped (FTP `REST`);
+  - terrain is held in memory, and a region file being written is downloaded again at most every 30 s;
+  - relief shading is recomputed only around chunks that changed.
+- **Measured against the VM while generating:** first read 8.7 s; each 10 s cycle took 8–12 s, including a terrain refresh every 30 s. A 204 means nothing changed; new data is about 5 MB to localhost.
+- **Not published:** the published Claude artifact stays a static snapshot (`--fragment`), because its sandbox can't reach the LAN.
+
 ### `spooky_pregen` 1.3.1: a join always pauses; blob size applied at startup (2026-11-07) — *client instance + VM*
 - **Problem 1, generating with a player online:** `/pregen start` was run at 05:28. ilovepuffles111 joined at 05:37:44, and generation carried on: force mode skipped the join pause by design (1.2.0). That contradicted the mod's purpose.
 - **Fix:** force mode now means "start now, without waiting for the server to be empty". It still runs alongside whoever is online when it starts, so an operator in game can use it. **The next player to join pauses the task and ends force mode**, logged as `force mode ended: <name> joined`. `/pregen stop`, `/pregen hold` and a restart still end it too.
-- **Problem 2, old size after a restart:** after the 1.3.0 restart, the paused blob square resumed at radius 1024 although the config said 512. The size was applied only by `/pregen radius`.
-- **Fix:** the blob size in force is now applied at startup, on `/pregen reload` and by `/pregen radius`, through one routine. A paused or running square larger than the size is cancelled (what it generated stays), and a blob that already covers the size is done, so a new one is picked.
+- **Problem 2, old size after a restart:** after the 1.3.0 restart, the paused blob square resumed at radius 1024 although the config said 512. In 1.3.0 a new config size reached the blob only at its next pick, and only `/pregen radius` cancelled a square that was already larger. A paused square resumes without a pick, so it carried on at the old size.
+- **Fix:** the blob size in force is now applied at startup, on `/pregen reload` and by `/pregen radius`, through one routine. A paused or running square larger than the size is cancelled (what it generated stays). A blob whose next step is larger than the size is finished, so a new one is picked. A size between two steps can end a blob one step early: with steps 256 → 512, `/pregen radius 384` ends a blob that has only done 256.
 - **Tested headless** on the scratch server:
   - A paused radius-128 square with the config at 96 was cancelled at boot, logged as `blob size from the config applied; ... now grows to radius 96 (was 128); cancelled its radius-128 square`.
   - `/pregen start` then ran seven squares back to back, and `/pregen hold` stopped the work.
@@ -1491,11 +1508,12 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Tested on the scratch server (no player can join headless):**
   - all five patches log `-> applying (antlers)`, with no injection errors after a Wendigo was summoned (that's when its goal classes load);
   - the `[antlersWendigo]` section is generated with its defaults;
-  - summoned Wendigos show as `calm` in `/tickfixes wendigo` (the per-tick hook runs), and at daybreak they still turned into the daytime form.
-  - **Not tested:** the provocation itself, the calm-down and despawning, because all three need a player. Check them in game.
+  - summoned Wendigos show as `calm` in `/tickfixes wendigo` (the per-tick hook runs), and at daybreak they still turned into the daytime form;
+  - the final build, with the keep-away goal and the retreat, booted the same way, and three summoned Wendigos built their goals without errors.
+  - **Not tested:** keeping away, the provocation itself, the calm-down, the retreat and vanishing, and despawning. All of these need a player. Check them in game.
 - **On the VM:** uploaded with the sync (1.3.4 moved to `mods-removed/`; 283 jars, parity verified). Live from the next restart, when Forge adds `[antlersWendigo]` with these defaults to the VM's `config/spooky_tick_fixes-common.toml`.
-- **Installed:** `mods/` and `local/` (1.3.4 removed). The new config section was added to `config/spooky_tick_fixes-common.toml`, and `modlist.md`/`modlist.json` were regenerated. On the VM, Forge adds the section with these defaults on first start.
-- **Check in game:** `/tickfixes wendigo` lists the loaded Wendigos and who provoked each. The server log has a `wendigo at x y z provoked by …` line for each provocation and a `… calmed down: …` line for each calm-down.
+- **Installed:** `mods/` and `local/` (1.3.4 removed). The new config section was added to `config/spooky_tick_fixes-common.toml`, and `modlist.md`/`modlist.json` were regenerated.
+- **Check in game:** `/tickfixes wendigo` lists the loaded Wendigos and their state. The server log gets `wendigo at x y z provoked by <player>: <reason>`, `… calmed down: …; retreating` and `… vanished after calming down`.
 - **Revert:** `[antlersWendigo] enabled = false` (and `despawnNormally = false`), or go back to the 1.3.4 jar.
 - **Also found, not changed:** CANTBREATHE plays a cave noise to **every** survival player in the Overworld on the same tick, every 12–22 min once its spawn timer is past half (VM `world/serverconfig/cant_breathe-server.toml`: any height, any light, surface allowed, all biomes, `only_play_noise_to_target = false`). Each player gets a random clip. Setting `only_play_noise_to_target = true` would make it the chosen victim only.
 
@@ -1517,21 +1535,10 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Tested on the scratch server:** both tables load with no loot warnings. A test copy without the kill condition, rolled 25 times, gave the antlers plus one relic every time. The real table dropped nothing without a player killer, as intended.
 - **On the VM:** the pack folder was uploaded to `config/openloader/data/WendigoTrophies/` and read back identical. It loads at the next restart.
 
-### `tools/pregen_map.py --serve`: a live pregen map (2026-11-07) — *this PC only*
-- **What it does:** `python tools/pregen_map.py --serve [--interval 10] [--port 8765] [--no-browser]` runs a small web server bound to 127.0.0.1. It re-reads the VM every `--interval` seconds (default 10, minimum 5), and the page repaints in place, keeping its zoom, position and hover.
-- **Page status:** the eyebrow shows "live · read HH:MM:SS". It says so when the VM can't be read (the last map stays) or when the server has stopped.
-- **Reads only what changed:**
-  - region headers of unchanged files are reused;
-  - rotated logs are read once, and `latest.log` from where the last read stopped (FTP `REST`);
-  - terrain is held in memory, and a region file being written is downloaded again at most every 30 s;
-  - relief shading is recomputed only around chunks that changed.
-- **Measured against the VM while generating:** first read 8.7 s; each 10 s cycle took 8–12 s, including a terrain refresh every 30 s. A 204 means nothing changed; new data is about 5 MB to localhost.
-- **Not published:** the published Claude artifact stays a static snapshot (`--fragment`), because its sandbox can't reach the LAN.
-
 ## Appendix A — OpenLoader packs created
-`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
+`config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `WendigoTrophies` (2026-11-07; Wendigo loot), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).
-(All `TFC*` packs above, data and resources, were deleted 2026-11-07 with TFC disabled on both sides.)
+(All `TFC*` packs above, data and resources, were deleted from this instance and the repo on 2026-11-07, with TFC disabled on both sides. The VM still has the three data packs `TFCFoodHunger`, `TFCLightItems` and `TFCVanillaCraftingTable`. Without TFC they do nothing: the first two hold only `tfc:` data, and the third re-states vanilla's own crafting-table recipe.)
 
 ## Appendix B — Known crash (NOT caused by these config changes)
 Startup crash traced to a **Mixin injection failure**: TerraFirmaCraft's `BiomeMixin` (`shouldFreezeWithClimate` redirect) fails because **Serene Seasons** (and Cold Sweat's freezing mixin) rewrite the same vanilla biome freeze/precipitation methods. This is a **mod-vs-mod incompatibility** at class-load, before any config/datapack is read — data edits cannot cause or fix it. **Recommended fix:** disable one of the conflicting climate mods (most likely **TerraFirmaCraft** vs **Serene Seasons**). **Update (July):** both **Serene Seasons** and **Cold Sweat** were disabled/removed, so this specific freeze-mixin conflict was resolved — TerraFirmaCraft was then the only climate mixin on those methods. **Update 2026-11-01:** reversed — TerraFirmaCraft and its dependants are now disabled and Serene Seasons is back, so TFC's `BiomeMixin` no longer loads and the conflict cannot occur. Do not re-enable TFC alongside Serene Seasons.

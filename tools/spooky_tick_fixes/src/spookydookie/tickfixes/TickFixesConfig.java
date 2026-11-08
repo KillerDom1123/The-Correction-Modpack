@@ -123,8 +123,9 @@ public final class TickFixesConfig {
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
-        b.comment("Spooky Dookie tick fixes. Each patch skips work that cannot change the outcome;",
-                  "see docs/SERVER_TICK_AUDIT_2026-11-06.md section 5.3. Set a switch to false to restore the mod's own behaviour.")
+        b.comment("Spooky Dookie tick fixes. Most patches skip work that cannot change the outcome; [activationRange],",
+                  "antlersDayCounterOverworldOnly and [antlersWendigo] change behaviour on purpose. Set a switch to false to restore the",
+                  "mod's own behaviour (watcherFollowRange keeps the lower default for new watchers). See tools/spooky_tick_fixes/README.md.")
          .push("patches");
         MIMIC_SLEEP = b.comment("Artifacts: a dormant mimic skips its tick while no player is within mimicWakeRange (it can only wake by targeting a player within 16 blocks, being hurt, or being in water).")
                 .define("mimicSleep", true);
@@ -188,12 +189,12 @@ public final class TickFixesConfig {
         CS_ENABLED = b.comment("Master switch.").define("enabled", true);
         CS_DISK_LOADS = b.comment("Load chunks that are fully generated on disk, as vanilla would (milliseconds). False = barrier for every unloaded chunk.")
                 .define("allowDiskLoads", true);
-        CS_DISK_MS = b.comment("Longest wait for the on-disk status check before answering with a barrier (the answer is cached for 5 s).")
+        CS_DISK_MS = b.comment("Longest wait for the on-disk status check before answering with a barrier (answers are cached for 60 s, 5 s after a timeout).")
                 .defineInRange("diskCheckMillis", 50, 5, 1000);
         CS_LOG = b.comment("Log the first barrier read from each caller, with its stack. Counts are in /tickfixes stats.")
                 .define("logCallers", true);
-        CS_EXEMPT = b.comment("Callers that may still generate terrain synchronously: class-name prefixes, matched against the first frame",
-                              "outside Minecraft/Forge, e.g. com.example.mod. or com.example.mod.SomeClass.someMethod")
+        CS_EXEMPT = b.comment("Callers that may still generate terrain synchronously: class-name prefixes, matched against the first stack frame outside",
+                              "the JDK, Forge, Mixin, Canary and the level read itself (other vanilla classes count), e.g. com.example.mod. or com.example.mod.SomeClass.someMethod")
                 .defineListAllowEmpty(List.of("exemptCallers"), List::of, o -> o instanceof String);
         b.pop();
 

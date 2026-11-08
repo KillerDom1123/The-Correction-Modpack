@@ -3,7 +3,9 @@
 
 Scope: every horror and horror-adjacent mod in the pack, reviewed against player feedback, the lore, the pack's existing tuning rules and the server's performance limits. For each mod: what it actually does (read from its jar where it mattered), where it can appear, and a proposed configuration.
 
-**Status:** one change is applied. **Man From The Fog is disabled** in this instance (§5.0). Everything else is a proposal. Applied changes get recorded in `CONFIG_CHANGES.md` as usual.
+**Status:** one change from this review is applied. **Man From The Fog is disabled** in this instance (§5.0). Everything else is a proposal. Applied changes get recorded in `CONFIG_CHANGES.md` as usual.
+
+**Since then (2026-11-07), outside this review's proposals:** Antlers' **Wendigo** was reworked after it attacked players without warning. It keeps away from players and attacks only a player who provokes it, and it now despawns like other monsters (`spooky_tick_fixes` 1.4.0, `[antlersWendigo]`). Its roar and scream now carry 128 blocks instead of 1,600 and 640, and it has loot (`WendigoTrophies`). Details: `CONFIG_CHANGES.md`, "Antlers Wendigo" and "Wendigo loot".
 
 Related: `thelore.md`, `blurb.md`, `configcheck.md`, `ftbquest.md` (Horror Investigation path), `sanity_mechanic.md`, `CONFIG_CHANGES.md` (every horror section), `SERVER_TICK_AUDIT_2026-11-06.md`.
 
@@ -56,6 +58,8 @@ Related: `thelore.md`, `blurb.md`, `configcheck.md`, `ftbquest.md` (Horror Inves
 In the game's code, "open sky" means full sky light at the position. That's never true in the Nether or the End, and never true under leaves.
 
 **Limits:** nothing proposed here has been run in game. The Mimic, Pale Hound and CANTBREATHE use the Cave Dweller config layout and are assumed to share its timer code. Only Cave Dweller's code was read. The KubeJS block property in §5.2 is marked *[verify live]*.
+- **Checked 2026-11-07:** Pale Hound and CANTBREATHE do share Cave Dweller's timer code (`serverTick`, `handleLogic`, `playCaveSoundToSpelunkers`, read from bytecode). The Mimic is still unchecked.
+- **Server-wide cave noise:** one timer per dimension plays a cave noise to every qualifying player on the same tick, each a random clip at their own position. CANTBREATHE's config (any height, any light, surface allowed, all biomes) makes that every survival player in the Overworld, every 12–22 minutes once its spawn timer is past half. `only_play_noise_to_target = true` in `cant_breathe-server.toml` would limit it to the chosen victim.
 
 ---
 
@@ -75,7 +79,7 @@ In the game's code, "open sky" means full sky light at the position. That's neve
 | **Rake** | Biome, forests | Code requires sky | No | No | Stalkers w2; sound emitter w15 |
 | **Creeping Woods** | Biome, forests | Code requires sky, Y > 60 | No | No | All w2 |
 | **John Mod** | Biome, any | John: yes. Baby John and The Hunted need sky | John only | No (Overworld check) | w1–2 |
-| **Wendigo** (Antlers) | Biome, any | Yes | Yes | Possible | w2, one per 1,000 blocks |
+| **Wendigo** (Antlers) | Biome, any Overworld biome, not on `#forge:stone` | Yes | Only on non-stone floors (gravel, dirt, moss, calcite…) | No (its spawn rule needs an Overworld biome) | w2, one per 1,000 blocks. Since 2026-11-07 provoke-only and despawns (see Status) |
 | **Whispering Spirits** | Biome, any | Yes | Yes | Yes | w2 |
 | **The Obsessed** | Targets a player wherever they are | Yes | Yes | — | Griefing, stealing and building on |
 | **Born in Chaos** (44 mobs) | Biome, any | 29 mobs: dark surface (light ≤ 4) | Same 29 in pitch-black caves; spiders cave-only | A few Nether mobs | Mod weights; seasonal events on |

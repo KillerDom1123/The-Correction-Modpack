@@ -12,7 +12,7 @@ displayTest = "IGNORE_ALL_VERSION"
 description = '''
 Runs Chunky while the dedicated server is empty and pauses it the moment a player logs in.
 Works through a list of points (each grown from radius to maxRadius), then the edges of the generated area.
-Configured in config/spooky_pregen.json; /pregen status|next|hold|resume|skip|reload.
+Configured in config/spooky_pregen.json; /pregen status|next|start|stop|hold|resume|skip|reload|radius.
 '''
 
 [[dependencies.spooky_pregen]]

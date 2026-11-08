@@ -12,13 +12,13 @@ import net.minecraftforge.event.RegisterCommandsEvent;
  * argument.
  * <ul>
  *   <li>{@code /pregen radius}: shows the blob size in force (the largest radius a blob grows to) and where it comes
- *       from. {@code /pregen radius <blocks>} (16 to 8192) sets it at once, for the blob in progress too: if that blob
- *       is already larger, its running square is cancelled and a new blob is picked. It's kept across restarts.
+ *       from. {@code /pregen radius <blocks>} (16 to 8192) sets it at once, for the blob in progress too: a larger square
+ *       is cancelled, and a blob whose next step is larger is finished (a new one is picked). Kept across restarts.
  *       {@code /pregen radius reset} returns to the config's blobMaxRadius.</li>
  *   <li>{@code /pregen} or {@code /pregen status}: enabled or not, player count, how long the server has been empty
  *       (and the grace time), hold, guards, free disk, the current Chunky task and its progress (percent, chunks, rate,
  *       ETA), the current blob and why it was picked, the anchors (count and newest), and each job's next radius.</li>
- *   <li>{@code /pregen next}: a dry run of the next pick (job, blob or edge square) and why.</li>
+ *   <li>{@code /pregen next}: the next pick (job, blob or edge square) and why; a missing blob is picked and kept.</li>
  *   <li>{@code /pregen start}: force-start. Begins (or resumes) work immediately, without waiting for an empty server
  *       or the check interval, alongside any players already online. It clears a hold. The next player to join pauses
  *       the task and ends force mode, as do {@code /pregen stop}, {@code /pregen hold} and a restart. The disk guards

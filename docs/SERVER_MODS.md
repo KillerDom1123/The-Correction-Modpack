@@ -20,8 +20,8 @@
 >   under DimThreads), `farsight-1.20.1-5.1`, `hardcoretruedarkness-4.0.0` (v6 blacks out the view under shaders and
 >   is a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.
 > - **Pack-built** (category *Local Fixes*, source in `tools/`): `spooky_tick_fixes` holds the server-tick fixes, the
->   activation range and the horror ray-cast guard (config `config/spooky_tick_fixes-common.toml`), on clients and the
->   server. `spooky_pregen` runs Chunky while the server is empty (config `config/spooky_pregen.json`, `/pregen`); it
+>   activation range, the chunk guards and chunk-safe ticking, and (1.4.0) the provoke-only Wendigo (config
+>   `config/spooky_tick_fixes-common.toml`), on clients and the server. `spooky_pregen` runs Chunky while the server is empty (config `config/spooky_pregen.json`, `/pregen`); it
 >   is inert on clients. `farsight_immptl_compat` is client-only. `immptl_dimthread_compat` is disabled with DimThreads.
 > - **DimThreads disabled 2026-11-06:** version 1.2.1 ticks every dimension under one global lock (no parallelism), and
 >   a 46-minute profile with it off was no slower. Its jar and `immptl_dimthread_compat` are `.jar.disabled` on both sides.
@@ -29,6 +29,9 @@
 >   despawn normally; Dynamic View (`dynview`) lowers view/simulation distance when ticks run long.
 > - **Removed / disabled 2026-11-06:** Data Anchor (an orphan library with a strict network channel, so it came off
 >   every client too) and The Man From The Fog (disabled in the client and on the VM).
+> - **JEI is on the server too (2026-11-07):** its "+" button, which moves a recipe's ingredients into a crafting grid,
+>   needs JEI's server half. It used to be on the client-only list, and the button failed with "Server must have JEI
+>   installed".
 > - **Kept despite being client-leaning** (harmless idling on a server, and dropping them risked a dependency or
 >   client refusal): `Camerapture`, `farsight`, `sounds_of_the_forest`, `clientcrafting`, plus client-side libraries
 >   (`athena`, `fusion`, `Iceberg`, `Prism`, `CreativeCore`).

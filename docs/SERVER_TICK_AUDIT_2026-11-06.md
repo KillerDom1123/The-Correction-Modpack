@@ -2,7 +2,7 @@
 
 Scope: why the dedicated server (Server v2 on the Proxmox VM) runs at about 7 TPS with one player online, and every change that would reduce its tick time. The work combined spark profiles, a bytecode scan of all 281 server jars, reading the code of every hook that showed up as costly, and online research into known issues.
 
-**Status (2026-11-06): phases 0–1 applied; the rest is still proposed.** The live server is now the Proxmox VM, deployed to over FTP. Record applied changes in `CONFIG_CHANGES.md` as usual. Applied so far (details in CONFIG_CHANGES, "Server tick audit — phases 0–1"):
+**Status (2026-11-06, updated 2026-11-07): phases 0–1 applied, plus the later work listed below; the rest is still proposed.** The live server is now the Proxmox VM, deployed to over FTP. Record applied changes in `CONFIG_CHANGES.md` as usual. Applied so far (details in CONFIG_CHANGES, "Server tick audit — phases 0–1"):
 - **§5.1.1:** the GC flags. Memory was kept at `-Xms8G -Xmx32G` by choice.
 - **§5.1.2:** CPU governor on `performance`.
 - **§5.1.3:** `sync-chunk-writes=false`.
@@ -21,6 +21,14 @@ Scope: why the dedicated server (Server v2 on the Proxmox VM) runs at about 7 TP
   Still open:
   - §5.3.7's The Obsessed `EntityTickProcedure` fix;
   - §5.5.2, the watcher despawn rule, which needs a decision.
+
+**Later (2026-11-06 evening to 2026-11-07), all deployed to the VM; details in CONFIG_CHANGES:**
+- **`spooky_tick_fixes` 1.2.0:** Antlers' day counter runs on the overworld only (a bug fix that changes behaviour), and TOWW skips its sync in empty levels.
+- **DimThreads disabled:** its 1.2.1 ticks every level under one global lock. The Incendium clock is trimmed by an OpenLoader datapack.
+- **1.3.0 to 1.3.3:** the horror look ray casts, The Obsessed's block reads and vanilla villagers' bed check no longer load chunks on the server thread.
+- **1.3.4, chunk-safe ticking:** no block read during a level tick generates terrain. This covers the cause of every watchdog crash so far.
+- **`spooky_pregen`:** a separate mod that pre-generates the world with Chunky while the server is empty.
+- **1.4.0:** a gameplay change outside this audit. Antlers' Wendigo keeps away from players and only attacks when provoked. It goes live at the VM's next restart.
 
 Related: `CONFIG_CHANGES.md` (sections "Performance — …", "Immersive Portals × DimThreads", "Better Chunk Loading smart post-processing off"), `UPDATE_REVIEW_2026-11-01.md`, `SERVER_MODS.md`.
 
@@ -305,7 +313,7 @@ Born in Chaos (about 40 `forge:any` hostiles at weights 2–30) and Foes are lef
 
 A small Forge mod with one job per mixin, built the same way as `tools/immptl_dimthread_compat`:
 - **Project:** `tools/spooky_tick_fixes/` with `build.py --install`, compiled with JDK 17 (`E:\Program Files\Java\jdk-17`) against the jars in the CurseForge install. The jar goes in `mods/` and `local/`.
-- **Install on both sides.** It changes no registries or network protocol, but keeping it on clients also speeds up singleplayer (The Correction instance) and keeps `mods/` identical. The sync script copies it to Server v2.
+- **Install on both sides.** It changes no registries or network protocol, but keeping it on clients also speeds up singleplayer (The Correction instance) and keeps `mods/` identical. The sync script copies it to the server (the VM by default).
 - **Fail-soft per target mod.** Use a mixin config plugin (`IMixinConfigPlugin.shouldApplyMixin`) that applies each mixin only if its target mod is loaded, and logs one line per applied patch. Removing a target mod later then doesn't crash the server. Each mixin is `required: true` *when applied*, so a target that changed shape fails loudly at startup (the existing shim's policy).
 - **Rule for every patch:** skip work that provably cannot change the result. Never change what the mod does.
 - **Verify every target with `javap`** against the shipped jar before building, as was done for the existing shims.

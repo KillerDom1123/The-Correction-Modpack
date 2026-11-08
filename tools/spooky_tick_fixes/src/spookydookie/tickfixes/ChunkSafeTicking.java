@@ -256,7 +256,7 @@ public final class ChunkSafeTicking {
         n.increment();
     }
 
-    /** The first frame outside Minecraft, Forge, Mixin, this mod and the chunk-system mods (a merged mixin handler counts). */
+    /** The first frame outside the JDK, Forge, Mixin, Canary, this class and the level reads (other vanilla classes count). */
     private static String caller() {
         return WALKER.walk(s -> s.map(f -> f.getClassName() + "." + f.getMethodName())
                 .filter(n -> !isInfra(n)).findFirst().orElse("<vanilla>"));

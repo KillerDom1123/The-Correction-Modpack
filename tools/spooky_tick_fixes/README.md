@@ -1,8 +1,9 @@
 # spooky_tick_fixes
 
 A small Forge 1.20.1 mod of behaviour-preserving server-tick fixes for the Spooky Dookie pack. Each patch skips work
-that provably cannot change the outcome. Two parts change gameplay on purpose, each with its own switch:
-`antlersDayCounterOverworldOnly` (a bug fix) and `[antlersWendigo]` (1.4.0, the Wendigo only attacks when provoked). Evidence, measurements and the full proposal
+that provably cannot change the outcome. Three parts change behaviour on purpose, each with its own switch:
+`[activationRange]` (far mobs tick less often while the server is behind), `antlersDayCounterOverworldOnly` (a bug fix)
+and `[antlersWendigo]` (1.4.0: the Wendigo keeps away and only attacks when provoked). Evidence, measurements and the full proposal
 list: `docs/SERVER_TICK_AUDIT_2026-11-06.md` (§5.3). Applied changes: `docs/CONFIG_CHANGES.md`.
 
 ## Patches (first pass)
@@ -83,7 +84,8 @@ chunk whose load has finished.
 | `obsessedReadsLoadedOnly` | The Obsessed `PlayerTickProcedure#execute`: all `isEmptyBlock` (33) and `getBlockState` (24) calls | A read in an unloaded chunk answers "not empty" / air | Its stalker spawn search reads at a scan point stored in the player's data. That point can sit near *another* player, or stay at the old location after a teleport, both outside `obsessedChunkRadius`. Every check that acts needs "empty", or a specific block (cobweb, cobweb stone, glass), or comes after an "empty" check on the same column. So the stub sends it down its own "no space here, move on" path, and it only spawns its stalker in loaded terrain |
 | `offThreadChunkLog` (diagnostic) | Vanilla `ServerChunkCache#getChunk` (`m_7587_`), HEAD, priority 1500 (after Canary's overwrite) | When the caller isn't the server thread, logs the first request from each distinct caller with a 30-frame stack. The rest are counted (sampled 1 in 64 after 2000). Only observes | Vanilla runs those requests on the server thread between ticks. They caused the "Can't keep up! 21 s behind" warnings of 2026-11-06 23:03–23:11 without any long tick, and the server-thread profile can't show who asked. Grep the log for `off-thread chunk request (new caller)`. Turn it off once the caller is known |
 
-`/tickfixes stats` adds the counts: villager bed reads skipped, Obsessed reads stubbed, and off-thread requests with the top callers. The plugin now also logs the two vanilla patches (`-> applying (vanilla)`): **31** applying lines in total.
+`/tickfixes stats` adds the counts: villager bed reads skipped, Obsessed reads stubbed, and off-thread requests with the top callers. The plugin now also logs the two vanilla patches (`-> applying (vanilla)`): **31** applying lines in total at the time
+(38 in 1.4.0; see Design).
 
 ## 1.3.4 — chunk-safe ticking (`[chunkSafeTicking]`)
 
@@ -110,7 +112,7 @@ stopped the server.
 |---|---|
 | loaded | unchanged, through a 4-entry cache that's cleared every tick and on chunk unload |
 | finished, in memory but not accessible | vanilla (it gets a ticket; nothing is generated) |
-| finished on disk (`Status` = full, read with the chunk scanner; the region file is checked first) | vanilla (a disk load). The check waits at most `diskCheckMillis` (50); its answer is cached for 60 s (5 s if it timed out) |
+| finished on disk (`Status` = full, read with the chunk scanner; the region file is checked first) | vanilla (a disk load). The check waits at most `diskCheckMillis` (50); its answer is cached for 60 s (5 s if it timed out). With `allowDiskLoads = false`, a barrier instead, for every chunk that isn't loaded |
 | not generated, half generated, or being generated right now | **a barrier block, no fluid**, at once |
 
 **Why a barrier, not air:** nothing spawns, places blocks or flows into terrain that doesn't exist, and ray casts stop
@@ -124,10 +126,13 @@ at it. That is generation the pre-generator (`spooky_pregen`) or a player's own 
 server thread.
 
 **Monitoring and escape hatches:**
-- **First reads are logged:** the first barrier read from each caller is logged with its stack (`chunk-safe ticking: … new caller`).
+- **First reads are logged** (`logCallers`): the first barrier read from each caller is logged with its stack (`chunk-safe ticking: … new caller`).
 - **`/tickfixes stats`** counts barriers, disk loads and memory loads.
 - **`/tickfixes probe <x> <z>`** performs one read at y 64 inside the next tick of your dimension and reports the path it took.
-- **`exemptCallers`** (class-name prefixes) lets a mod that really must generate on the spot keep doing so.
+- **`exemptCallers`** (class-name prefixes) lets a mod that really must generate on the spot keep doing so. A prefix
+  is matched against the first stack frame outside the JDK, Forge, Mixin, Canary and the level read itself (`Level`,
+  `BlockGetter`, `LevelReader`, `LevelAccessor`, `ServerLevel.getBlockState`). Other vanilla classes aren't skipped,
+  so that frame can be one such as `FlowingFluid` rather than the mod that started the work.
 - **`enabled = false`** restores vanilla.
 
 **Also in 1.3.4:**
@@ -200,12 +205,12 @@ retreating. The log gets one line per event: `wendigo at x y z provoked by <play
 
 ## Activation range (1.1.0) — `[activationRange]`
 
-This changes behaviour, for far mobs only. (The other behaviour change is the 1.2.0 Antlers day-counter fix.) Mobs more than `range` (48) blocks from every player
-in their dimension tick once every `interval` (4) ticks, staggered by entity id. A skipped tick is skipped entirely, so
-the mob moves, thinks and runs its own timers in slow motion. Two things still run on skipped ticks, so their rates
-are unchanged:
-- `AgeableMob` age (growth and breeding cooldowns);
-- the vanilla despawn check.
+This changes behaviour, for far mobs only. (The other deliberate behaviour changes are the 1.2.0 Antlers day-counter fix
+and the 1.4.0 Wendigo rework.) Mobs more than `range` (48) blocks from every player in their dimension tick once every
+`interval` (4) ticks, staggered by entity id. A skipped tick is skipped entirely, so the mob moves, thinks and runs its
+own timers in slow motion. Two things still run on skipped ticks, so their rates are unchanged:
+- `AgeableMob` age (growth and breeding cooldowns), switch `ageCatchUp`;
+- the vanilla despawn check, switch `despawnChecks`.
 
 **Never throttled:**
 - non-mob entities;
@@ -224,8 +229,8 @@ moving-block counts for your dimension, and the average tick time.
 Verified headless: a baby cow kept ageing at exactly 20/s while throttled; a throttled pig fell far more slowly than
 an immune (ridden) one; dormant mimics still slept.
 
-Not yet done (see the audit doc): Alex's Caves' per-entity magnetism check, Slice & Dice wet air, the watcher despawn
-rule (§5.5.2).
+Not yet done (see the audit doc): Alex's Caves' per-entity magnetism check, Slice & Dice wet air, The Obsessed's
+`EntityTickProcedure` (§5.3.7), the watcher despawn rule (§5.5.2).
 
 ## Commands
 
@@ -240,9 +245,12 @@ Operators only (permission level 2). The server console works too, and acts in t
     chunk requests with the top callers;
   - **chunk-safe ticking (1.3.4):** reads answered with a barrier and their top callers, disk loads, memory loads, and
     disk checks that timed out.
-- **`/tickfixes wendigo`** (1.4.0): no arguments. One line for the patch (on/off, `despawnNormally`, provocations and
-  calm-downs and vanishings since start), then one line per loaded Wendigo: dimension and position, distance from you,
-  and its state: `calm`, `calm, keeping away from a player`, `provoked by <player> (<how>)` or `calmed down, retreating`.
+- **`/tickfixes wendigo`** (1.4.0): no arguments. One line for the patch (on/off, `despawnNormally`, provocations,
+  calm-downs and vanishings since start), then one line per loaded Wendigo: dimension and position, distance from you
+  (in your own dimension only), and its state: `calm`, `calm, keeping away from a player`, `provoked by <player>
+  (<how>)`, or `calmed down, retreating`, with ` (moving away)` while it walks off. With none it says `no Wendigo
+  loaded`. Only Wendigos that have ticked with `[antlersWendigo] enabled = true` are listed, so with the patch off the
+  list is always empty.
 - **`/tickfixes probe <x> <z>`**: tests chunk-safe ticking at one position.
   - **`x`, `z`:** whole-number block coordinates in your dimension. y is always 64.
   - **What it does:** queues one `getBlockState` read for the start of your dimension's next tick, inside the guarded
@@ -251,7 +259,8 @@ Operators only (permission level 2). The server console works too, and acts in t
     - `fast path (chunk loaded)`;
     - `loaded from memory`;
     - `loaded from disk`;
-    - `barrier (chunk is not generated / is being generated / could not be checked in time)`;
+    - `barrier (chunk is not generated / is being generated / could not be checked in time / is not loaded)`; the
+      last only with `allowDiskLoads = false`;
     - `exempt caller …, vanilla`.
   - **Side effects:** probing ungenerated terrain doesn't generate it. Probing a generated but unloaded chunk loads it
     briefly, as any read would.
@@ -261,10 +270,15 @@ Operators only (permission level 2). The server console works too, and acts in t
 ## Design
 
 - **Fail-soft per target mod.** `TickFixesMixinPlugin` applies a patch only when its target mod is installed and logs
-  one line per patch (`... -> applying (modid)`). Applied patches keep `defaultRequire: 1`, so a target that changed
-  shape fails loudly at startup.
+  one line per patch and target class (`... -> applying (modid)`, or `(vanilla)` for the 4 vanilla patches;
+  `CreepingWoodsRayMixin` has 3 targets). The 3 accessors and the activation-range hook aren't gated and log nothing.
+  1.4.0 logs 38 lines. Applied patches keep `defaultRequire: 1`, so a target that changed shape fails loudly at startup.
 - **Switch per patch.** Each switch is read on the hot path, so a misbehaving patch can be turned off in the config
-  without a rebuild. A config reload applies, except the watcher type default, which is set at startup. In practice Forge's file watcher hasn't fired on the VM or the test server, so expect config edits to apply on restart.
+  without a rebuild. A config reload applies. In practice Forge's file watcher hasn't fired on the VM or the test
+  server, so expect config edits to apply on restart.
+  - **One exception:** the watchers' lower follow-range *default* is set when the game registers entity attributes,
+    before the config is read. `watcherFollowRange = false` stops the clamp on saved watchers, but new watchers still
+    get 32. Only removing the jar restores 2048.
 - **No network channels, no registry entries.** `displayTest = "IGNORE_ALL_VERSION"`: it can sit on the server only,
   but the pack ships it on both sides, which also speeds up singleplayer.
 - **SRG names** are used directly with `remap = false`, as in `immptl_dimthread_compat`, so no refmap is needed.

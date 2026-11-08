@@ -16,6 +16,7 @@ online uses time the server would otherwise spend idle.
 Once a second, on the server thread:
 
 - **Players online:** if its Chunky task is running, it's paused (also instantly on login, before other listeners).
+  `"enabled": false` (after `/pregen reload`) pauses it the same way.
 - **Empty for `emptyGraceMinutes`:** a paused task is resumed. If there is none, every `checkIntervalMinutes` it picks
   the next one and starts it. A finished task is followed straight away by the next while the server stays empty.
 - **Work order:**
@@ -35,7 +36,8 @@ Once a second, on the server thread:
        always touches existing land, so no new islands. Then the edge is recomputed and the next seed picked.
      - **Restarts:** the blob in progress is stored in the state file and carries on after a restart.
      - **Example:** on the VM's 2026-11-07 world (32 islands, 27 of them specks) a simulation picks Milton___'s area,
-       then ilovepuffles111's, then alternates, with about 7,500–15,000 new chunks per blob (25–50 min each).
+       then ilovepuffles111's, then alternates. At the pack's blob size (512) a blob is at most 64 × 64 = 4,096 chunks,
+       about 10–25 minutes at the VM's rate. (At 1.1.0's 1024 it was 7,500–15,000 new chunks, 25–50 minutes.)
   3. **`edges` in `"mode": "nearest"`** (the 1.0.0 behaviour): It reads the 4 KB location table at the start of every region file, which
      gives the exact set of chunks stored on disk without loading any of them. The *edge* is every missing chunk that
      touches a stored one. The edge chunk nearest the rule's centre (within `maxDistance` on either axis, inside the
@@ -45,15 +47,18 @@ Once a second, on the server thread:
      saved status, so half-finished fringe chunks get completed).
 - **Guards** (checked once a minute; a tripped guard pauses the task until it clears):
   - free space on the world's disk below `minFreeDiskGb`;
-  - the world folder grew more than `maxDiskGrowthMbPerDay` since the first check of the day (0 = off).
-- **Restarts:** the task is paused on shutdown (Chunky saves it). State is in `world/spooky_pregen_state.json` (job
-  radii, finished jobs, the current task, hold flag, daily-growth baseline). After a restart the task resumes once the
-  server has been empty for the grace time. Chunky's own `continueOnRestart` can stay `false`.
+  - the world folder grew more than `maxDiskGrowthMbPerDay` since the first check of the day (0 = off; the pack sets 0,
+    so only the free-space floor applies).
+- **Restarts:** the task is paused on shutdown (Chunky saves it). State is in `world/spooky_pregen_state.json`: job
+  radii, finished jobs, the current task, the blob in progress, the `/pregen radius` size, the player anchors, the hold
+  flag and the daily-growth baseline. After a restart the task resumes once the server has been empty for the grace
+  time. Chunky's own `continueOnRestart` can stay `false`.
 - **Only its own tasks:** a Chunky task someone starts by hand is left alone. If that dimension is busy, it waits. If
   its own task is cancelled or paused with `/chunky`, it holds until `/pregen resume`.
 
-Square sizes are worth keeping moderate. A pause is immediate, but Chunky checks every chunk in a square, and squares
-re-checked after a restart are skipped quickly (finished chunks go by at thousands per second).
+Square sizes are worth keeping moderate. A pause takes effect at once, though Chunky still finishes the chunks already
+in flight (up to 50, about 10–15 s on the VM). Chunky checks every chunk in a square, and squares re-checked after a
+restart are skipped quickly (finished chunks go by at thousands per second).
 
 ## Config: `config/spooky_pregen.json`
 
@@ -79,7 +84,8 @@ Only `radius` takes an argument. The server console works too.
 - `/pregen` or `/pregen status`: enabled, players, how long the server has been empty, hold, guards, free disk, the
   current task and Chunky's progress (percent, chunks, rate, ETA), the current blob and why it was picked, the anchors
   (count and newest), and each job's next radius.
-- `/pregen next`: what it would start next, including the edge search result. A dry run.
+- `/pregen next`: what it would start next, including the edge search result. Nothing is generated, but if no blob
+  is chosen yet it picks one now and keeps it, so the next start uses that blob.
 - `/pregen start`: **force-start**. Begins (or resumes) work immediately, without waiting for an empty server or the
   check interval, alongside any players already online (an operator running it in game keeps it running). It clears a
   hold. **The next player to join pauses the task and ends force mode**, as do `/pregen stop`, `/pregen hold` and a
@@ -93,8 +99,10 @@ Only `radius` takes an argument. The server console works too.
 - `/pregen radius`: show the blob size, which is the largest radius a blob grows to (the square is twice that across),
   and whether it comes from the config or from the command.
 - `/pregen radius <blocks>` (16–8192): set the blob size at once.
-  - It applies to the blob in progress too. If that blob is already larger, its running square is cancelled (what it
-    generated stays) and a new blob is picked.
+  - It applies to the blob in progress too. A running or paused square larger than the new size is cancelled (what
+    it generated stays). If the blob's next step is larger than the new size, the blob is finished and a new one is
+    picked. A size between two steps can end a blob one step early: with steps 256 → 512, `/pregen radius 384` ends a
+    blob that has only done 256.
   - It's kept in the state file, so it survives restarts, and it overrides `blobMaxRadius`.
   - Example: `/pregen radius 256` gives 512 × 512-block blobs.
 - `/pregen radius reset`: go back to the config's `blobMaxRadius`. A config edit plus `/pregen reload` also resizes the
@@ -102,8 +110,10 @@ Only `radius` takes an argument. The server console works too.
 - `/pregen reload`: re-read `config/spooky_pregen.json`. If it doesn't parse, the previous settings stay and the reply
   gives the error.
 
-Chunky's progress line goes to the log every `updateInterval` seconds (`config/chunky/config.json`, default 1).
-Raise it (e.g. 60) if the log gets noisy.
+The pack runs Chunky silent (`"silent": true` in `config/chunky/config.json`): no progress line in the log and no boss
+bar. `/pregen status` and `/chunky progress` show progress on demand. spooky_pregen detects completion from Chunky's
+API progress event, which fires either way. With `silent` off, Chunky logs a progress line every `updateInterval`
+seconds (default 1).
 
 ## Build / deploy
 

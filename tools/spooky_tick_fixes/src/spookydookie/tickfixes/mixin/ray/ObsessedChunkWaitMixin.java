@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import spookydookie.tickfixes.RayGuard;
 
 /**
- * The Obsessed: its per-player tick reads single blocks (isEmptyBlock / getBlockState) at random offsets of up to
- * ~20 blocks around the player. A read in a chunk that is still loading or generating blocks the server thread
+ * The Obsessed: its per-player tick reads single blocks (isEmptyBlock / getBlockState), mostly at its stalker scan
+ * point, about 37-80 blocks from the player (hence obsessedChunkRadius 6). A read in a chunk that is still loading or generating blocks the server thread
  * until the chunk is done; while a player was in fresh terrain this cost 19 s in one minute (2026-11-06 22:17).
  * Such a read can't be answered without the chunk, so instead the whole procedure waits: it is skipped for that
  * player on any tick where a chunk within the configured radius is not finished yet.

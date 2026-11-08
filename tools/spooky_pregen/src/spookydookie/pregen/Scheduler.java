@@ -627,8 +627,8 @@ final class Scheduler {
 
     /**
      * Applies the blob size in force (/pregen radius, else the config) to the blob in progress. A square of it that is
-     * larger, running or paused, is cancelled (what it generated stays); a blob that already covers the size is done and
-     * the next pick finds a new edge. Called by /pregen radius, /pregen reload and at startup, so a paused square from
+     * larger, running or paused, is cancelled (what it generated stays); a blob whose next step is larger is finished
+     * and the next pick finds a new edge (a size between two steps can end a blob one step early). Called by /pregen radius, /pregen reload and at startup, so a paused square from
      * before a size change never resumes at the old size. Returns what changed ("" for nothing); the caller saves.
      */
     private static String clampBlob(Integer fallback) {

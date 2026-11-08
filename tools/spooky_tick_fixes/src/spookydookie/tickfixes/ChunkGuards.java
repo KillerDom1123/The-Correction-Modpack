@@ -83,7 +83,7 @@ public final class ChunkGuards {
             "it.unimi.", "com.google.", "io.netty.", "spookydookie.tickfixes.", "com.abdelaziz.canary.", "org.embeddedt.modernfix."};
 
     /**
-     * Called at the head of ServerChunkCache.getChunk when the calling thread isn't the server thread. Vanilla then
+     * Called from getChunk's off-thread branch (Canary's getChunkOffThread or vanilla's supplyAsync). Vanilla then
      * runs the request on the server thread, in the gap between ticks, and the calling thread waits. A request for a
      * chunk that still has to be generated holds up the next tick for seconds. The first request from each distinct
      * caller is logged with its stack; the rest are only counted. After the first 2000 requests, 1 in 64 is sampled.

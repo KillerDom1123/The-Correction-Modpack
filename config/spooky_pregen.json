@@ -1,6 +1,6 @@
 // spooky_pregen: pre-generates the world with Chunky while the dedicated server is empty.
 // Only ever runs on a dedicated server (never in singleplayer). Pauses the moment a player logs in.
-// Edit, then run /pregen reload (no restart needed). /pregen status shows what it is doing; /pregen next previews.
+// Edit, then run /pregen reload (no restart needed). /pregen status shows what it is doing; /pregen next shows what comes next.
 // Comments like these are allowed. Distances are in blocks; a Chunky "radius" is half the side of the square.
 {
   "enabled": true,
@@ -11,8 +11,8 @@
   "emptyGraceMinutes": 5,
   // Never generate while the world's disk has less free space than this (GB). The VM disk is 12.6 GB in total.
   "minFreeDiskGb": 2.0,
-  // Pause for the rest of the day once the world folder has grown this much since midnight (MB). 0 = no cap.
-  // About 4-7 MB per finished region (32x32 chunks). Off: generation runs on until minFreeDiskGb is reached.
+  // Pause for the rest of the day once the world folder has grown this much since the first check of the day (MB). 0 = no cap.
+  // A finished region (32x32 chunks) is about 20 MB on the VM. Off: generation runs on until minFreeDiskGb is reached.
   "maxDiskGrowthMbPerDay": 0,
 
   "shape": "square",

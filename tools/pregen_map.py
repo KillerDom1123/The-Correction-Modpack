@@ -18,9 +18,10 @@ Writes the page to --out (default tools/build/pregen_map.html) as a complete HTM
 --fragment writes it without the document wrapper, for publishing as a Claude artifact.
 
 --serve keeps the map live instead: a web server on http://localhost:8765 (127.0.0.1 only, --port) that reads the VM
-again every --interval seconds (default 10). The page asks for new data as often and repaints in place, keeping its
-zoom and position. After the first read only what changed is downloaded: headers of changed region files, the new end
-of latest.log, and the terrain of region files being written (at most every 30 s each).
+again every --interval seconds (default 10). The page asks for new data every half interval (between 2 and 10 s; not
+while its tab is hidden) and repaints in place, keeping its zoom and position. After the first read only what changed
+is downloaded: headers of changed region files, the new end of latest.log, and the terrain of region files being
+written (at most every 30 s each).
 """
 import argparse
 import base64
@@ -587,7 +588,7 @@ def render(data_json, fragment):
 
 def serve(args):
     """Serve the live map on this PC only. Every --interval seconds the data is read again (only what changed on the VM
-    is downloaded). The open page asks for it as often, at /data?have=<version>: 204 when nothing changed, else the new
+    is downloaded). The open page asks every half interval, at /data?have=<version>: 204 when nothing changed, else the new
     data, which it repaints in place, keeping its zoom and position. Every response carries X-Checked (when the VM was
     last read) and, while the VM can't be read, X-Error."""
     import contextlib

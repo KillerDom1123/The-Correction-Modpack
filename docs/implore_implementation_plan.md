@@ -1,294 +1,360 @@
-# Old Civilisation — Story Item Implementation Plan
-### KubeJS 6 + LootJS + FTB Quests integration for the modpack pack
+# Old Civilisation story items — implementation
 
-> Companion to `implore.md` (item spec), `thelore.md` (hidden truth), and `ftbquest.md` (quest-book design).
+How the story items specified in `implore.md` are built with KubeJS 6, LootJS and FTB Quests.
 
-## ✅ BUILD STATUS — implemented (all phases, first pass)
-
-Decisions taken: **full build**, **quest wiring + collection chapter**, **placeholder-first textures**, namespace **`oldcivilisation:`** (KubeJS 6 custom-namespace confirmed via `RegistryInfo`).
-
-Files created:
-- `kubejs/startup_scripts/oc_items.js` — 26 items registered.
-- `kubejs/client_scripts/oc_tooltips.js` — NBT-variant + staged dynamic tooltips (5 voices).
-- `kubejs/server_scripts/oc_loot.js` — LootJS injection (vanilla + Ad Astra More Structures + born_in_chaos/foes mob regex).
-- `kubejs/server_scripts/oc_interactions.js` — variant stamping, discovery counter, staged anomalies, signal/audio right-click, endgame Correction Fragment grant, corrupted-map recipe.
-- `kubejs/assets/oldcivilisation/textures/item/*.png` — 26 category-coded placeholders.
-- FTB Quests: wired 4 endgame tasks (Missing Years → incident reports; Unidentified Contact → biological sample; Departure Records → 4 black-box fragments; The Answer → Correction Fragment) + new optional chapter `recovered_evidence.snbt` (order_index 5; later chapters bumped to 6/7/8).
-
-Validated statically: SNBT balanced, 440 unique quest IDs, no dangling deps; all 4 JS files pass `node --check`; item IDs consistent across scripts + quests.
-
-**Must be verified in-game (I could not run the client). Watch `logs/kubejs/`:**
-1. Custom namespace registration — confirm the 26 items exist (`/give @s oldcivilisation:personal_data_chip`).
-2. `player.inventory` `getItem/setItem` scan + `.nbt =` assignment (variant stamping / staged tooltips).
-3. LootJS regex table modifier for `born_in_chaos_v1` / `foes` entities (wrapped in try/catch; falls back gracefully).
-4. `.rarity('...')` / `.glow(true)` builder methods on this KubeJS build.
-
-### Follow-up pass (configcheck.md refinements + quest expansion)
-
-**4 refinements implemented:**
-- **#7 horror = evidence:** born_in_chaos/foes sample rates lowered (0.05→0.02 etc.); added 4 marquee-horror **residue items** (`distorted_replica`, `deep_echo`, `fog_residue`, `temporal_residue`) that drop near-guaranteed from the named horrors via `EntityEvents.death` (they have no JSON loot tables). Now 31 KubeJS items.
-- **#2 AE2 lore tooltips:** `ae2:controller` / `inscriber` / `drive` get "reconstructing, not inventing" tooltips.
-- **#5 Cold Sweat lore:** climate variants folded into `personal_data_chip` + `incident_report` text pools.
-- **#4 HS-LGTFO Mission Data:** craftable from the 4 flight recorders + colony manifest + navigation fragment (flavour; does **not** gate rockets — sandbox preserved).
-
-**Quest trees fleshed out (~24 new quests, staged early→mid→late):**
-- Broken World +3 survival (Cold Sweat warmth, FarmersDelight cooking, first shelter).
-- Machines That Remain +7 (Create brass/precision → Create Additions electricity; IE multiblocks → Immersive Petroleum; PneumaticCraft; Mekanism factory → teleport/QIO).
-- The Other Science +6 (Ars automation; Iron's Spellbooks; Occultism labour → familiars; Hexerei; Forbidden Arcanus forge).
-- Recovered Data +4 (AE2 crafting CPU → 16k/P2P → quantum/spatial; CC:Tweaked computers).
-- Field Reports +4 optional evidence-recovery quests wired to the new residues.
-
-Validated: 9 chapters, 585 unique quest IDs, no dups/dangling deps, no stray chars; all 4 JS pass `node --check`; 205 modded IDs all resolve.
-
-**CC:Tweaked Archive Terminal (#3) — implemented.** Ships as a datapack ROM program via `kubejs/data/computercraft/lua/rom/`:
-- `programs/archive.lua` — the `archive` program: boot/integrity sequence, then a browsable menu of recovered records (personnel / research / incident / evacuation), each showing randomised, corrupted, never-complete fragments in the five voices. The **anomalous** record is encrypted and unlocks only when recovered media (any floppy) sits in an attached disk drive — the "recovered media detected" mechanic, without hard-gating.
-- `autorun/oc_archive.lua` — subtle one-line boot hint ("type: archive").
-- `help/archive.txt` — `help archive` entry.
-- Available on **every** computer (ROM merge); the "Machines That Think" quest points players to it. Lua validated (keyword/paren/brace balance) — verify live in-world.
-
-Still not done (deliberate): MineColonies town-hall milestones (#4 configcheck — poor hook), custom structures (#9), authored art/`.ogg`.
+> **Status:** Implemented. Scripts committed 2026-07-08; loot routing for modded structures added 2026-07-09; quest
+> wiring revised 2026-11-08. On the VM, all KubeJS startup and server scripts loaded with 0 errors after the
+> 2026-11-08 01:14 restart.
+> - Items: `kubejs/startup_scripts/oc_items.js` (33 items: 31 story items and the two sanity clarity consumables),
+>   `kubejs/startup_scripts/oc_creative.js` (creative tab), `kubejs/assets/oldcivilisation/models/item/`.
+> - Tooltips: `kubejs/client_scripts/oc_tooltips.js`.
+> - Loot: `kubejs/server_scripts/oc_loot.js`.
+> - Variant stamping, discovery tracking, stateful items, right-click items, residue drops, recipes and the endgame
+>   grant: `kubejs/server_scripts/oc_interactions.js`. Residues for surviving an encounter:
+>   `kubejs/server_scripts/oc_encounters.js`.
+> - Archive terminal: `kubejs/data/computercraft/lua/rom/`.
+> - Quests: `config/ftbquests/quests/chapters/`, with stage tags from `kubejs/server_scripts/oc_quest_checks.js`.
+>
+> **Related:** `docs/implore.md` (item spec), `docs/thelore.md` (hidden truth), `docs/ftbquest.md` (quest-book
+> design), `docs/sanity_mechanic.md` (clarity consumables), `docs/PACK_DIRECTION_REVIEW_2026-07-08.md` (proposals #2, #3, #5, #6 and #7, §5),
+> `docs/CONFIG_CHANGES.md` ("KubeJS — Old Civilisation script bugfix (`oc_interactions.js`)", "KubeJS — Old
+> Civilisation loot coverage (`oc_loot.js`)", "2026-11-08 — Quest book: fixes and additions").
+>
+> **Not verified in game:**
+> 1. Variant stamping (`inv.setItem` with a new stack carrying `oc_variant` / `oc_stage` NBT) and the tooltips that
+>    read it. Test: find a data chip in a dungeon, see a random message, no flicker. The same inventory scan's
+>    discovery tracking does run: `oc_q_evidence_magic`, mirrored from the scan's `oc_flag_magic`, was granted on the
+>    VM at 01:24 on 2026-11-08.
+> 2. Born in Chaos and Foes mob drops. The regex table modifiers load without logging a failure (CONFIG_CHANGES
+>    "KubeJS — Old Civilisation loot coverage (`oc_loot.js`)").
+> 3. The `archive` program. The Lua was checked for keyword, parenthesis and brace balance only.
+> 4. The survive-an-encounter residue payout. The `oc_encounters.js` fix (`getUuid()`) was uploaded to the VM on
+>    2026-11-08 and takes effect at the next VM restart or `/reload` (last recorded state, 2026-11-08).
+>
+> Watch `logs/kubejs/` for `[OldCiv]` lines.
 
 ---
 
+## 1. Guiding constraints
 
----
+These rules come from the source docs and drive every technical choice:
 
-## 0. Guiding constraints (re-confirmed from the source docs)
-
-Everything below is bound by rules that are already written down. Restating them because they drive every technical choice:
-
-| Constraint | Source | How this plan honours it |
+| Constraint | Source | How the implementation honours it |
 |---|---|---|
-| "No single item explains the story. A player should need **5–10 discoveries** before they understand a concept." | implore.md | Every concept is split across many low-information fragments + randomised text pools. No item is a summary. |
-| "Every discovery should answer one question while creating two more." | implore.md | Tooltip-writing rubric (§6). Text always withholds. |
-| "The player should **never receive a complete explanation**." | implore.md | No Patchouli "here's the plot" book. Guidebooks (if any) only *index* finds, never interpret them. |
-| Add **perspective** — engineer / mage / survivor / spirit / horror each contradict each other. | implore.md | Every item is tagged to a faction voice (§4 column "Voice"). Contradiction is the point. |
-| Quest book is a **modern researcher cataloguing**, not a narrator. | ftbquest.md + your mid-task note | **Tonal split (below).** Items are raw primary sources; quest text stays the present-day annotator. |
-| The world stays a **sandbox**; not a linear adventure map. | implore.md | Lore items are loot/drops/encounters. Quest hooks are **optional & reward-only**, never hard gates for core play. |
-| The Correction Fragment "do not add until endgame… only after space + magic + engineering." | implore.md | Gated on the convergence already built in `second_civilisation.snbt` / `the_final_question.snbt`. |
+| "No single item explains the story. A player should need **5–10 discoveries** before they understand a concept." | implore.md | Every concept is split across many low-information fragments and randomised text pools. No item is a summary. |
+| "Every discovery should answer one question while creating two more." | implore.md | The rule heading `oc_tooltips.js`: no single line explains the plot. Text always withholds. |
+| "The player should **never receive a complete explanation**." | implore.md | No "here's the plot" book. Patchouli and Modonomicon are installed but not used. |
+| Add **perspective**: engineer, mage, survivor, spirit and horror each contradict the others. | implore.md | Every item is tagged to a faction voice (§4, column "Voice"). Contradiction is the point. |
+| The quest book is a **modern researcher cataloguing**, not a narrator. | ftbquest.md; design | **Tonal split** (below). Items are raw primary sources; quest text stays the present-day annotator. |
+| The world stays a **sandbox**, not a linear adventure map. | implore.md | Lore items come from loot, drops and encounters. Quest hooks are **optional and reward-only**, never hard gates for core play. |
+| The Correction Fragment: "do not add until endgame… only after space + magic + engineering." | implore.md | Granted by `oc_interactions.js` only after a technical, a magical and an exodus record and 12 distinct kinds of evidence (§5). |
 
-### The tonal split (critical — keep these two voices distinct)
-- **Story items = raw voices.** First-person, in-world, contradictory, emotional, unlabelled. An ID badge, a panicked data chip, a spirit's taunt. The Old Civilisation and its horrors speaking *directly*.
-- **FTB quest text = the modern cataloguer.** Detached, present-day, "recovered document, cause unknown." Already written this way in the seven chapters.
+### The tonal split
 
-The player is the researcher. The **items are the evidence**; the **quest book is their lab notebook**. Do not let items adopt the cataloguer's detached voice, and do not let the quest book start explaining. This separation is what makes the mystery feel assembled-by-the-player rather than handed over.
+- **Story items are raw voices.** First-person, in-world, contradictory, emotional, unlabelled. An ID badge, a
+  panicked data chip, a spirit's taunt. The Old Civilisation and its horrors speak *directly*.
+- **FTB quest text is the modern cataloguer.** Detached, present-day: "recovered document, cause unknown." The pack's
+  quest chapters are written this way.
+
+The player is the researcher. The **items are the evidence**; the **quest book is the lab notebook**. Items never adopt
+the cataloguer's detached voice, and the quest book never starts explaining. This separation makes the mystery feel
+assembled by the player rather than handed over.
 
 ---
 
-## 1. Tooling map (what does what)
+## 2. Tooling
 
-| Tool | Installed | Role in this feature |
+| Tool | Version | Role |
 |---|---|---|
-| **KubeJS 6** (`kubejs-forge-2001.6.5`) | ✅ | Register the ~30 items (`startup_scripts`), dynamic/NBT tooltips (`client_scripts`), right-click behaviour & state escalation (`server_scripts`). |
-| **LootJS** (`lootjs-forge-2.13.1`) | ✅ | Inject items into vanilla + modded loot tables and mob drops. `LootJS.modifiers(...)` with per-drop `modifyLoot` callbacks (confirmed in jar) → lets us roll a random text variant at drop time. |
-| **FTB Quests** (`ftb-quests-2001.4.22`) | ✅ | Optional collection quests; wire fragments into the existing endgame chapters. |
-| **lootintegrations** (+ WDA / T&T / BornInChaos / integrated addons) | ✅ | Already normalises structure loot; our LootJS modifiers stack on top. Note: test interaction, don't fight it. |
-| **Camerapture** | ✅ | *Not* used for the Damaged Photo (see §5, item 3 — pictures need runtime-uploaded images). Kept as flavour reference only. |
-| **CC:Tweaked** | ✅ | Optional advanced route for Audio Logs / archive terminals (§7 stretch). |
-| **Patchouli / Modonomicon** | ✅ | Optional "evidence index" only — must not explain. Default plan: **skip**. |
-| **Curios, ycurrenci, MineColonies** | ✅ | `old_currency` can be made a MineColonies-tradeable / ycurrenci-adjacent trinket (§5 item 18). |
+| **KubeJS 6** | `kubejs-forge-2001.6.5` | Item registration (`startup_scripts`), NBT-driven tooltips (`client_scripts`), right-click behaviour, state escalation and recipes (`server_scripts`). |
+| **LootJS** | `lootjs-forge-1.20.1-2.13.1` | Adds the items to vanilla and modded chest loot tables and to mob loot tables. |
+| **FTB Quests** | `ftb-quests-forge-2001.4.22` | Optional collection quests; evidence wired into the endgame chapters (§6). |
+| **lootintegrations** (+ WDA, Towns and Towers, Born in Chaos and integrated addons) | 4.7 | Normalises structure loot. The LootJS modifiers stack on top of it. |
+| **Camerapture** | 1.10.12 | Not used for the Damaged Photograph (§5): a picture needs a runtime-uploaded image bound in NBT. |
+| **CC:Tweaked** | 1.113.1 | The `archive` program (§5). |
+| **Patchouli / Modonomicon** | installed | Not used. An "evidence index" book would be the only acceptable use, and it must not explain. |
+| **Curios, ycurrenci, MineColonies** | installed | Planned `old_currency` trade tie-in; not implemented. |
 
-### KubeJS folder layout we will use
+### File layout
+
 ```
 kubejs/
   startup_scripts/
-    oc_items.js            # register all items + properties
+    oc_items.js            # registers the 33 items
+    oc_creative.js         # puts them in a creative tab (KubeJS 6 adds custom items to no tab)
   server_scripts/
-    oc_loot.js             # LootJS loot/mob injection
-    oc_interactions.js     # right-click, state escalation, discovery counter
+    oc_loot.js             # LootJS chest and mob-table injection
+    oc_interactions.js     # variant stamping, discovery tracking, stateful items, right-click, residues, recipes, endgame grant
+    oc_encounters.js       # residue when a player survives an encounter
   client_scripts/
-    oc_tooltips.js         # dynamic NBT-driven tooltips + text pools
+    oc_tooltips.js         # tooltips from text pools, picked by NBT
   assets/oldcivilisation/
-    lang/en_us.json        # display names
-    textures/item/*.png    # 16x16 art (or placeholders)
-    models/item/*.json     # auto-generated if omitted (item/generated)
+    models/item/*.json     # each item parents an existing vanilla or Create item model
+    textures/item/*.png    # 31 category-coded placeholders, unreferenced
+  data/computercraft/lua/rom/
+    programs/archive.lua   # the archive program
+    autorun/oc_archive.lua # one-line boot hint
+    help/archive.txt       # `help archive`
 ```
+
+Display names are set in `oc_items.js`; there is no lang file.
 
 ---
 
-## 2. Key technical decisions (recommendations)
+## 3. Technical design
 
-1. **Namespace.** KubeJS 6 accepts a custom namespace in `event.create('oldcivilisation:...')`. **Recommendation:** use `oldcivilisation:` to match `implore.md` verbatim. *Fallback if a build rejects it:* `kubejs:oc_<name>`. → **One 2-minute in-game test decides this before we write 30 IDs.**
-2. **Randomised text = NBT index + text pool.** One item, many messages. Store `{ oc_variant: <int> }` on the stack; the tooltip script picks `POOL[id][variant]`. Randomisation happens **once, at drop time** via LootJS `modifyLoot` (so a given item never flickers). This is how "Personal Data Chip", "Damaged Photo", "Incident Report", "Arcane Notes", etc. get variety without 200 item registrations.
-3. **Multi-item concepts stay multi-item** where the spec says so: Memory Fragments (faded/distorted/forbidden = 3 items) and Black Box (launch/transit/arrival/final = 4 items). Rarity escalates per variant.
-4. **Textures.** Start with a small set of shared placeholder textures grouped by "form" (chip, badge, paper, crystal, bone, disc, currency). Missing textures still function (purple/black), so art can lag behind logic. Custom art is a polish pass, not a blocker.
-5. **State-changing items** (Unstable Memory Crystal, Signal Device) read a per-player **discovery counter** in `player.persistentData.oc_discoveries`; server-side code stamps the item's NBT stage when thresholds are crossed, so the **client tooltip only reads NBT** (no custom networking needed).
-6. **Audio Logs**: default = right-click item that plays an **existing** eerie sound event via `level.playSound` + shows a transcript tooltip. Custom `.ogg` is an optional upgrade (needs `sounds.json` asset work). Avoids a custom sound-registration pipeline on day one.
-7. **No hard gating.** Only the *endgame* Correction Fragment and the already-terminal Final chapter may depend on items. Everything else is discoverable and ignorable.
+1. **Namespace: `oldcivilisation:`**, matching `implore.md`. KubeJS 6 accepts a custom namespace in
+   `event.create('oldcivilisation:…')` (confirmed via `RegistryInfo`).
+2. **Randomised text = NBT index + text pool.** One item, many messages. A stack carries `{ oc_variant: <int> }`; the
+   tooltip shows `pool[oc_variant % pool.length]`. `oc_interactions.js` stamps a random variant from 0 to 11
+   (`OC_VARIANT_ITEMS_MAX` 12) the first time the item appears in a player's inventory; the scan runs every 60 ticks.
+   Stamping happens on acquisition because LootJS can't randomise NBT at drop time (`oc_interactions.js` header). The
+   variant is fixed once stamped, and
+   the tooltip path never calls `Math.random()`, so a given item never flickers. This gives the Personal Data Chip,
+   Damaged Photograph, Incident Report, Arcane Notes and the rest their variety without hundreds of registrations.
+3. **Multi-item concepts stay multi-item** where the spec says so: Memory Fragments (faded, distorted, forbidden: 3
+   items) and the Black Box (launch, transit, arrival, final: 4 items). Rarity escalates per variant.
+4. **Icons.** Each item's model parents an existing vanilla or Create item model (for example
+   `create:item/electron_tube` for the data chip, `minecraft:item/music_disc_13` for the audio log). Missing textures
+   would still function (purple and black), so art never blocks logic. Authored art is not implemented.
+5. **State lives in `player.persistentData`:** `oc_discoveries` (count of distinct lore item IDs seen), `oc_seen`
+   (the IDs, as `[id]` strings), the path flags `oc_flag_tech`, `oc_flag_magic` and `oc_flag_space`, and
+   `oc_correction_granted`. Server code stamps a stateful item's `oc_stage` when a threshold is crossed, so the
+   **client tooltip only reads NBT** and no custom networking is needed. Thresholds: Unstable Memory stage 1/2/3 at
+   4/9/16 discoveries; Signal Device stage 1 at 10.
+6. **Audio logs** are right-click items: they play an existing sound (`minecraft:entity.elder_guardian.curse`) and
+   print one of three transcript lines, chosen by discovery count. No custom sound registration.
+7. **No hard gating.** Only the endgame Correction Fragment and the final chapter depend on items. The HS-LGTFO
+   Mission Data does not gate rockets.
+8. **Clarity consumables** (`sedative_ampoule`, `familiar_photograph`, specified in `sanity_mechanic.md`) use the same
+   registration, tooltip and loot pipeline, but `OC_NON_LORE` excludes them from discovery tracking and variant
+   stamping.
+9. **Rhino rule:** declarations inside event callbacks use `var`, not `const`/`let`. This KubeJS build's Rhino engine
+   mis-hoists `const`/`let` declared inside a `try` block in a repeatedly invoked callback (CONFIG_CHANGES "KubeJS —
+   Old Civilisation script bugfix (`oc_interactions.js`)"). `Entity#getUUID` is exposed as `getUuid()`.
+
+### Code patterns (from the built scripts)
+
+**Registration** (`oc_items.js`):
+```js
+const b = event.create('oldcivilisation:' + id).displayName(name)
+b.maxStackSize(opts.stack !== undefined ? opts.stack : 16)
+if (opts.rarity) b.rarity(opts.rarity)
+if (opts.glow) b.glow(true)
+```
+
+**Tooltip from NBT** (`oc_tooltips.js`):
+```js
+tt.addAdvanced(id, (item, advanced, text) => {
+  const v = ((ocInt(item, 'oc_variant') % pool.length) + pool.length) % pool.length
+  ocRender(text, pool[v])
+})
+```
+A leading `»` marks a corrupted or redacted line and `~` an anomalous one (both dark grey italic); other lines are grey.
+
+**Loot injection** (`oc_loot.js`):
+```js
+event.addLootTableModifier(tables).randomChance(chance).addLoot(item)
+event.addLootTableModifier(/born_in_chaos_v1:entities\/.*/).randomChance(0.02).addLoot('oldcivilisation:biological_sample')
+```
+
+**Right-click escalation** (`oc_interactions.js`):
+```js
+ItemEvents.rightClicked('oldcivilisation:signal_device', event => {
+  var d = event.player.persistentData.getInt('oc_discoveries') | 0
+  // d < 10: "SIGNAL DETECTED." / "SOURCE: UNKNOWN."   d >= 10: "SIGNAL DETECTED." / "SOURCE: LOCAL."
+})
+```
+The Signal Device also plays `minecraft:block.sculk_sensor.clicking`.
 
 ---
 
-## 3. Core code patterns (illustrative — confirm method names on first run)
+## 4. Item catalogue
 
-**Item registration** (`startup_scripts/oc_items.js`):
-```js
-StartupEvents.registry('item', e => {
-  e.create('oldcivilisation:personal_data_chip')
-    .displayName('Personal Data Chip')
-    .maxStackSize(16).rarity('uncommon').glow(false)
-  // ... ~30 items, some with .rarity('rare'/'epic'), .glow(true) for anomalies
-})
-```
+`Voice` is the faction perspective (it drives contradiction). `Mech` is complexity: **L** loot only (one fixed
+tooltip), **T** randomised tooltip, **S** stateful or scripted. Chances are per chest roll. Vanilla tables follow
+`implore.md` (common 5–10%, rare about 2–3%, very rare about 1%); modded structure families run slightly lower.
 
-**Dynamic tooltip from NBT** (`client_scripts/oc_tooltips.js`):
-```js
-const POOLS = {
-  'oldcivilisation:personal_data_chip': [
-    ['§7"Reminder: pick up supplies after work."'],
-    ['§7"They cancelled transport again today."'],
-    ['§7"Nobody is saying why."'],
-  ],
-  // ...
-}
-ItemEvents.tooltip(t => {
-  t.addAdvanced('oldcivilisation:personal_data_chip', (stack, adv, text) => {
-    const pool = POOLS[stack.id]; if (!pool) return
-    const v = (stack.nbt?.oc_variant ?? 0) % pool.length
-    pool[v].forEach(line => text.add(1, Text.of(line)))
-  })
-})
-```
-
-**Loot injection + per-drop random variant** (`server_scripts/oc_loot.js`):
-```js
-LootJS.modifiers(ev => {
-  ev.addTableModifier('minecraft:chests/village/village_house')   // + abandoned/dungeon tables
-    .randomChance(0.08)
-    .addLoot('oldcivilisation:personal_data_chip')
-    .modifyLoot('oldcivilisation:personal_data_chip', (stack, ctx) =>
-      stack.withNBT({ oc_variant: Math.floor(Math.random() * 3) }))
-})
-```
-
-**Mob drop** (horror evidence):
-```js
-LootJS.modifiers(ev => {
-  ev.addEntityModifier('born_in_chaos_v1:*')   // + themimic_er, cave_dweller, foes, etc.
-    .randomChance(0.05)
-    .addLoot('oldcivilisation:biological_sample')
-})
-```
-
-**Right-click signal / escalation** (`server_scripts/oc_interactions.js`):
-```js
-ItemEvents.rightClicked('oldcivilisation:signal_device', e => {
-  const n = e.player.persistentData.oc_discoveries | 0
-  e.player.tell(n < 10 ? 'SIGNAL DETECTED. SOURCE: UNKNOWN.' : 'SIGNAL SOURCE: LOCAL.')
-})
-```
-
----
-
-## 4. The full item catalogue (~30 stacks) — voice, source, mechanic
-
-`Voice` = which faction's perspective (drives contradiction). `Mech` = complexity: **L** loot-only, **T** randomised tooltip, **S** stateful/scripted.
-
-| # | ID (`oldcivilisation:`) | Cat | Voice | Where it comes from | Mech |
+| # | ID (`oldcivilisation:`) | Category | Voice | Source | Mech |
 |--:|---|---|---|---|:--:|
-| 1 | `personal_data_chip` | Personal | Survivor | Villages, abandoned structures, dungeons, mansions (~5–10%) | T |
-| 2 | `id_badge` | Personal | Survivor/Eng | Strongholds, dungeons, "industrial" loot | T |
-| 3 | `damaged_photo` | Personal | Survivor | Villages, abandoned homes, ruins | T |
-| 4 | `old_currency` | Joke/Immersion | Survivor | Everywhere, common; MineColonies/ycurrenci tie-in | L |
-| 5 | `employee_handbook` | Joke→Horror | Survivor→? | Offices/libraries (village/stronghold libraries) | T |
-| 6 | `incident_report` | Technical | Engineer | Industrial: mineshaft, IE/other tech structures, dungeons | T |
-| 7 | `audio_log` | Technical | Engineer | Rare loot | S |
-| 8 | `containment_label` | Technical | Engineer | Very rare, deep/industrial | T |
-| 9 | `memory_fragment_faded` | Magic | Mage | Ars/Hexerei/Occultism structures & drops (common) | T |
-| 10 | `memory_fragment_distorted` | Magic | Mage | as above (rare) | T |
-| 11 | `memory_fragment_forbidden` | Magic | Mage/Correction | as above (very rare) | T |
-| 12 | `arcane_notes` | Magic | Mage | Magic structures / ritual by-products | T |
-| 13 | `bound_thought` | Magic | Spirit | Rare Occultism interactions (ritual output / demon drops) | T |
-| 14 | `biological_sample` | Horror | Horror | Born in Chaos, Mimic, Foes, horror mobs | L |
-| 15 | `impossible_bone` | Horror | Horror | Rare monster drops | L |
-| 16 | `corrupted_map_fragment` | Horror/Anomaly | Correction | Exploration loot; combine → `corrupted_map` | S |
-| 17 | `colony_manifest` | Exodus | Engineer | Ad Astra structures | T |
-| 18 | `navigation_fragment` | Exodus | Engineer | Moon / Mars loot (dimension-conditioned) | T |
-| 19 | `flight_recorder_launch` | Exodus | Engineer | Ad Astra / orbit loot | T |
-| 20 | `flight_recorder_transit` | Exodus | Engineer | Moon loot | T |
-| 21 | `flight_recorder_arrival` | Exodus | Engineer | Mars loot | T |
-| 22 | `flight_recorder_final` | Exodus | Engineer→Horror | Rare, off-world | T |
-| 23 | `unstable_memory` | Anomaly | Correction | Rare magic/deep loot; tooltip escalates with discoveries | S |
-| 24 | `signal_device` | Anomaly | Correction | Rare; right-click escalating messages | S |
-| 25 | `correction_fragment` | Final | Correction | **Endgame only** — after space+magic+engineering | S |
-| 26–30 | Variant/atmos filler to reach the spec's per-category counts | mixed | mixed | spread across the above tables to hit implore.md's table (Personal 5 / Technical 8 / Magical 6 / Horror 6 / Exodus 6 / Anomalous 5) | T |
+| 1 | `personal_data_chip` | Personal | Survivor | Village houses, dungeons, mineshafts, mansions 8%; WDA settlements, More Underground Structures, Lost Architects brawler's guild 5% | T |
+| 2 | `id_badge` | Personal | Survivor/Engineer | Strongholds, dungeons, mineshafts, pillager outposts 6%; WDA keeps and towers, Better Strongholds 4% | T |
+| 3 | `damaged_photo` | Personal | Survivor | Village houses, mansions, dungeons 6%; WDA settlements 4% | T |
+| 4 | `old_currency` (×3) | Joke/Immersion | Survivor | Village houses and workshops, dungeons, mineshafts, ocean chests 15%; WDA settlements and keeps, YUNG temples and ocean monuments, brawler's guild 10% | L |
+| 5 | `employee_handbook` | Joke→Horror | Survivor→? | Stronghold libraries, mansions, village temples and cartographers 5%; WDA pub, camp and bandit village, Better Strongholds, brawler's guild 3% | T |
+| 6 | `incident_report` | Technical | Engineer | Dungeons, mineshafts, mansions, ancient cities 7%; WDA keeps and industrial sites, Better Strongholds, More Underground Structures, artificer's workshop 4% | T |
+| 7 | `audio_log` | Technical | Engineer | Mansions, stronghold libraries, ancient cities 2%; WDA industrial sites, artificer's workshop 1.2% | S |
+| 8 | `containment_label` | Technical | Engineer | Stronghold libraries, mansions, ancient cities 1.5%; WDA foundry and mechanical nest 1% | T |
+| 9 | `memory_fragment_faded` | Magic | Mage | Village houses, dungeons, mineshafts 6%; WDA mushroom sites and tree house, YUNG ocean monuments and witch huts, More Underground Structures 4% | T |
+| 10 | `memory_fragment_distorted` | Magic | Mage | Mansions, strongholds, desert and jungle temples 3%; WDA plague, infested and abandoned sites and monastery/heavenly sites, Better Strongholds, YUNG temples 2% | T |
+| 11 | `memory_fragment_forbidden` | Magic | Mage/Correction | Ancient cities, mansions 1.2% | T |
+| 12 | `arcane_notes` | Magic | Mage | Mansions, stronghold libraries, ancient cities, temples 5%; WDA monastery, heavenly and mythic-beast sites, Better Strongholds, YUNG temples and witch huts, Lost Architects 3% | T |
+| 13 | `bound_thought` | Magic | Spirit | Ancient cities, bastions 2%; WDA Typhon, Ceryneian Hind and Heavenly Conqueror 1.2% | T |
+| 14 | `biological_sample` | Horror | Horror | Ancient cities, mansions 3%; Born in Chaos mobs 2%, Foes mobs 2.5%; WDA undead and plague sites, YUNG witch huts, More Underground Structures 2% | T |
+| 15 | `impossible_bone` | Horror | Horror | Ancient cities 2%; Born in Chaos mobs 1%, Foes mobs 1.2%; WDA plague, infested and abandoned sites 1.2% | T |
+| 16 | `corrupted_map_fragment` | Horror/Anomaly | Correction | Mansions, ocean chests, ancient cities 5%; WDA pirate ship and abandoned temple, YUNG temples and ocean monuments 3%. Four combine (shapeless) into `corrupted_map` | S |
+| 17 | `corrupted_map` | Horror/Anomaly | Correction | Crafted from 4 fragments. Tooltip: impossible geography | T |
+| 18 | `distorted_replica` | Horror residue | Horror | The Mimicer (§5) | L |
+| 19 | `deep_echo` | Horror residue | Horror | The Cave Dweller | L |
+| 20 | `fog_residue` ("Breathless Residue") | Horror residue | Horror | CANTBREATHE. The ID is kept from The Man From The Fog, disabled 2026-11-06 | L |
+| 21 | `temporal_residue` | Horror residue | Horror | Weeping Angels | L |
+| 22 | `colony_manifest` | Exodus | Engineer | Moon dungeon; Ad Astra More Structures rare Mars, Mercury, Venus, Glacio and "other" chests 10% | T |
+| 23 | `navigation_fragment` | Exodus | Engineer | Moon dungeon and village chests, Ad Astra More Structures common Mars 12% | T |
+| 24 | `flight_recorder_launch` | Exodus | Engineer | Moon dungeon chest, moon village house and blacksmith 10% | T |
+| 25 | `flight_recorder_transit` | Exodus | Engineer | Moon dungeon chest, common Mars 10% | T |
+| 26 | `flight_recorder_arrival` | Exodus | Engineer | Common and rare Mars 10% | T |
+| 27 | `flight_recorder_final` | Exodus | Engineer→Horror | Rare Mars, Venus, Mercury 6% | T |
+| 28 | `hs_lgtfo_mission_data` | Exodus | Engineer | Crafted (shapeless) from #22–27. Flavour; does not gate rockets | T |
+| 29 | `unstable_memory` | Anomaly | Correction | Ancient cities, mansions, stronghold libraries, moon dungeon, rare Mars 2%; WDA Typhon, Heavenly Conqueror, monastery 1.2%. Tooltip escalates with discoveries | S |
+| 30 | `signal_device` | Anomaly | Correction | Ancient cities, rare "other" and Venus chests 2%; WDA mechanical nest, blimp and lighthouse, artificer's workshop 1.2%. Right-click message escalates | S |
+| 31 | `correction_fragment` | Final | Correction | **Endgame only.** Granted, never looted (§5) | S |
 
-> The spec's target table sums to ~36 "slots" but many are **text variants of the same item** (that's the intent: dozens of finds, one slowly-forming picture). We hit the counts primarily through the NBT text pools, registering ~20–25 distinct items and letting variants do the rest.
+Also registered: `sedative_ampoule` (×2; dungeons, mineshafts, strongholds, ancient cities, outposts 5%) and
+`familiar_photograph` (village houses, mansions, dungeons 4%), the sanity clarity consumables.
+
+`implore.md`'s target table sums to about 36 slots (Personal 5, Technical 8, Magical 6, Horror 6, Exodus 6,
+Anomalous 5). Many of those are **text variants of the same item** (dozens of finds, one slowly forming picture), so
+31 story items are registered and the NBT text pools supply the rest.
+
+Loot limits:
+- Off-world loot goes only into tables that a structure in the pack places (checked 2026-11-08 against every jar's
+  structure NBT). Ad Astra More Structures' `common_moon`, `common_other`, `rare_moon`, `common_mercury`,
+  `common_venus` and `common_glacio` are never placed.
+- YUNG's Better Dungeons and Better Mineshafts reuse the vanilla tables, so they are covered. YUNG's Better Nether
+  Fortresses chests are not routed.
+- Loot is baked when a chest is first rolled, so changes reach only newly generated or unopened chests. Lootr is
+  compatible: LootJS modifies the table, which Lootr then rolls per player.
 
 ### Perspective seeds (the deliberate contradictions)
-- **Engineer** (incident report, black box): *"The chamber remained stable. External interference was not identified."* → "we succeeded / it wasn't our fault."
-- **Mage** (arcane notes, memory fragments): *"The engineers believe they created the breach. They are mistaken."* → "we should not have tried."
-- **Survivor** (data chip, photo, handbook): *"They cancelled transport again. Nobody is saying why."* → "we did not know."
+
+- **Engineer** (incident report, black box): *"The chamber remained stable. External interference was not
+  identified."* → "we succeeded / it wasn't our fault."
+- **Mage** (arcane notes, memory fragments): *"The engineers believe they created the breach. They are mistaken."* →
+  "we should not have tried."
+- **Survivor** (data chip, photo, handbook): *"They cancelled transport again. Nobody is saying why."* → "we did not
+  know."
 - **Spirit** (bound thought): *"We were not summoned. We were already here."* → "you were warned."
-- **Horror/Correction** (impossible bone, forbidden memory, correction fragment): *"No creature matches this anatomy."* / *"Something notices."* → "something is fixing the universe."
+- **Horror/Correction** (impossible bone, forbidden memory, correction fragment): *"No creature matches this
+  anatomy."* / *"Something notices."* → "something is fixing the universe."
 
 Five voices, no narrator. The player reconciles them.
 
 ---
 
-## 5. Notable per-item implementation notes
+## 5. Per-item notes
 
-- **3 Damaged Photograph** — implement as a normal item with a randomised tooltip ("Three people visible." → later finds: "Four shadows detected."). *Not* a Camerapture picture: those require a runtime-uploaded image bound in NBT, which we can't prebake into loot. Camerapture stays the player's own tool.
-- **7 Audio Log** — default: right-click plays an existing unsettling sound (e.g. an elder-guardian/whisper/cave ambience) + transcript tooltip. Optional upgrade: bundle `.ogg` + `sounds.json` for authored recordings; or a CC:Tweaked disk that prints transcript to a terminal (stretch).
-- **16 Corrupted Map Fragment** — fragments combine (shapeless craft) into `corrupted_map` (lore item whose tooltip describes impossible geography: "a continent that does not exist", "a city beneath the ocean"). *Optional* stretch: right-click issues a `/locate` to a real rare modded structure so the "wrong map" points somewhere real-but-strange.
-- **18 Old Currency** — cosmetic + soft economy hook. Simplest: just loot everywhere with the fatalistic tooltip. Optional: a KubeJS trade/recipe so MineColonies-era players can sink them, or bridge to `ycurrenci`.
-- **23 Unstable Memory / 24 Signal Device** — the only genuinely stateful items. Drive both off `player.persistentData.oc_discoveries`. Ship them in a **later phase** so the discovery counter is battle-tested first.
-- **25 Correction Fragment** — obtainable only when the player has cleared the space/magic/engineering convergence (see §6). It is the physical payoff of `The Answer`.
+- **3 Damaged Photograph:** a normal item with a randomised tooltip ("Three people visible." → later finds: "Four
+  shadows detected."). Not a Camerapture picture: those need a runtime-uploaded image bound in NBT, which can't be
+  prebaked into loot. Camerapture stays the player's own tool.
+- **4 Old Currency:** loot everywhere with the fatalistic tooltip; also a reward (8) in the Recovered Evidence chapter.
+- **7 Audio Log:** right-click plays `minecraft:entity.elder_guardian.curse` and prints a transcript line ("Day 42…",
+  "Day 61…", "Day 90…").
+- **16–17 Corrupted Map:** four fragments combine (shapeless) into `corrupted_map`, a lore item whose tooltip
+  describes impossible geography ("A continent no survey records.", "A city beneath the ocean.").
+- **18–21 Horror residues** (`PACK_DIRECTION_REVIEW_2026-07-08.md` #7). Each marquee horror leaves a unique residue instead of generic
+  loot:
+  - on death: 90% chance, summoned as an item at the death location by `EntityEvents.death`, because these mobs have
+    no JSON loot tables;
+  - on survival (`oc_encounters.js`): an encounter starts when one of the four comes within 24 blocks of a survival
+    player. It pays out if the horror then disappears without being killed and the player hasn't died meanwhile. The
+    player gets the residue and a one-line message. Open encounters are kept in memory only, so a restart forgets
+    them.
+  - The common swarm mobs stay rare evidence so horror is not a farm: Born in Chaos and Foes sample chances were
+    lowered (0.05 → 0.02 and similar) when the residues were added.
+  - `fog_residue` moved from The Man From The Fog to CANTBREATHE on 2026-11-06 (CONFIG_CHANGES "2026-11-06 — Server
+    tick audit: phases 0 and 1") and was renamed Breathless Residue on 2026-11-08.
+- **29–30 Unstable Memory / Signal Device:** the only genuinely stateful items, both driven by `oc_discoveries`
+  (thresholds in §3).
+- **28 HS-LGTFO Mission Data** (`PACK_DIRECTION_REVIEW_2026-07-08.md` #6, labelled #4 in the `oc_interactions.js` comment): crafted from
+  the four flight recorders, the colony manifest and the navigation fragment. Flavour only: rockets are not gated, so
+  the sandbox is preserved. "The Answer" asks for it.
+- **31 Correction Fragment:** `oc_interactions.js` gives it once, when `oc_flag_tech`, `oc_flag_magic` and
+  `oc_flag_space` are all set and `oc_discoveries` is at least 12, with the line *"Something settles into your pack.
+  You did not pick it up."* It is the physical payoff of "The Answer".
+- **AE2 lore tooltips** (`PACK_DIRECTION_REVIEW_2026-07-08.md` #2): `ae2:controller` "A familiar architecture. The original creator is
+  unknown.", `ae2:inscriber` "The pattern was already here. We only pressed it again.", `ae2:drive` "Recovered storage
+  protocol. It remembers formats we never wrote." (reconstructing, not inventing).
+- **Climate lines** (`PACK_DIRECTION_REVIEW_2026-07-08.md` #5): written for Cold Sweat and folded into the `personal_data_chip` ("The
+  winters were never this harsh.") and `incident_report` ("Atmospheric readings continue to change.") text pools.
+  Cold Sweat was removed in 2026-07; Serene Seasons is the climate layer since 2026-11-01.
+- **Archive terminal** (`PACK_DIRECTION_REVIEW_2026-07-08.md` #3): the `archive` program ships as a datapack ROM file through
+  `kubejs/data/computercraft/lua/rom/`, so it is on **every** computer (ROM merge). It runs a boot and integrity
+  sequence, then a browsable menu of recovered records (personnel, research, incident, evacuation), each showing
+  randomised, corrupted, never-complete fragments in the five voices. The **anomalous** record is encrypted and unlocks
+  only while recovered media (any floppy) sits in an attached disk drive: the "recovered media detected" mechanic,
+  without hard gating. `autorun/oc_archive.lua` prints a one-line boot hint ("type: archive"); `help/archive.txt` is
+  the `help archive` entry. The "The Machines That Think" quest points players to it.
 
 ---
 
-## 6. FTB Quests integration (wiring evidence into the seven chapters)
+## 6. FTB Quests integration
 
-The quests currently reference "fragments" **narratively** and use `checkmark`/dependency placeholders. Now that fragments are real items, we upgrade **a small number of endgame, optional-feeling** tasks to real item collection — without turning the sandbox into a fetch quest.
+Quest text refers to fragments narratively. A small number of endgame, optional-feeling tasks require the real items,
+so the sandbox doesn't turn into a fetch quest. Every task checks something real; none is a checkmark (`ftbquest.md`).
 
-Concrete, low-risk wiring (quest IDs from the existing chapters):
-
-| Quest (chapter) | ID | Change |
+| Quest (chapter) | ID | Task |
 |---|---|---|
-| **The Missing Years** (Recovered Data) | `7A04000000000104` | Add optional `item` task: collect e.g. 3× `incident_report`. Keep the checkmark too (either/OR via `dependency`/task tuning). |
-| **Unidentified Contact** (Field Reports) | `7A05000000000105` | Task becomes "possess a `biological_sample` **or** `impossible_bone`." Fits "Confirmed." perfectly. |
-| **The Departure Records** (Final Question) | `7A07000000000101` | Replace checkmark with `item` tasks for the **4 black-box fragments** (`flight_recorder_launch/transit/arrival/final`). This is the ideal literal realisation of "reassemble the departure records." |
-| **The Answer** (Final Question) | `7A07000000000104` | Task = submit/own `correction_fragment`. The fragment only exists post-convergence, so the gate is honest and endgame-only. |
+| **The Missing Years** (Recovered Data) | `7A04000000000104` | Item: 3× `incident_report`. Hidden until "Automation" is done |
+| **Unidentified Contact** (Field Reports) | `7A05000000000105` | Stage `oc_q_contact`: a `biological_sample` **or** an `impossible_bone` in `oc_seen`. Fits "Confirmed." |
+| **The Departure Records** (The Final Question) | `7A07000000000101` | Items: the **4 black-box fragments** (`flight_recorder_launch/transit/arrival/final`), the literal "reassemble the departure records". Comes after "Following Their Path", because the recorders are space loot |
+| **The Answer** (The Final Question) | `7A07000000000104` | Stages `oc_q_evidence_tech`, `oc_q_evidence_magic`, `oc_q_evidence_space`, `oc_q_discoveries_12` (the grant conditions), and items `hs_lgtfo_mission_data` and `correction_fragment`. The fragment exists only after the convergence, so the gate is honest and endgame-only |
+| **It Wears Faces / The One Below / The Breathless / It Was Not There Before** (Field Reports, optional) | `7A05000000000107`–`10A` | Items: the four residues |
 
-Optional new chapter — **"Recovered Evidence"** (`order_index` after Field Reports): a purely **optional, observation-style checklist** that lists the lore items as `item` tasks with 0-consume, so a player can see *how many* fragments they've catalogued. It must **only list and reward**, never explain — matching "collect dozens, realise later." This gives collectors a home without violating the no-explanation rule.
+**Recovered Evidence** (`recovered_evidence.snbt`, `order_index` 5; The Second Civilisation, The Final Question and
+When Dungeons Arise follow at 6, 7 and 8) is a purely **optional, observation-style catalogue**. It lists the lore
+items as `item` tasks that consume nothing (`default_consume_items: false`), so a player can see how many fragments
+they have catalogued. It **only lists and rewards**, never explains, matching "collect dozens, realise later". Quests:
+Recovered Evidence (the data chip), Personal Effects, Technical Records, Magical Records, Horror Evidence, Exodus
+Records, Anomalous Objects, The Whole Picture (the Correction Fragment), Deeper Memories, The Map That Lies, Coping (the
+two clarity consumables), and Four, Ten and Sixteen Entries (invisible until done; stages `oc_q_discoveries_4`, `_10`,
+`_16`).
 
-Everything else (Category 1–3 atmospheric items) stays **off** the quest grid — they're world texture, found by playing, not chased on a checklist.
-
----
-
-## 7. Phased rollout
-
-Each phase is independently shippable and testable. Recommended order:
-
-- **Phase 0 — Foundation (½ day).** Namespace test; register 3 pilot items (data chip, id badge, incident report); build the NBT-variant tooltip framework + one text pool; one LootJS injection into `chests/simple_dungeon`. *Exit test:* find a chip in a dungeon, see a random message, no flicker.
-- **Phase 1 — Personal artefacts (Cat 1).** Items 1–5. Village/abandoned/mansion loot. Pure L/T. Highest "world feels inhabited" payoff, lowest risk.
-- **Phase 2 — Technical records (Cat 2).** Items 6–8. Industrial/mineshaft/stronghold loot. Audio log v1 (existing sound). Introduces the *engineer* voice.
-- **Phase 3 — Magic records (Cat 3).** Items 9–13, incl. 3 memory variants. Loot from Ars/Hexerei/Occultism structures + ritual/demon drops. Introduces *mage* + *spirit* voices and the first "reality is wrong" hints.
-- **Phase 4 — Horror evidence (Cat 4).** Items 14–16. Mob-drop injection across the 11 horror mods (namespaces already identified). Corrupted map combine recipe. Introduces *horror* voice.
-- **Phase 5 — Exodus/space (Cat 5).** Items 17–22. Ad Astra structure + Moon/Mars dimension-conditioned loot. Sets up the black-box fragments for the quest wiring.
-- **Phase 6 — Anomalous / stateful (Cat 6).** Items 23–24 + the `oc_discoveries` counter. First scripted, synced-via-NBT behaviour. Ship after the counter is proven.
-- **Phase 7 — Endgame + quest wiring.** Correction Fragment; upgrade the 4 quest tasks (§6); optional "Recovered Evidence" chapter.
-- **Phase 8 — Polish.** Custom textures, authored `.ogg` audio logs, balance loot chances against `lootintegrations`, optional CC:Tweaked archive terminal, optional `/locate` corrupted map.
+The atmospheric items (categories 1–3 of `implore.md`) stay **off** the main quest grid: they're world texture, found
+by playing, not chased on a checklist.
 
 ---
 
-## 8. Risks & mitigations
+## 7. Risks and limits
 
-| Risk | Mitigation |
+| Risk | Handling |
 |---|---|
-| Custom namespace rejected by this KubeJS build | 2-min Phase-0 test; fallback to `kubejs:oc_*`. |
-| `lootintegrations` overwrites/normalises tables we modify | LootJS runs as a modifier layer; test each target table in-game; prefer `addTableModifier` on specific tables over broad type modifiers where overlap is likely. |
-| Loot spam (too many lore items) breaks the "rare, meaningful" feel | Central `CHANCES` table in `oc_loot.js`; tune globally; obey spec percentages (5–10% common, "very rare" ≈ 1–2%). Log-and-review, no silent inflation. |
-| Dynamic tooltip flicker / desync | Variant fixed in NBT at drop; never `Math.random()` in the tooltip path. |
-| Stateful items (23–25) over-scoped early | Deferred to Phase 6–7; counter proven first. |
-| Audio/custom sound pipeline cost | v1 reuses existing sounds; authored `.ogg` is Phase 8 polish. |
-| Over-explaining via a guidebook | Patchouli/Modonomicon intentionally **out** of default scope; "Recovered Evidence" chapter is index-only. |
+| `lootintegrations` overwrites or normalises tables the scripts modify | LootJS runs as a modifier layer on top. Specific tables or regex families are targeted rather than broad type modifiers. An in-game check of each target table is not recorded. |
+| Loot spam breaks the "rare, meaningful" feel | Chances follow the spec (5–10% common, "very rare" about 1–2%). Each line's `randomChance` in `oc_loot.js` is the tuning point. |
+| Tooltip flicker or desync | The variant is fixed in NBT on acquisition; the tooltip path never calls `Math.random()`. |
+| Script errors silently disable the system | Every handler is wrapped in try/catch and logs an `[OldCiv]` line. Rhino `var` rule in §3. |
+| Over-explaining via a guidebook | Patchouli and Modonomicon are out of scope; the Recovered Evidence chapter is index-only. |
 
 ---
 
-## 9. Open decisions (need your call before Phase 0)
+## Not implemented
 
-1. **Namespace:** `oldcivilisation:` (matches spec, pending the quick support test) vs guaranteed `kubejs:oc_*`. — *Rec: try `oldcivilisation:` first.*
-2. **Scope of first build:** ship **Phase 0 pilot** now, or land **Phases 0–1** (all personal artefacts) as the first deliverable? — *Rec: 0–1 together; it's the biggest atmosphere win.*
-3. **Quest wiring depth:** just the 4 endgame task upgrades (§6), or also add the optional **"Recovered Evidence"** collection chapter? — *Rec: both, chapter last.*
-4. **Textures:** placeholder-first (I generate simple 16×16 art), or hold logic until you supply/commission art? — *Rec: placeholder-first so gameplay isn't blocked.*
-5. **Audio logs:** existing-sound v1 acceptable, or is authored `.ogg` a must-have for the horror feel? — *Rec: v1 now, authored later.*
+- Authored item art (the models reuse vanilla and Create item art) and authored `.ogg` audio logs (`sounds.json`).
+- Transcripts printed by a CC:Tweaked disk.
+- A right-click `/locate` on the Corrupted Map pointing to a real rare modded structure.
+- An Old Currency sink: a KubeJS trade or recipe for MineColonies-era players, or a bridge to ycurrenci.
+- A Patchouli or Modonomicon evidence index.
+- Mob-drop injection across all 11 horror mods. Built: the Born in Chaos and Foes loot tables, plus residues from four
+  marquee horrors.
+- MineColonies town-hall milestones (`PACK_DIRECTION_REVIEW_2026-07-08.md` #4, a poor hook) and custom structures (`PACK_DIRECTION_REVIEW_2026-07-08.md` #9).
+
+---
+
+## Implementation
+
+The whole design was built in one pass (all phases), with quest wiring, the Recovered Evidence chapter and
+placeholder-first art. The same July build added about 24 quests, staged early → mid → late, across The Broken World,
+The Machines That Remain, The Other Science, Recovered Data and Field Reports (listed per chapter in `ftbquest.md`).
+Changes since then are in `docs/CONFIG_CHANGES.md`:
+
+- July build validation: SNBT balanced, no duplicate quest IDs, dangling dependencies or stray characters, 205 modded
+  IDs resolved; all JS files passed `node --check`; item IDs consistent across scripts and quests; the Lua
+  balance-checked.
+- "KubeJS — Old Civilisation script bugfix (`oc_interactions.js`)": the Rhino `const`/`let` errors (167 in the log)
+  had stopped the whole discovery, stateful-item, endgame-grant and residue system; fixed and verified 2026-07-09.
+- "KubeJS — Old Civilisation loot coverage (`oc_loot.js`)": routing for When Dungeons Arise, YUNG's structures, More
+  Underground Structures and Lost Architects (2026-07-09).
+- "2026-11-06 — Fog Residue: drop moved from The Man From The Fog to CANTBREATHE".
+- "2026-11-08 — Quest book: real checks instead of click-to-complete" and "2026-11-08 — Quest book: fixes and
+  additions": stage tasks, `oc_encounters.js`, the flight-recorder loot moved to placed moon tables, The Final Question
+  reordered, the Breathless Residue rename, and the evidence milestones. The quest book has 9 chapters and 133 quests
+  (VM log, 2026-11-08).

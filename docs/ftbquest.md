@@ -1,8 +1,21 @@
+# Quest book design
+
+> **Status:** Implemented in `config/ftbquests/quests/chapters/`: 9 chapters and 133 quests, including the
+> `wda_questline` mod's When Dungeons Arise chapter. Checks: `kubejs/server_scripts/oc_quest_checks.js`,
+> `kubejs/startup_scripts/oc_quest_spellcast.js`, `kubejs/server_scripts/oc_encounters.js` and the OpenLoader pack
+> `QuestChecks`. Live on the VM since the 2026-11-08 01:14 restart (log: *Loaded 9 chapters, 133 quests*).
+> **Related:** `docs/implore_implementation_plan.md` (story-item wiring and the Recovered Evidence chapter),
+> `docs/thelore.md`, `docs/CONFIG_CHANGES.md` ("2026-11-08 — Quest book: real checks instead of click-to-complete",
+> "2026-11-08 — Quest book: fixes and additions")
+> **Not tested in game:** anything that needs a player, such as the survive-an-encounter payout and the quest screens.
+> The `oc_encounters.js` fix (`getUuid()`) was uploaded to the VM on 2026-11-08 and takes effect at the next restart
+> or `/reload`. One mirrored tag, `oc_q_evidence_magic`, was granted live at 01:24 on 2026-11-08.
+
 The quest book is **not a progression guide**.
 
 It is an **investigation framework**.
 
-A player should be able to ignore half of it and still play. The quests exist to:
+A player can ignore half of it and still play. The quests exist to:
 
 1. Give players direction when they ask "what should I do next?"
 2. Teach the major mods naturally.
@@ -12,12 +25,25 @@ A player should be able to ignore half of it and still play. The quests exist to
 
 The chapters below are therefore **parallel investigations**, not a campaign order.
 
+| Order | Chapter | File |
+|--:|---|---|
+| 0 | The Broken World | `broken_world.snbt` |
+| 1 | The Machines That Remain | `machines_that_remain.snbt` |
+| 2 | The Other Science | `the_other_science.snbt` |
+| 3 | Recovered Data | `recovered_data.snbt` |
+| 4 | Field Reports | `field_reports.snbt` |
+| 5 | Recovered Evidence (optional) | `recovered_evidence.snbt` |
+| 6 | The Second Civilisation | `second_civilisation.snbt` |
+| 7 | The Final Question | `the_final_question.snbt` |
+| 8 | When Dungeons Arise | `when_dungeons_arise.snbt` |
+
 ---
 
 ## How the quest book checks progress (2026-11-08)
 
-Every quest checks something real; none can be completed by clicking a checkmark. The requirements below are the design.
-For each quest's actual task, see `CONFIG_CHANGES.md` ("Quest book: real checks instead of click-to-complete").
+Every quest checks something real; none can be completed by clicking a checkmark. The requirements below are the
+built checks. The task-by-task record is in `CONFIG_CHANGES.md` ("2026-11-08 — Quest book: real checks instead of
+click-to-complete").
 
 - **Built-in tasks:** items, advancements, dimensions, biomes, structures and (two optional reports) kills. Biome and
   structure tasks also use tags from the OpenLoader pack `QuestChecks`: `#oldcivilisation:abandoned_places`,
@@ -28,33 +54,9 @@ For each quest's actual task, see `CONFIG_CHANGES.md` ("Quest book: real checks 
   `oc_q_*` tag when the player has done it.
 - **Residues without a kill:** the residue quests in Field Reports also pay out when a player lives through an
   encounter (`kubejs/server_scripts/oc_encounters.js`). Observation, not killing, stays the way through that chapter.
-- **Where the implementation differs from the design below:**
-  - **"The Silent Nights":** 5 whole nights at least 256 blocks from spawn, *awake* on each counted night (rather than
-    "sleep in fewer than half").
-  - **"The Watchers":** the pack has no chunk-claim mod, so "away from claimed chunks" means 256+ blocks from spawn
-    and from your bed, and outside any MineColonies colony.
-  - **"People Return":** 25 citizens, MineColonies' nearest population milestone (it has none at 20).
-  - **"Knowledge, Power, Shelter":** no task of its own. Its dependencies already require one quest from each path,
-    and it completes when they do.
-  - **"The Second Civilisation":** its first two quests appear once the opening quests of two of the four paths are
-    done.
-  - **"The First Survey":** no waystone. `WaystonesGate` puts waystones behind an Ender Eye, so the waystone comes with
-    a later quest, "Through the Portal" (enter the Nether and stand in a fortress or bastion).
-  - **"A Familiar Design":** a Crusher instead of the Digital Miner, which `MekanismProgression` makes endgame. The
-    Digital Miner is in "Distant Hands".
-  - **"The Unacceptable Solution":** completes on any one of three sub-quests: fission, fusion, or an Extreme Reactors
-    reinforced reactor.
-  - **"Unidentified Contact":** holding a Biological Sample or an Impossible Bone Fragment, the remains these
-    encounters leave.
-  - **"The Final Question" order:** The Skyward Project, Following Their Path, The Departure Records, The Answer. The
-    flight recorders are found in space, so the records come after the flights. "The Answer" lists its conditions:
-    the technical, magical and exodus evidence, 12 kinds of evidence, and the assembled HS-LGTFO Mission Data.
-- **Added since the original design (2026-11-08):** quests for the mods added later (Extreme Reactors, Applied
-  Mekanistics, Blood Magic, Mahou Tsukai, Deeper and Darker), a Nether quest, four MineColonies milestones, optional
-  Field Reports for the newer horrors (The Obsessed, the Creeping Woods Figure, the Wendigo, the Nightmare Stalker),
-  three optional endings after "The Answer" (Follow Them, Launch Again, Stay), and quests that stay invisible until
-  done (sanity Breakdown, evidence milestones at 4, 10 and 16). The full list is in `CONFIG_CHANGES.md` ("Quest book:
-  fixes and additions").
+- **Item tasks consume nothing** (`default_consume_items: false`).
+- A **whole night** means seen at or before 14000 and at or after 22000 (night is 13000–23000), alive, and in the
+  Overworld throughout. Players get a short line after each counted night ("Night 2 of 5…").
 
 ---
 
@@ -78,21 +80,19 @@ Purpose:
 
 ### Type
 
-Advancement / Location
+Structure
 
 ### Requirements
 
 ```pseudo
-Visit:
-- any abandoned structure
-- any generated dungeon
-- any ruined settlement
+Stand inside any structure in #oldcivilisation:abandoned_places
+(179 ruins, dungeons and abandoned buildings from 21 mods and vanilla)
 ```
 
-Suggested structures:
+The tag includes the design's suggested structures:
 
 * Abandoned Watchtowers
-* Dungeons Arise
+* When Dungeons Arise
 * YUNG structures
 * Lost Architects
 
@@ -100,7 +100,7 @@ Suggested structures:
 
 * Explorer's Compass
 * Nature's Compass
-* Basic supplies
+* A backpack and basic supplies (food, torches)
 
 ### Lore
 
@@ -116,14 +116,15 @@ Location counter
 
 ```pseudo
 Discover:
-5 biomes
-3 structures
-1 underground location
+5 biomes: forest, plains, river, mountain, taiga
+3 structures: village, mineshaft, ruined portal
+1 underground location: any #forge:is_underground biome
 ```
 
 ### Reward
 
-* Travel supplies (the waystone comes later, with "Through the Portal")
+* Travel supplies: warp scrolls, a sleeping bag, a map. No waystone: `WaystonesGate` puts waystones behind an Ender
+  Eye, so the waystone comes with "Through the Portal".
 
 ### Lore
 
@@ -135,17 +136,17 @@ Discover:
 
 ### Type
 
-Hidden observation quest
+Hidden observation quest (appears after "The First Survey")
 
 ```pseudo
-Conditions:
-- Spend 5 nights away from spawn
-- Sleep less than 50% of nights
+Stage oc_q_silent_nights:
+- Spend 5 whole nights at least 256 blocks from spawn, not necessarily in a row
+- Stay awake on each counted night
 ```
 
 ### Reward
 
-Journal fragment
+A Familiar Photograph, Night Vision Goggles and food.
 
 ### Lore
 
@@ -158,6 +159,14 @@ Journal fragment
 This introduces the horror without naming it.
 
 ---
+
+## Further quests in this chapter
+
+| Quest | Checks |
+|---|---|
+| Sustenance | Farmer's Delight cooking pot and cutting board |
+| The First Night | Stage `oc_q_first_night`: a whole night survived under a roof for at least 75% of it, or slept through indoors |
+| Through the Portal | Enter the Nether, and stand inside `#oldcivilisation:nether_strongholds` (fortress, Better Fortresses' fortress, bastion, Incendium's Forbidden Castle and Sanctum). Gives the waystone |
 
 ---
 
@@ -178,7 +187,8 @@ Mods:
 * Immersive Petroleum
 * PneumaticCraft
 * Mekanism
-* SecurityCraft
+* Extreme Reactors
+* SecurityCraft (in "The Second Civilisation")
 
 ---
 
@@ -221,15 +231,15 @@ Create components.
 Create:
 
 ```pseudo
-- Mechanical Belts
-- Funnels
-- Chutes
-- Mechanical Arms
+- Mechanical Belt
+- Andesite Funnel
+- Chute
+- Mechanical Arm
 ```
 
 ### Reward
 
-Storage components.
+Brass casings and backpack upgrades (pickup, magnet).
 
 ### Lore
 
@@ -248,15 +258,15 @@ Storage components.
 Immersive Engineering:
 
 ```pseudo
-- Coke Oven
-- Blast Furnace
-- Generator
-- Capacitor
+- Coke Brick (Coke Oven)
+- Blast Brick (Blast Furnace)
+- Kinetic Dynamo (generator)
+- LV Capacitor
 ```
 
 ### Reward
 
-Engineer handbook / materials
+Engineer's manual, hammer and steel.
 
 ### Lore
 
@@ -273,9 +283,9 @@ Engineer handbook / materials
 Create:
 
 ```pseudo
-- Train
-- Track network
-- Station
+- Railway Casing (train)
+- Track
+- Train Station
 ```
 
 ### Reward
@@ -294,19 +304,19 @@ Travel supplies.
 
 ### Requirements
 
-Any:
+Any one (stage `oc_q_power`):
 
 ```pseudo
-Create power
+Create power: a water wheel, windmill or steam engine advancement (each needs real torque)
 OR
-Immersive Engineering power
+Immersive Engineering power: windmill, kinetic dynamo or diesel generator
 OR
-PneumaticCraft pressure
+PneumaticCraft pressure: air or liquid compressor
 ```
 
 ### Purpose
 
-Do not force a mod.
+No mod is forced.
 
 ---
 
@@ -330,6 +340,8 @@ Mekanism:
 - Crusher
 ```
 
+The Digital Miner is endgame under `MekanismProgression`, so it sits in "Distant Hands".
+
 ### Reward
 
 Advanced materials.
@@ -344,14 +356,14 @@ Advanced materials.
 
 ### Requirements
 
-Mekanism:
+No task of its own. It completes when any one of three sub-quests does:
 
 ```pseudo
-Fission Reactor
+The Split Atom: Mekanism fission reactor port
 OR
-Fusion Reactor
+A Star in a Box: Mekanism fusion reactor controller
 OR
-Extreme Reactors reinforced reactor
+The Reinforced Core: Extreme Reactors reinforced reactor controller
 ```
 
 ### Reward
@@ -370,6 +382,20 @@ This is deliberately ominous.
 
 ---
 
+## Further quests in this chapter
+
+| Quest | Checks |
+|---|---|
+| Brass and Precision | Create crushing wheel, mechanical crafter, deployer, brass ingot |
+| Captured Lightning | Create Additions electric motor, alternator, accumulator |
+| Refined Extraction | Immersive Engineering metal press, crusher, squeezer |
+| The Oil Beneath | Immersive Petroleum pumpjack, distillation tower |
+| Pressurised | PneumaticCraft air compressor, pressure tube, plastic, pressure gauge |
+| Factory Line | Mekanism steel casing, basic energy cube, basic universal cable, basic smelting factory |
+| Distant Hands | Mekanism teleporter, QIO dashboard, gas-burning generator, Digital Miner |
+| The Split Atom, A Star in a Box, The Reinforced Core | See "The Unacceptable Solution" |
+| The Yellow Ore | Extreme Reactors Yellorium ingot, basic reactor controller, basic turbine controller |
+
 ---
 
 # PATH TWO
@@ -387,6 +413,8 @@ Mods:
 * Occultism
 * Forbidden Arcanus
 * Iron's Spells
+* Blood Magic
+* Mahou Tsukai
 
 ---
 
@@ -401,8 +429,8 @@ Mods:
 ```pseudo
 Craft:
 - Source Jar
-- Spellbook
-- Basic Glyphs
+- Novice Spell Book
+- Imbuement Chamber
 ```
 
 ### Reward
@@ -420,10 +448,14 @@ Spell resources.
 ### Requirements
 
 ```pseudo
-Generate Source
-Cast spells
-Create magical tools
+Generate Source: imbue a Source Gem
+Cast a spell of your own from a spell book (stage oc_q_cast_spell, from Ars Nouveau's SpellCastEvent)
+Create magical tools: Enchanting Apparatus
 ```
+
+### Reward
+
+Source gems and Iron's Spells starter items.
 
 ### Lore
 
@@ -437,11 +469,11 @@ Create magical tools
 
 ### Requirements
 
-Occultism:
+Occultism ritual tools:
 
 ```pseudo
-Summon first spirit
-Create ritual tools
+- Golden Sacrificial Bowl
+- White Chalk
 ```
 
 ### Reward
@@ -463,9 +495,9 @@ Occultism resources.
 Hexerei:
 
 ```pseudo
-- Brew
-- Create altar
-- Use rituals
+- Mixing Cauldron (brew)
+- Book of Shadows Altar
+- Book of Shadows
 ```
 
 ### Lore
@@ -481,7 +513,7 @@ Hexerei:
 Forbidden Arcanus:
 
 ```pseudo
-Create advanced materials
+Create advanced materials: Arcane Crystal
 ```
 
 ### Lore
@@ -489,6 +521,19 @@ Create advanced materials
 > "Some discoveries were abandoned before the world ended."
 
 ---
+
+## Further quests in this chapter
+
+| Quest | Checks |
+|---|---|
+| The Living Workshop | Ars Nouveau ritual brazier, drygmy charm, agronomic sourcelink |
+| Words of Power | Iron's Spells inscription table, scroll forge, scroll |
+| Demon Labour | Occultism storage controller, satchel, empty magic lamp |
+| The Bound Servant | Occultism familiar ring, dimensional matrix, stable wormhole |
+| The Broom and the Cauldron | Hexerei willow broom, herb jar, candle dipper |
+| The Forge Unbidden | Forbidden Arcanus Hephaestus Forge, clibano core |
+| The Price → What the Blood Bought → The Great Work | Blood Magic: dagger, altar, weak orb; soul snare, Hellfire Forge; master ritual stone, apprentice orb |
+| Circles on the Floor → The Lesser Grail | Mahou Tsukai: mortar and pestle plus advancement `mahoutsukai:root` (first circle); `mahoutsukai:lesser_grail` |
 
 ---
 
@@ -503,6 +548,7 @@ Create advanced materials
 Mods:
 
 * Applied Energistics 2
+* Applied Mekanistics
 * CC:Tweaked
 
 ---
@@ -524,13 +570,12 @@ AE2:
 ```pseudo
 - Inscriber
 - ME Controller
-- Drive
 - Terminal
 ```
 
 ### Reward
 
-Storage cell.
+Storage cells.
 
 ### Lore
 
@@ -549,6 +594,7 @@ Create:
 - Wireless terminal
 - Import bus
 - Export bus
+- Drive
 ```
 
 ### Lore
@@ -567,14 +613,14 @@ Create:
 
 ```pseudo
 AE2:
-- Pattern Encoding
+- Pattern Encoding Terminal
 - Molecular Assembler
-- Autocrafting
+- Pattern Provider (autocrafting)
 ```
 
 ### Reward
 
-Archive fragment.
+An Incident Report Fragment (archive fragment).
 
 ---
 
@@ -587,9 +633,9 @@ Archive fragment.
 Requirements:
 
 ```pseudo
-AE2 advanced system
+AE2 advanced system: appears after "Automation"
 +
-exploration discoveries
+exploration discoveries: 3 Incident Report Fragments
 ```
 
 ### Lore
@@ -597,6 +643,18 @@ exploration discoveries
 > "The final records were not lost."
 
 > "They were deliberately removed."
+
+---
+
+## Further quests in this chapter
+
+| Quest | Checks |
+|---|---|
+| Crafting on Demand | AE2 crafting unit, 1k crafting storage, crafting accelerator, storage bus |
+| One Mind, Many Hands | AE2 16k item storage cell, ME P2P tunnel, level emitter |
+| Beyond the Network | AE2 quantum ring, quantum link, spatial IO port |
+| The Machines That Think | CC:Tweaked computer, disk drive, monitor, wireless modem. Its text points to the `archive` program |
+| Chemical Memory | Applied Mekanistics chemical storage cell 1k, chemical P2P tunnel |
 
 ---
 
@@ -634,9 +692,9 @@ No "defeat the monster."
 
 ```pseudo
 Visit:
-- Deep caves
-- Ancient structures
-- Dense forests
+- Deep caves: any #forge:is_underground biome
+- Ancient structures: #oldcivilisation:abandoned_places
+- Dense forests: #oldcivilisation:dense_forests (dark forest, old-growth taiga, jungle)
 ```
 
 ### Reward
@@ -654,10 +712,7 @@ Camera / exploration supplies.
 Camerapture:
 
 ```pseudo
-Take photographs of:
-- ruins
-- unusual areas
-- strange events
+Hold 3 photographs (Camerapture pictures)
 ```
 
 ---
@@ -678,7 +733,7 @@ Take photographs of:
 
 ```pseudo
 Visit:
-Creeping Woods
+Creeping Woods: any of its 24 sites (#oldcivilisation:creeping_woods)
 ```
 
 ### Lore
@@ -697,9 +752,8 @@ Creeping Woods
 
 ```pseudo
 Explore:
-Alex's Caves
-Deep underground areas
-Cave Dweller locations
+an Alex's Caves biome
+the Deep Dark
 ```
 
 ### Lore
@@ -714,19 +768,23 @@ Cave Dweller locations
 
 ### Hidden
 
-Triggers:
+Appears after "Below".
+
+Requirements (stage `oc_q_contact`):
 
 ```pseudo
-Encounter:
-- CANTBREATHE
-- Mimicer
-- Cave Dweller
-- Weeping Angel
+Hold:
+- a Biological Sample
+OR
+- an Impossible Bone Fragment
 ```
+
+The four encounters (CANTBREATHE, the Mimicer, the Cave Dweller, a Weeping Angel) each have an optional residue report
+below.
 
 ### Reward
 
-Archive fragment.
+A Containment Label (archive fragment).
 
 ### Lore
 
@@ -746,15 +804,54 @@ No explanation.
 
 ### Requirements
 
-Survive:
+Survive (stage `oc_q_watchers`):
 
 ```pseudo
-10 nights away from claimed chunks
+10 whole nights away from home:
+256+ blocks from spawn and from your bed, outside any MineColonies colony
 ```
+
+The pack has no chunk-claim mod, so distance from spawn, bed and colonies stands in for "away from claimed chunks".
+The quest text reads "Nowhere near a bed, a colony…".
 
 ### Lore
 
 > "Something has noticed the return of civilisation."
+
+---
+
+## Residue reports (optional)
+
+Objective text: "Survive an encounter, or end one." A kill drops the residue (90%); so does surviving the encounter
+(`oc_encounters.js`).
+
+| Quest | Item | Horror |
+|---|---|---|
+| It Wears Faces | Distorted Replica | The Mimicer |
+| The One Below | Deep Echo | The Cave Dweller |
+| The Breathless | Breathless Residue | CANTBREATHE |
+| It Was Not There Before | Temporal Residue | Weeping Angels |
+
+## Further quests in this chapter
+
+| Quest | Checks |
+|---|---|
+| Below the Bedrock | Deeper and Darker: enter the Otherside; find an Ancient Temple |
+| Fixation (optional) | Advancement `the_obsessed:first_impressions` |
+| The Figure (optional) | Creeping Woods advancement `demons_of_the_forest` (encounter the Figure) |
+| Hunger (optional) | Kill a Wendigo |
+| Day Three (optional) | Born in Chaos advancement `fighting_nightmares` (kill the Nightmare Stalker) |
+| Breakdown (optional, invisible until done) | Stage `oc_q_breakdown`: sanity reaches Breakdown. Gives 4 Sedative Ampoules |
+
+---
+
+# OPTIONAL CHAPTER
+
+# "Recovered Evidence"
+
+An index of the story items, one catalogue entry per category, plus evidence milestones at 4, 10 and 16 kinds that
+stay invisible until done. It lists and rewards, never explains. Design and quest list:
+`implore_implementation_plan.md` §6.
 
 ---
 
@@ -766,7 +863,8 @@ Unlocked when players complete several paths.
 
 Not gated.
 
-Just appears.
+Just appears: "People Return" and "Secure The Future" stay hidden until the opening quests of two of the four paths
+are done.
 
 ---
 
@@ -786,8 +884,10 @@ MineColonies:
 
 ```pseudo
 Population:
-20+
+25 (advancement minecolonies:minecolonies/colony_population_25)
 ```
+
+MineColonies has population milestones at 10 and 25, none at 20.
 
 ---
 
@@ -800,9 +900,9 @@ Population:
 SecurityCraft:
 
 ```pseudo
-- Security cameras
-- Doors
-- Defences
+- Security Camera
+- Keypad Door
+- Sentry
 ```
 
 ---
@@ -813,21 +913,33 @@ SecurityCraft:
 
 Requirements:
 
-One from each:
+No task of its own. It completes once its six dependencies do: "People Return", "Secure The Future", and one quest
+from each path:
 
 ```pseudo
 Technology:
-Advanced machine
+Advanced machine: "A Familiar Design"
 
 Knowledge:
-AE2 system
+AE2 system: "Storage Is Not Enough"
 
 Understanding:
-Magic system
+Magic system: "A Different Kind of Power"
 
 Observation:
-Horror discovery
+Horror discovery: "Unidentified Contact"
 ```
+
+---
+
+## Further quests in this chapter
+
+| Quest | Checks |
+|---|---|
+| The Centrepiece | MineColonies: Town Hall level 5 |
+| The Enchanter's Tower | MineColonies: build an Enchanter's Tower |
+| A Village Again | MineColonies: 50 citizens |
+| Take Arms | MineColonies: build a Barracks |
 
 ---
 
@@ -837,32 +949,14 @@ Horror discovery
 
 ---
 
-This chapter should appear slowly.
+This chapter appears slowly.
 
 Not all at once.
 
 ---
 
-## Quest:
-
-"The Departure Records"
-
-Requirements:
-
-```pseudo
-Recover:
-multiple archive fragments
-```
-
----
-
-Lore:
-
-> "They did not fight."
-
-> "They prepared."
-
----
+Order: The Skyward Project → Following Their Path → The Departure Records → The Answer. The flight recorders are
+found in space, so the records come after the flights.
 
 ## Quest:
 
@@ -873,10 +967,14 @@ Requirements:
 Ad Astra:
 
 ```pseudo
-Rocket
-Space suit
+Tier 1 Rocket
+Space Suit
 Fuel
 ```
+
+It depends on "The Missing Years", "Unidentified Contact", and the quests behind each NASA Workbench part
+(`AdAstraSpaceGate`): "Brass and Precision", "A Familiar Design", "Storage Is Not Enough" and "The Enchanter's Tower"
+(teleport scroll). Its text names the four parts.
 
 ---
 
@@ -891,8 +989,29 @@ Visit:
 ```pseudo
 Moon
 Mars
-Space stations
+Earth Orbit (space stations)
 ```
+
+---
+
+## Quest:
+
+"The Departure Records"
+
+Requirements:
+
+```pseudo
+Recover:
+the four flight recorder fragments: Launch, Transit, Arrival, Final
+```
+
+---
+
+Lore:
+
+> "They did not fight."
+
+> "They prepared."
 
 ---
 
@@ -900,13 +1019,24 @@ Space stations
 
 "The Answer"
 
-Final hidden objective:
-
-Find:
+Final hidden objective. It lists its conditions:
 
 ```pseudo
-HS-LGTFO remains
+Recover a technical record, a magical record and an exodus record
+Hold 12 different kinds of recovered evidence
+Assemble the HS-LGTFO Mission Data (the HS-LGTFO remains)
+Hold the Correction Fragment
 ```
+
+The evidence conditions are the conditions of the Correction Fragment grant (`oc_interactions.js`).
+
+## Optional endings (after "The Answer")
+
+| Quest | Checks |
+|---|---|
+| Follow Them | Reach Glacio |
+| Launch Again | A Tier 4 rocket |
+| Stay | 75 citizens |
 
 ---
 
@@ -953,4 +1083,19 @@ It is:
 
 ---
 
-This structure should translate very cleanly into FTB Quests because every branch is independently completable, multiplayer-friendly, and every major mod has a narrative reason to exist.
+# "When Dungeons Arise"
+
+The `wda_questline` mod's own chapter, plus one pack quest: "Find a Jungle Tree House" (structure
+`dungeons_arise:jungle_tree_house`; WDA has no advancement for it).
+
+---
+
+# Not implemented
+
+- "The Silent Nights": the "sleep in fewer than half of the nights" rule. The built check counts only nights spent
+  awake.
+- "Observation": what the photographs show. The task counts three Camerapture pictures.
+- "Below": Cave Dweller locations.
+- Activity checks that became item checks: Basic Glyphs ("Old Symbols", which asks for an Imbuement Chamber instead),
+  summoning a first spirit ("The Invisible Workforce", which asks for the ritual tools), using Hexerei rituals ("The
+  Old Practices").

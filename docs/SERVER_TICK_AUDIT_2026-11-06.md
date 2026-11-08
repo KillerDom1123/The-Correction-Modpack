@@ -1,44 +1,71 @@
 # Server tick audit — 2026-11-06
 
-Scope: why the dedicated server (Server v2 on the Proxmox VM) runs at about 7 TPS with one player online, and every change that would reduce its tick time. The work combined spark profiles, a bytecode scan of all 281 server jars, reading the code of every hook that showed up as costly, and online research into known issues.
+**Scope:** why the live dedicated server on the Proxmox VM (the VM) ran at about 7 TPS with one player online, and every change that would reduce its tick time. Evidence: three spark profiles of the VM (§3.1), a bytecode scan of all 281 server jars, the code of every hook that showed up as costly, and online research into known issues.
 
-**Status (2026-11-06, updated 2026-11-07): phases 0–1 applied, plus the later work listed below; the rest is still proposed.** The live server is now the Proxmox VM, deployed to over FTP. Record applied changes in `CONFIG_CHANGES.md` as usual. Applied so far (details in CONFIG_CHANGES, "Server tick audit — phases 0–1"):
-- **§5.1.1:** the GC flags. Memory was kept at `-Xms8G -Xmx32G` by choice.
-- **§5.1.2:** CPU governor on `performance`.
-- **§5.1.3:** `sync-chunk-writes=false`.
-- **§5.2.1:** the spawn overrides. `mftfhang` was removed entirely, since Man From The Fog is now disabled.
-- **§5.2.2:** Data Anchor removed.
-- **§5.2.3:** the Fragile Torches list trimmed.
-- **Server files chown-ed,** which fixes spark's async-profiler.
-- **§3.3:** the in-game test command.
-- **§5.3, first pass:** built as `tools/spooky_tick_fixes` 1.0.0 and deployed to both local instances and the VM. It covers §5.3.1–5.3.4 and §5.3.6–5.3.8.
-- **§5.3, second pass and §5.5.1:** `spooky_tick_fixes` 1.1.0, deployed everywhere. It adds:
-  - **§5.3.5** Full Immersion;
-  - **§5.3.9** Citadel only (Slice & Dice is still open);
-  - **§5.3.10** the moving-block search only (the magnetism check is still open);
-  - **§5.5.1** activation range, with config lists instead of a datapack tag; villagers throttled; adaptive mode on.
-  
-  Still open:
-  - §5.3.7's The Obsessed `EntityTickProcedure` fix;
-  - §5.5.2, the watcher despawn rule, which needs a decision.
+**Summary:** As profiled on 2026-11-06, a tick took 130–150 ms (6.6–7.5 TPS; target 50 ms) with one player online and 550–620 entities loaded. About 84% of the overworld's tick was entity ticking, and no single mod accounted for it: the cost is the number of living entities times a high per-entity cost on a 2013 Xeon core, made up of about 45 mod listeners per mob per tick, several needlessly expensive per-mob hooks, and specific bugs (dormant Artifacts mimics running the full mob tick, The One Who Watches watchers that never despawn and path-search up to 2048 blocks, Farm & Charm sending a packet per animal per tick). The server thread added 15–25 ms, mostly The Obsessed's player-variable sync and Whispering Spirits' look check. DimThreads 1.2.1 gave no parallelism, because it ticks every dimension under one global lock (§4.1, corrected 2026-11-08). No single proposal reaches 20 TPS on the E5-2650 v2; the estimates (§1, §8) combine host and JVM settings, config changes, a compat shim (`spooky_tick_fixes`) and an activation range for far mobs.
 
-**Later (2026-11-06 evening to 2026-11-07), all deployed to the VM; details in CONFIG_CHANGES:**
-- **`spooky_tick_fixes` 1.2.0:** Antlers' day counter runs on the overworld only (a bug fix that changes behaviour), and TOWW skips its sync in empty levels.
-- **DimThreads disabled:** its 1.2.1 ticks every level under one global lock. The Incendium clock is trimmed by an OpenLoader datapack.
-- **1.3.0 to 1.3.3:** the horror look ray casts, The Obsessed's block reads and vanilla villagers' bed check no longer load chunks on the server thread.
-- **1.3.4, chunk-safe ticking:** no block read during a level tick generates terrain. This covers the cause of every watchdog crash so far.
-- **`spooky_pregen`:** a separate mod that pre-generates the world with Chunky while the server is empty.
-- **1.4.0:** a gameplay change outside this audit. Antlers' Wendigo keeps away from players and only attacks when provoked. It goes live at the VM's next restart.
+**Status reviewed:** 2026-11-08
 
-Related: `CONFIG_CHANGES.md` (sections "Performance — …", "Immersive Portals × DimThreads", "Better Chunk Loading smart post-processing off"), `UPDATE_REVIEW_2026-11-01.md`, `SERVER_MODS.md`.
+Every patch listed as applied is in `spooky_tick_fixes` 1.4.0, installed on the client instance and the VM. Every change listed as applied reached the VM by 2026-11-07 and is live (last recorded VM restart: 2026-11-08 01:14).
+
+Change-log entries cited in the table:
+- **phase 0**, **phase 1**: CONFIG_CHANGES "2026-11-06 — Server tick audit: phases 0 and 1". Phase 0 was applied on the VM by the server operator.
+- **1.0.0**: CONFIG_CHANGES "2026-11-06 — spooky_tick_fixes 1.0.0: first tick-fix pass".
+- **1.1.0**: CONFIG_CHANGES "2026-11-06 — spooky_tick_fixes 1.1.0: second pass and activation range".
+- **1.3.0**: CONFIG_CHANGES "2026-11-06 — spooky_tick_fixes 1.3.0: horror look-check ray casts". DimThreads disabled: "2026-11-06 — DimThreads disabled". Dynamic View added, with the VM's new view and simulation distances: "2026-11-06 — Let Me Despawn, Almanac and Dynamic View added".
+
+| § | Proposal | Finding | Status |
+|---|---|---|---|
+| 3.2 | — (phase 0 fix) | spark could not unpack async-profiler, because `config/spark/tmp` was root-owned, and fell back to the slower Java sampler | Applied (phase 0): all server files chown-ed to the server's user account |
+| 3.3 | In-game follow-range test | §4.2: melee path searches were 15.1% of the overworld tick | Applied 2026-11-06 to the watchers loaded at the time (result in §3.3). Superseded by §5.3.2 |
+| 4.1 | — | Thread structure under DimThreads | Corrected 2026-11-08: DimThreads 1.2.1 ticks dimensions in series under one global lock. DimThreads disabled 2026-11-06 (1.3.0 entry) |
+| 5.1.1 | Aikar's G1 flags | §4.7: G1 young pauses average about 100 ms | Applied by config (phase 0) |
+| 5.1.1 | Fixed 12 GB heap (`-Xms12G -Xmx12G`) | §4.7: `-Xmx32G` lets the heap grow to all of the VM's 32 GB | Rejected (no reason recorded): phase 0 set the VM's memory to `-Xms8G -Xmx32G`. The profiled value (§2) was `-Xms12G -Xmx32G` |
+| 5.1.2 | Host CPU governor `performance`, turbo on | §4.7: the tick is bound to one core | Applied (phase 0): governor confirmed on `performance`. Turbo: not recorded |
+| 5.1.3 | `sync-chunk-writes=false` | — | Applied by config (phase 0): true → false |
+| 5.2.1 | Complete the horror spawn overrides | §4.6 | Applied by config (phase 1): `toww_hanging` 30 → 2, `toww_delusion` 3 → 2, `toww_hallucination` 5 → 2, Rake `ambient_sound` 15 → 2. `mftfhang`: a `forge:none` override instead of weight 2, with The Man From The Fog disabled (CONFIG_CHANGES "2026-11-06 — The Man From The Fog: disabled"); its jar is disabled since 2026-11-06 |
+| 5.2.2 | Remove Data Anchor | §4.4: orphan library, about 1% | Applied on the client instance and the VM (phase 1). Every joining client must drop it too (strict network channel) |
+| 5.2.3 | Trim the Fragile Torches gentle list | §4.3 | Applied by config (phase 1) |
+| 5.2.4 | Fewer Artifacts campsites and mimics | §4.2: 115–134 dormant mimics loaded | Open: gameplay decision (phase 1 entry). `count` 4 and `mimicChance` 0.3 unchanged (2026-11-08). §5.3.1 covers the performance side |
+| 5.2.5 | `simulation-distance` 10 → 8 | §4.2 | Applied by config (1.3.0 entry): the VM's `simulation-distance` 8 and `view-distance` 12, with Dynamic View moving them within 6–8 and 8–12 |
+| 5.2.6 | Incendium per-tick clock | §4.2: 3.7% | Applied by the `IncendiumClockTrim` OpenLoader datapack: CONFIG_CHANGES "2026-11-06 — Incendium: clock functions trimmed" |
+| 5.2.6 | Ars Nouveau Rewind off, Immersive Weathering moss off, Underminer weight, Quark small modules | §4.3, §4.4 | Open: pending decisions (phase 1 entry) |
+| 5.2.6 | Mekanism radiation off | §4.3 | Rejected: fission is a documented milestone |
+| 5.3.1 | Dormant mimics skip their tick | §4.2 | Applied in `spooky_tick_fixes` 1.0.0 (`mimicSleep`) |
+| 5.3.2 | TOWW follow range 32 | §4.2, §4.6 | Applied in `spooky_tick_fixes` 1.0.0 (`watcherFollowRange`) |
+| 5.3.3 | The Obsessed: one sync per player per tick | §4.5 | Applied in `spooky_tick_fixes` 1.0.0 (`obsessedSyncCoalesce`) |
+| 5.3.4 | Whispering Spirits look-check gate | §4.5 | Applied in `spooky_tick_fixes` 1.0.0 (`spiritLookGate`). The gate skips when no spirit is loaded in the dimension, not within the 101-block reach. The optional cache of the three identical `clip` results: applied in `spooky_tick_fixes` 1.3.0 (`horrorRayCastDedupe`) |
+| 5.3.5 | Full Immersion portal hooks | §4.4 | Applied in `spooky_tick_fixes` 1.1.0 (`fullImmersionGate`) |
+| 5.3.6 | Fragile Torches torch pre-check | §4.3 | Applied in `spooky_tick_fixes` 1.0.0 (`fragileTorchesPrecheck`) |
+| 5.3.7 | MCreator `EntityAnimationFactory` gates | §4.3 | Applied in `spooky_tick_fixes` 1.0.0 (`animationGates`) for Born in Chaos, The Obsessed, Creeping Woods, Foes, TOWW, Rake and Antlers; Man From The Fog is not covered |
+| 5.3.7 | Ad Astra Extra gate | §4.3 | Applied in `spooky_tick_fixes` 1.0.0 (`adAstraExtraGate`) |
+| 5.3.7 | The Obsessed `EntityTickProcedure`: cached namespace test | §4.3 | Open |
+| 5.3.8 | Farm & Charm: send saturation only on change | §4.4 | Applied in `spooky_tick_fixes` 1.0.0 (`farmCharmSyncOnChange`) |
+| 5.3.9 | Citadel tick-rate tracker cache | §4.4 | Applied in `spooky_tick_fixes` 1.1.0 (`citadelTrackerCache`) |
+| 5.3.9 | Create Slice & Dice wet-air gate | §4.4 | Open |
+| 5.3.10 | Alex's Caves moving-block search | §4.4 | Applied in `spooky_tick_fixes` 1.1.0 (`alexsCavesMovingBlockGate`) |
+| 5.3.10 | Alex's Caves per-entity magnetism check | §4.4 | Open: needs a magnet-block count |
+| 5.4 | ServerCore | — | Open: not installed. The activation range comes from §5.5.1, and dynamic distance from Dynamic View |
+| 5.4 | Dynamic View | — | Applied (1.3.0 entry): `dynview-1.20.1-4.0.jar`, view 8–12, simulation 6–8, target 40 ms |
+| 5.5.1 | Activation range | §5.5.1 (entity distances) | Applied in `spooky_tick_fixes` 1.1.0 (`[activationRange]`): exemptions as config lists instead of a datapack tag, villagers throttled, adaptive mode on |
+| 5.5.2 | Far-away despawn for stationary watchers | §4.6 | Open: needs a decision, because it changes horror pacing (1.1.0 entry) |
+| 5.5.3 | One-off cleanup (raiders, watchers, zombie villagers) | §4.2, §4.6, §7 | Open: pending decisions (phase 1 entry) |
+| 5.5.4 | Proxmox host tuning | §4.7 | Open |
+| 5.5.5 | JVM extras (transparent huge pages, GraalVM) | — | Open. The VM runs Ubuntu OpenJDK 21.0.12 with G1 (`docs/SERVER_MODS.md` notes) |
+| 5.5.6 | Pregenerate the world with Chunky | §4.5: chunk loading up to 12% of the server thread | Applied: the overworld was pre-generated to ±2,048 by 2026-11-06 (CONFIG_CHANGES "2026-11-06 — spooky_tick_fixes 1.3.2: The Obsessed waits for chunks"). Further pre-generation runs with `spooky_pregen` while the server is empty: CONFIG_CHANGES "2026-11-07 — spooky_pregen 1.0.0: pre-generation while the server is empty" |
+| 5.5.7 | Lower mob caps | — | Open |
+| 5.5.8 | Remove heavy mods | — | Open (last resort) |
+| 5.5.9 | Faster CPU | §4.7 | Open |
+| 5.5.10 | Parallel entity ticking, region splitting, near/far threads, precomputed ticks | — | Rejected: reasons in §5.5.10 |
+| 8 | Verify each step | — | Post-change profile: the all-threads profile of the VM, 2026-11-06 19:06–19:20, after phases 0–1 and `spooky_tick_fixes` 1.1.0, measured 20 TPS with a 46 ms median at the same population (about 550–600 entities, about 150 mimics), against 6.6–7.2 TPS at about 140 ms before. Source: CONFIG_CHANGES "2026-11-06 — spooky_tick_fixes 1.2.0". In-game checks of the player-dependent patches: last recorded as open (2026-11-06, 1.1.0 entry) |
 
 ---
 
-## 1. Summary
+## 1. Symptom, cause and expected effect
 
-**Symptom.** Steady-state tick time is 130–150 ms (TPS 6.6–7.5), with one player online and about 3,700 chunks and 550–620 entities loaded. The target is 50 ms (20 TPS).
+**Symptom.** As profiled on 2026-11-06, steady-state tick time is 130–150 ms (TPS 6.6–7.5), with one player online and about 3,700 chunks and 550–620 entities loaded. The target is 50 ms (20 TPS).
 
-**Cause.** DimThreads ticks each dimension on its own worker thread, and the server thread waits until every worker has finished. The overworld worker takes about 115–130 ms per tick, and roughly 84% of that is entity ticking. No single mod accounts for it. The cost comes from the number of living entities multiplied by a high per-entity cost on a slow core:
+**Cause.** DimThreads ticks each dimension on its own worker thread, and the server thread waits until every worker has finished. The overworld worker takes about 115–130 ms per tick, and roughly 84% of that is entity ticking. (Corrected 2026-11-08: DimThreads 1.2.1 runs these level ticks one after another under a global lock, not in parallel; see §4.1.) No single mod accounts for it. The cost comes from the number of living entities multiplied by a high per-entity cost on a slow core:
 - every living entity runs about 45 mod event listeners each tick;
 - several mods do needlessly expensive work for every mob;
 - a few specific bugs (watchers that never despawn and search for paths up to 2048 blocks; dormant mimics running the full mob tick; Farm & Charm sending a packet per animal per tick).
@@ -49,7 +76,7 @@ After the overworld finishes, the server thread spends another 15–25 ms on its
 
 | Step | Tick time | TPS | TPS gain |
 |---|---|---|---|
-| Now | ~137 ms | 7.2 | — |
+| As profiled | ~137 ms | 7.2 | — |
 | Tier 1 config only (§5.2) | ~135 ms | 7.4 | +3% |
 | + Tier 2 compat shim, first pass (§5.3) | 92–111 ms | 9.0–10.9 | +25–50% |
 | + Alex's Caves patch and the optional configs | 85–106 ms | 9.4–11.7 | +30–62% |
@@ -57,7 +84,7 @@ After the overworld finishes, the server thread spends another 15–25 ms on its
 | *or, instead of simulation 8:* + activation range (§5.5.1), keeping simulation 10 | 63–86 ms | 11.6–15.9 | +61–121% |
 | Activation range alone, without the shim | 86–96 ms | 10.4–11.6 | +45–61% |
 
-None of these alone reaches 20 TPS on this CPU. The likely last step is host tuning (§5.1.2, §5.5.4) or a faster CPU (§5.5.9).
+None of these alone reaches 20 TPS on the E5-2650 v2. The likely last step is host tuning (§5.1.2, §5.5.4) or a faster CPU (§5.5.9).
 
 **The five most valuable actions:**
 1. Stop dormant Artifacts mimics from ticking (11–17% of the overworld tick).
@@ -68,7 +95,7 @@ None of these alone reaches 20 TPS on this CPU. The likely last step is host tun
 
 ---
 
-## 2. Environment (as profiled)
+## 2. Environment (as profiled, 2026-11-06)
 
 | Item | Value | Note |
 |---|---|---|
@@ -81,20 +108,19 @@ None of these alone reaches 20 TPS on this CPU. The likely last step is host tun
 | GC | G1 defaults: young pauses average ~100 ms, one about every 25 s | — |
 | `server.properties` (VM) | `view-distance=16`, `simulation-distance=10`, `sync-chunk-writes=true`, `max-tick-time=120000`, `entity-broadcast-range-percentage=100` | — |
 | Mods | 281 server jars (`SERVER_MODS.md`) | — |
-| DimThreads | v1.2.1, 4 threads, ~50 dimensions | Total tick = slowest dimension + server-thread work. |
+| DimThreads | v1.2.1, 4 threads, ~50 dimensions | Total tick = the sum of every dimension's tick + server-thread work. (Corrected 2026-11-08: given as "slowest dimension + server-thread work"; DimThreads 1.2.1 ticks dimensions in series, §4.1.) |
 
 ---
 
-## 3. How the investigation was done
+## 3. Method and limits
 
 ### 3.1 Spark profiles
 
 | Profile | Threads sampled | Length | Used for |
 |---|---|---|---|
 | https://spark.lucko.me/LnjBFaG1Y8 | Server thread only (spark's default background profiler) | 548 s, 4,332 ticks | Showed the server thread spending 79–90% of each tick waiting in `ThreadPool.awaitCompletion` (DimThreads), with the real work hidden on the workers. Gave per-minute TPS and the server thread's own costs. |
-| https://spark.lucko.me/JvMaXZXDpo | none (empty) | 24 s | The thread filter was written in quotes; spark keeps the quote characters, so nothing matched (§3.2). |
-| https://spark.lucko.me/ulUxjide6w | all threads | 13 s, 49 ticks | First view of `dimthread_server_overworld`. |
-| https://spark.lucko.me/UFcKxbb5UP | all threads | 3.4 s, 15 ticks | After the §3.3 test. |
+| https://spark.lucko.me/ulUxjide6w | all threads | 13 s, 49 ticks | The worker threads, including `dimthread_server_overworld`. |
+| https://spark.lucko.me/UFcKxbb5UP | all threads | 3.4 s, 15 ticks | Taken after the §3.3 test. |
 
 ### 3.2 Profiling DimThreads correctly
 
@@ -106,7 +132,7 @@ DimThreads names its workers `dimthread_server_<dimension>`. Spark's default and
 
 Do **not** put quotes around spark arguments. Spark joins space-separated values but keeps the quote characters, so `--thread "Server thread|…"` matches no thread and produces an empty profile. Let the profile run the full 5 minutes. Recording every thread with the Java sampler slows the server noticeably while it runs (3.8 TPS during profile ulUxjide6w), so read **percentages**, not absolute milliseconds.
 
-### 3.3 In-game test (applied)
+### 3.3 In-game test
 
 To test whether The One Who Watches' pathfinding was the 15% hotspot:
 
@@ -115,7 +141,7 @@ To test whether The One Who Watches' pathfinding was the 15% hotspot:
 /execute as @e[type=the_one_who_watches:toww_staring] run attribute @s minecraft:generic.follow_range base set 32
 ```
 
-Result (profile UFcKxbb5UP): melee path searches dropped from 15.1% to 0.6% of the overworld tick. TPS barely moved (6.8 → 7.2 over 1 minute, median 140 → 137 ms, 95th percentile 219 → 157 ms), because 19 more mimics had loaded in the meantime (115 → 134) and used up the saving (§4.2). The command only affected the watchers loaded at that moment. Watchers spawned later still have 2048 (§5.3.2).
+Result (profile UFcKxbb5UP): melee path searches dropped from 15.1% to 0.6% of the overworld tick. TPS barely moved (6.8 → 7.2 over 1 minute, median 140 → 137 ms, 95th percentile 219 → 157 ms), because 19 more mimics had loaded in the meantime (115 → 134) and used up the saving (§4.2). The command only affected the watchers loaded at that moment. Watchers spawned after it still had 2048 (§5.3.2 fixes this).
 
 ### 3.4 Static audit of every jar
 
@@ -136,11 +162,11 @@ Two research passes covered: server-side performance mods that exist for Forge 1
 
 ### 3.7 Limits of the data
 
-The overworld percentages come from about 16 seconds of worker samples, so treat each number as ±30%. Mimic and entity counts change as the player moves. Block-entity costs are tiny now (2%) because the world is new. They will grow with bases (§6).
+The overworld percentages come from about 16 seconds of worker samples, so treat each number as ±30%. Mimic and entity counts change as the player moves. Block-entity costs were tiny as profiled (2%) because the world was new. They grow with bases (§6).
 
 ---
 
-## 4. Findings
+## 4. Findings (as profiled on 2026-11-06)
 
 ### 4.1 Thread structure
 
@@ -148,7 +174,9 @@ Each tick runs in this order:
 1. The server thread hands every dimension to a DimThreads worker and waits.
 2. When all workers finish, the server thread processes player packets and player ticks, then server-tick events.
 
-Tick time is therefore (slowest dimension) + (server thread's own work). Steady state is overworld ≈ 115 ms plus server thread ≈ 21 ms. All other dimensions run in parallel and finish well inside the overworld's time. Extra DimThreads threads don't help when everyone is in the overworld.
+DimThreads 1.2.1 runs the dimension ticks one after another: `DimThread.swapThreadsAndRun` is `static synchronized` and wraps each level's tick, so all ~45 levels tick in series and extra DimThreads threads give no parallelism. Tick time is therefore the sum of every level's tick plus the server thread's own work, and any cost paid per level is paid about 45 times per tick. Steady state is overworld ≈ 115 ms plus server thread ≈ 21 ms.
+
+(Corrected 2026-11-08: written as "Tick time is therefore (slowest dimension) + (server thread's own work). … All other dimensions run in parallel and finish well inside the overworld's time. Extra DimThreads threads don't help when everyone is in the overworld." Source: the all-threads profile of the VM, 2026-11-06 19:06–19:20; CONFIG_CHANGES "2026-11-06 — spooky_tick_fixes 1.2.0". DimThreads was disabled on 2026-11-06: CONFIG_CHANGES "2026-11-06 — DimThreads disabled".)
 
 ### 4.2 Overworld tick breakdown (profiles ulUxjide6w + UFcKxbb5UP)
 
@@ -203,7 +231,7 @@ Capability lookups (`getCapability`) total 1.8% of the overworld tick, mostly Cu
 
 | Item | Share of server thread | Notes |
 |---|---|---|
-| Waiting for DimThreads | 79–90% | The overworld's time |
+| Waiting for DimThreads | 79–90% | The time of every level, ticked in series (§4.1). (Corrected 2026-11-08: given as "the overworld's time".) |
 | The Obsessed `PlayerTickProcedure` (+ `PlayerTick2`) | 4.2–7.8% (+0.5%) | Grew from 0.5 to 11.6 ms per tick within 9 minutes, for one player. 95% of it is `syncPlayerVariables`: **83 call sites** in `PlayerTickProcedure` and **19** in `PlayerTick2Procedure`. Each one serialises the full variable set to NBT, including the free-text fields `store_chats` 1–5, `store_speech`, `message_memory` and `imitation_structure_storage`, and sends it. |
 | Whispering Spirits `PlayerLookAtSpiritProcedure` | 1.3–3.4% | Up to **100 ray steps per player per tick**, each doing 3 identical `Level.clip` raycasts plus an entity search |
 | Chunk loading from disk (`ChunkSerializer.read`) | up to 12% while moving | Vanilla does this on the main thread |
@@ -225,7 +253,7 @@ Capability lookups (`getCapability`) total 1.8% of the overworld tick, mostly Cu
 
 Most TOWW entities never despawn, and almost all have `FOLLOW_RANGE` 2048: hanging, staring, stalking, hunting, crawling, hallucination, delusion and looked-at (running and stare have 1000). The loaded watcher count rose 6 → 7 → 8 across the profiles, which is the pile-up in progress.
 
-Born in Chaos (about 40 `forge:any` hostiles at weights 2–30) and Foes are left at mod weights on purpose (CONFIG_CHANGES, "The Altered"). They share the vanilla monster cap, so they change which hostiles spawn, not how many.
+Born in Chaos (about 40 `forge:any` hostiles at weights 2–30) and Foes are left at mod weights on purpose (CONFIG_CHANGES "2026-11-01 — Lore and config consistency pass", which files them as "The Altered"). They share the vanilla monster cap, so they change which hostiles spawn, not how many.
 
 ### 4.7 JVM and hardware
 
@@ -237,10 +265,11 @@ Born in Chaos (about 40 `forge:any` hostiles at weights 2–30) and Foes are lef
 
 ## 5. Proposed changes
 
-**Where edits go.** The usual flow:
-1. Edit this instance (the repo).
-2. Copy to `Servers/Server v2` (mods via `scripts/sync_server_mods.py`).
-3. Copy the changed files to the VM (e.g. over SFTP).
+**Where edits go.**
+1. Edit the client instance (the repo).
+2. Deploy mods to the VM with `scripts/sync_server_mods.py` (over FTP; the VM is its default target), and copy the changed configs, datapacks and scripts to the VM. Steps: README "Multiplayer / Dedicated Server".
+
+(Corrected 2026-11-08: written as "copy to `Servers/Server v2` (mods via `scripts/sync_server_mods.py`), then copy the changed files to the VM (e.g. over SFTP)". Since 2026-11-06 the sync script deploys to the VM over FTP by default, and `Servers/Server v2` is a local test bed, not live. See CONFIG_CHANGES "2026-11-06 — Deployment tooling: VM sync, mod-list generators, shared build script".)
 
 `defaultconfigs/` only seeds new worlds; for the live world, edit `world/serverconfig/` on the VM. Mods and datapacks need a server restart. Anything in `mods/` must match on clients and server.
 
@@ -250,12 +279,12 @@ Born in Chaos (about 40 `forge:any` hostiles at weights 2–30) and Foes are lef
 ```
 -Xms12G -Xmx12G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1
 ```
-- *Why:* a fixed 12 GB heap stays well below the VM's RAM and leaves room for the OS and off-heap memory. Aikar's flags are the standard G1 tuning for Minecraft. Current hosting guides recommend G1 up to about 12 GB; generational ZGC costs 10–15% more CPU, which comes straight out of tick time on slow cores (research).
+- *Why:* a fixed 12 GB heap stays well below the VM's RAM and leaves room for the OS and off-heap memory. Aikar's flags are the standard G1 tuning for Minecraft. Hosting guides (as of 2026-11-06) recommend G1 up to about 12 GB; generational ZGC costs 10–15% more CPU, which comes straight out of tick time on slow cores (research).
 - *Effect:* under 1% of average tick time, but it removes the ~100 ms hitches and the swap risk.
 
 **5.1.2 Host CPU frequency (Proxmox host, not the VM).** Check that turbo is enabled in the BIOS. On the host, `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor` should report `performance`. If it doesn't, set it with `cpupower frequency-set -g performance` (persist it via the distribution's usual method).
 - *Why:* the E5-2650 v2 runs at 2.6 GHz base and up to 3.4 GHz with turbo. The tick is bound to a single thread, so clock speed translates directly into tick time.
-- *Effect:* 0–25%, depending on the current state.
+- *Effect:* 0–25%, depending on the host's state.
 
 **5.1.3 Optional: `sync-chunk-writes=false`** in the VM's `server.properties`. With `true`, chunk saves write synchronously (fsync) on the IO workers. This doesn't change the steady tick, but it reduces save stalls on slow disks. Paper's default is `false`. The trade-off is slightly more risk of chunk loss if the host loses power.
 
@@ -276,11 +305,11 @@ Born in Chaos (about 40 `forge:any` hostiles at weights 2–30) and Foes are lef
 `data/the_one_who_watches/forge/biome_modifier/toww_hallucination_biome_modifier.json` and `data/rake_the_arrival/forge/biome_modifier/ambient_sound_biome_modifier.json` — **copy each file from its mod jar** (both use explicit biome lists that must be kept) and change only `weight` (5 → 2, 15 → 2).
 
 - *Why:* puts these spawns at the documented benchmark (weight 2, solitary). It stops `toww_hanging`, which spawns at weight 30 in every biome and never despawns, from piling up across the world. Each loaded watcher also carries the 2048-block pathfinding cost unless §5.3.2 is applied.
-- *Effect:* prevents the tick from getting slower over time; it doesn't speed up today's tick. Watchers already in the world remain. Kill the loaded ones with `/kill @e[type=the_one_who_watches:toww_hanging]` if wanted (only loaded chunks are affected).
+- *Effect:* prevents the tick from getting slower over time; it doesn't speed up the profiled tick. Watchers already in the world remain. Optional: kill the loaded ones with `/kill @e[type=the_one_who_watches:toww_hanging]` (only loaded chunks are affected).
 - Takes effect on world load. Revert by deleting the files.
 
 **5.2.2 Remove Data Anchor** (`Data_Anchor-forge-1.20.1-1.0.0.24.jar`, by Corgi Taco). No jar on either side references its classes or declares it as a dependency; it's an orphan, possibly left behind by a removed mod.
-- *How:* remove it in the CurseForge app (so the app doesn't restore it), run `scripts/sync_server_mods.py` (which prunes it from Server v2), and delete it from the VM's `mods/`. It must come off **both** sides.
+- *How:* remove it in the CurseForge app (so the app doesn't restore it), then take it out of the VM's `mods/` with `scripts/sync_server_mods.py`, which moves unwanted jars aside (`mods-removed/` or `.jar.disabled`) instead of deleting them. It must come off **both** sides. (Corrected 2026-11-08: written as "run the sync script (which prunes it from Server v2), and delete it from the VM's `mods/`". Since 2026-11-06 the script targets the VM by default; Server v2 is a local test bed.)
 - *Why:* its mixins on `ServerLevel.tickChunk` and `Level.tickBlockEntities` iterate tracked data for every ticking chunk and block-entity pass, for nothing.
 - *Effect:* ~1% of the overworld tick.
 
@@ -302,8 +331,8 @@ Born in Chaos (about 40 `forge:any` hostiles at weights 2–30) and Foes are lef
 | Change | File / key | Effect | Trade-off |
 |---|---|---|---|
 | Ars Nouveau Rewind off | `config/ars_nouveau/rewind.toml` `enabled = false` | 1.2%. Verified in code: `EffectRewind.shouldRecordData` returns false when the glyph is disabled. A middle option: add entity types to the `ars_nouveau:rewind_blacklist` tag via a datapack. | The Rewind glyph can no longer be used |
-| Immersive Weathering moss | `config/immersive_weathering-common.toml` `[mossy_blocks] enabled = false` | Up to 1.3% now. Upstream issue #464 reports about 4% from moss neighbour-update chains on larger worlds (research). | No moss spreading |
-| Alex's Mobs Underminer | `config/alexsmobs.toml` `underminerSpawnWeight` 50 → lower | Reported as laggy upstream (research, unverified here) | Fewer Underminers |
+| Immersive Weathering moss | `config/immersive_weathering-common.toml` `[mossy_blocks] enabled = false` | Up to 1.3% as profiled. Upstream issue #464 reports about 4% from moss neighbour-update chains on larger worlds (research). | No moss spreading |
+| Alex's Mobs Underminer | `config/alexsmobs.toml` `underminerSpawnWeight` 50 → lower | Reported as laggy upstream (research, unverified in the pack) | Fewer Underminers |
 | Incendium per-tick clock | override `incendium:clocks/main` via an OpenLoader datapack | 3.7%. Its tag `incendium:mobs_no_player` lists all ~70 vanilla mobs, so it initialises and rescans every mob in every dimension, every tick. Its `@e` selectors have no position limit, so they also read other dimensions' entity lists from the overworld worker. Options: run the init/eid lines on a slower clock, or disable the functions (FTB did this in its own pack; research). | Delays or removes Incendium's scripted mob behaviour; needs a careful datapack |
 | Quark small modules | `config/quark-common.toml`: Pig Litters, Parrot Eggs, Horses Swim, Dragon Scales, Vexes Die With Their Masters, Poison Potato Usage | Part of 1.2% | Small gameplay tweaks lost |
 
@@ -313,7 +342,7 @@ Born in Chaos (about 40 `forge:any` hostiles at weights 2–30) and Foes are lef
 
 A small Forge mod with one job per mixin, built the same way as `tools/immptl_dimthread_compat`:
 - **Project:** `tools/spooky_tick_fixes/` with `build.py --install`, compiled with JDK 17 (`E:\Program Files\Java\jdk-17`) against the jars in the CurseForge install. The jar goes in `mods/` and `local/`.
-- **Install on both sides.** It changes no registries or network protocol, but keeping it on clients also speeds up singleplayer (The Correction instance) and keeps `mods/` identical. The sync script copies it to the server (the VM by default).
+- **Install on both sides.** It changes no registries or network protocol, but keeping it on clients also speeds up singleplayer and keeps `mods/` identical. The sync script copies it to the server (the VM by default). (Corrected 2026-11-08: written as "speeds up singleplayer (The Correction instance)". That second client instance was deleted on 2026-11-06; the client instance is the only client instance.)
 - **Fail-soft per target mod.** Use a mixin config plugin (`IMixinConfigPlugin.shouldApplyMixin`) that applies each mixin only if its target mod is loaded, and logs one line per applied patch. Removing a target mod later then doesn't crash the server. Each mixin is `required: true` *when applied*, so a target that changed shape fails loudly at startup (the existing shim's policy).
 - **Rule for every patch:** skip work that provably cannot change the result. Never change what the mod does.
 - **Verify every target with `javap`** against the shipped jar before building, as was done for the existing shims.
@@ -370,7 +399,7 @@ Measured costs are shares of the overworld tick (O) or the server thread (S).
 #### 5.3.8 Farm & Charm: send saturation only on change — O 0.75%, plus network
 - **Target:** `net.satisfy.farm_and_charm.core.network.PacketHandler#sendSaturationSync(SyncSaturationPacket, Entity)`, inject at HEAD, cancellable.
 - **Change:** remember the last `(level, foodCounter)` sent per entity (weak map). Cancel when unchanged, but resend every 100 ticks, and when a player starts tracking the animal (`PlayerEvent.StartTracking`), so clients that come into range get the current value.
-- **Why it helps:** today it sends one packet per animal per tick to every player in the dimension, near or far.
+- **Why it helps:** as profiled, it sends one packet per animal per tick to every player in the dimension, near or far.
 
 #### 5.3.9 Smaller patches — O ~1.4% combined
 - **Create Slice & Dice** (`EntityMixin.baseTick`, wet-air check): gate on whether the level has any loaded sprinkler, tracked through the sprinkler block entity's load and unload.
@@ -398,9 +427,15 @@ Both need their code read in full before building.
 - **What:** adjusts simulation and view distance to hold a target MSPT. It's lower-risk than ServerCore (it only changes distances) and comes from the author of Chunk Sending, Smooth Chunk, Better Chunk Loading and others already in the pack. It needs Cupboard, which is already installed. DimThreads 1.2.1 fixed an earlier Cupboard incompatibility.
 - **Caveat:** don't combine it with ServerCore's dynamic distance.
 
-**Hardware.** A current desktop-class CPU is about 2.5× faster per core than the E5-2650 v2. That alone would put today's tick near the 50 ms budget.
+**Hardware:** see §5.5.9.
 
-### 5.5 Additional options (added after the audit)
+### 5.5 Further options: entity count, host, world generation, last resorts
+
+By topic:
+- **Entity count and throttling:** §5.5.1 activation range, §5.5.2 far-away despawn for watchers, §5.5.3 one-off cleanup, §5.5.7 mob caps.
+- **Host and JVM** (extends §5.1): §5.5.4 Proxmox host tuning, §5.5.5 JVM extras, §5.5.9 faster CPU.
+- **World generation:** §5.5.6 pregeneration.
+- **Last resort and rejected:** §5.5.8 mod removal, §5.5.10 considered and rejected.
 
 #### 5.5.1 Activation range: tick far-away entities less often — O 35–44% alone
 
@@ -417,28 +452,29 @@ Another 230–270 entities, including 63–84 mimics, sit in chunks that are loa
 
 So more than 80% of the entities that tick are more than 48 blocks from the player. Nobody can see them in detail, yet each costs a full tick.
 
-**The change.** Mobs more than 48 blocks from every player in their dimension run their tick only one tick in four. Entities are staggered by ID (`(gameTime + id) % 4 == 0`), so each tick handles about a quarter of the far mobs instead of all of them. A skipped tick is skipped entirely, so the mob lives in slow motion, including its own timers. Two exceptions:
+**The change.** Mobs more than 48 blocks from every player in their dimension run their tick only one tick in four. Entities are staggered by ID (`(gameTime + id) % 4 == 0`), so each tick handles about a quarter of the far mobs instead of all of them. A skipped tick is skipped entirely, so the mob lives in slow motion, including its own timers. Exceptions:
 - `AgeableMob` age gets the skipped ticks added back, so growth and breeding cooldowns keep normal pace;
+- the vanilla despawn check also runs on skipped ticks (switch `despawnChecks`) (Corrected 2026-11-08: added in the `spooky_tick_fixes` 1.1.0 implementation; the proposal listed only the age catch-up);
 - the immunity rules below always override the throttle.
 
 **Never throttled:**
 - **Non-mobs:** items, projectiles, minecarts, boats, falling blocks, markers, item frames, armor stands, and Create and Immersive Portals entities. These keep vanilla behaviour.
 - **Mobs in an active state:** anything with a target, hurt in the last 5 s, burning, leashed, riding or being ridden, or taking part in a raid.
 - **Bosses.**
-- **Anything in the datapack tag `#spooky_tick_fixes:always_tick`.** Seed it with:
+- **Anything in the config lists `alwaysTickEntities` and `alwaysTickNamespaces`** (`config/spooky_tick_fixes-common.toml`). Seed them with:
   - MineColonies citizens and visitors (MineColonies officially lists activation-range mods as conflicting, because citizens work away from players);
   - Guard Villagers guards;
   - the horror suite's scripted mobs (TOWW chase variants, Rake, Man From The Fog, Cave Dweller, Weeping Angels, Pale Hound, CANTBREATHE, The Mimicer);
   - Mahou Tsukai familiars.
 
-  Editing the tag needs no rebuild.
-- **Optional adaptive mode:** throttle only while the last-minute average tick is above 50 ms, so the world runs at full fidelity whenever the server keeps up.
+  Editing the lists needs no rebuild. (Corrected 2026-11-08: proposed as a datapack tag, `#spooky_tick_fixes:always_tick`; implemented in `spooky_tick_fixes` 1.1.0 as these two config lists. `alwaysTickEntities` holds the vanilla bosses; `alwaysTickNamespaces` exempts whole mods: `minecolonies`, `guardvillagers`, `the_one_who_watches`, `rake_the_arrival`, `the_obsessed`, `cave_dweller`, `weeping_angels`, `pale_hound`, `cant_breathe`, `themimic_er`, `whispering_spirits`, `antlers`, `john_mod_reborn`, `creepingwoods`, `man`, `mahoutsukai`. See CONFIG_CHANGES "2026-11-06 — spooky_tick_fixes 1.1.0: second pass and activation range".)
+- **Optional adaptive mode:** throttle only while the last-minute average tick is above 50 ms, so the world runs at full fidelity whenever the server keeps up. (Corrected 2026-11-08: implemented in 1.1.0 and on by default; throttling switches on above `enableAboveMspt` 50 ms and off below `disableBelowMspt` 30 ms.)
 
 **Gameplay effect:**
 - Mobs, animals and villagers more than 48 blocks away move, path and think at quarter rate. They're too far to be seen in detail.
 - Animal growth and breeding stay normal (the age catch-up).
-- Far villagers work and breed more slowly. Add `minecraft:villager` to the tag if that matters.
-- Far hostiles despawn more slowly, since their despawn check runs less often. The mob cap then stays fuller, so fewer new spawns happen. That's neutral to slightly fewer mobs.
+- Far villagers work and breed more slowly. (Corrected 2026-11-08: written as "Add `minecraft:villager` to the tag if that matters". In 1.1.0 villagers are throttled by design, and the exemptions are config lists, not a tag.)
+- Far hostiles despawn at the normal rate, because the despawn check runs on skipped ticks too. (Corrected 2026-11-08: written as "Far hostiles despawn more slowly, since their despawn check runs less often. The mob cap then stays fuller, so fewer new spawns happen. That's neutral to slightly fewer mobs." That describes the proposal; 1.1.0 runs the despawn check on every tick.)
 - Known visual edge: mobs seen through an Immersive Portals portal more than 48 blocks away can look slow-motion. If that shows, treat entities within range of a portal near a player as near.
 
 **Estimated gain:**
@@ -448,12 +484,12 @@ So more than 80% of the entities that tick are more than 48 blocks from the play
 - It replaces the need for §5.2.5: far things keep running slowly instead of freezing beyond 128 blocks.
 
 **How to get it, either way:**
-- **Built into `spooky_tick_fixes` (recommended).** One cancellable inject at HEAD of `ServerLevel.tickNonPassenger` (`m_8647_`), plus the immunity checks, the age catch-up, the tag and a config file holding range, interval and adaptive mode. That's about 150 lines.
-  - *Why recommended:* only the listed behaviour changes, the exclusion list is under the pack's control, and it's tested against this pack's mods.
+- **Built into `spooky_tick_fixes` (recommended).** One cancellable inject at HEAD of `ServerLevel.tickNonPassenger` (`m_8647_`), plus the immunity checks, the age catch-up, the exemption lists and a config file holding range, interval and adaptive mode. That's about 150 lines.
+  - *Why recommended:* only the listed behaviour changes, the exclusion list is under the pack's control, and it's tested against the pack's mods.
   - *Add a `/tickfixes stats` command* showing how many entities were throttled last tick, to confirm it's working.
 - **ServerCore (§5.4).** Its activation range is ported from Paper and configurable per entity type. It's the last Forge build, untested with DimThreads and Immersive Portals, and needs the same MineColonies exclusions.
 
-**Why not two threads (near and far)?** It was considered. The split is lopsided (about 18% near, 82% far), so the tick would still wait for the far thread processing 82% of the work: a ceiling of about 20% gain. It also carries every risk in §5.5.10. Skipping three of four far ticks removes more work and needs no threading.
+**Why not two threads (near and far)?** Rejected (§5.5.10). The split is lopsided (about 18% near, 82% far), so the tick would still wait for the far thread processing 82% of the work: a ceiling of about 20% gain. It also carries every risk in §5.5.10. Skipping three of four far ticks removes more work and needs no threading.
 
 #### 5.5.2 Let non-despawning horror mobs despawn when far away
 
@@ -467,7 +503,7 @@ These are gameplay decisions; check what's there before deleting anything.
 - **The raider group** that sat near spawn for 30+ minutes in every profile (24 pillagers plus vindicators and witches, chunks 6–7 / 3–5, blocks x 96–127, z 48–95):
   `/kill @e[type=#minecraft:raiders,x=96,y=-64,z=48,dx=32,dy=384,dz=48]`
 - **Loaded watchers:** `/kill @e[type=the_one_who_watches:toww_hanging]` (only loaded chunks are affected).
-- **27 zombie villagers around the village.** Probably converted villagers, which never despawn. Cure them, or kill them, as preferred.
+- **27 zombie villagers around the village.** Probably converted villagers, which never despawn. Options: cure them or kill them.
 
 #### 5.5.4 Proxmox host tuning (adds to §5.1.2)
 
@@ -475,22 +511,22 @@ The E5-2650 v2 normally sits in dual-socket boards. Settings that each tend to b
 - **Keep the VM on one socket.** Check the layout on the host with `lscpu -e` (the SOCKET, NODE and CORE columns) or `numactl --hardware`. Enable NUMA for the VM (`qm set <vmid> --numa 1`). Pin its vCPUs to cores on one socket (`qm set <vmid> --affinity <core list>`, Proxmox VE 7.3+). That way memory reads don't cross sockets.
 - **Prefer physical cores over hyperthread pairs** for the vCPU list: two hyperthreads of one core share it, and the tick thread is the one that suffers.
 - **Power settings:** BIOS power profile on "Maximum Performance", deep C-states off, and turbo on. With the `intel_pstate` driver, `cat /sys/devices/system/cpu/intel_pstate/no_turbo` should print `0`. Then the `performance` governor (§5.1.2).
-- **Check for contention:** run `vmstat 1` inside the VM and watch the `st` (steal) column while the server runs. If it isn't near 0, other VMs are taking this VM's CPU time.
+- **Check for contention:** run `vmstat 1` inside the VM and watch the `st` (steal) column while the server runs. If it isn't near 0, other VMs are taking the VM's CPU time.
 
-Together with §5.1.2 this could be 10–25% if turbo or power saving is currently holding the CPU back, and close to nothing if it's already tuned.
+Together with §5.1.2 this could be 10–25% if turbo or power saving is holding the CPU back, and close to nothing if it's already tuned.
 
 #### 5.5.5 JVM extras (Linux)
 
 - **`-XX:+UseTransparentHugePages`** added to the §5.1.1 line lets the JVM back its heap with 2 MB pages, which cuts memory-translation overhead. It's a few percent at low risk. Requires `/sys/kernel/mm/transparent_hugepage/enabled` in the VM to read `[madvise]` or `[always]`.
-- **Oracle GraalVM for JDK 21** in place of the Ubuntu OpenJDK. Same flags; its JIT compiler is often reported 5–15% faster on modded servers *(community benchmarks, unverified here)*. It's just a different Java install, so it's easy to try and revert. Test on a copy first, like any JVM change.
+- **Oracle GraalVM for JDK 21** in place of the Ubuntu OpenJDK. Same flags; its JIT compiler is often reported 5–15% faster on modded servers *(community benchmarks, unverified in the pack)*. It's just a different Java install, so it's easy to try and revert. Test on a copy first, like any JVM change.
 
 #### 5.5.6 Pregenerate the world with Chunky
 
 While exploring, chunk loading took up to 12% of the server thread (§4.5), and new terrain also costs generation work.
 - **What to run:** `/chunky center 0 0`, `/chunky radius <n>`, `/chunky start`, at a time nobody is playing.
 - **What it fixes:** the generation hitches while exploring, not the steady tick.
-- **Already in place:** Better Chunk Loading's smart post-processing is already off, which prevents the Chunky deadlock (CONFIG_CHANGES 2026-11-03).
-- **Disk space is the limit.** The VM has about 6 GB free, and modded region files grow fast. Start with a small radius (e.g. 1000 blocks, about 15,600 chunks) and check usage before going further.
+- **Already in place:** Better Chunk Loading's smart post-processing is already off, which prevents the Chunky deadlock (CONFIG_CHANGES "2026-11-03 — Better Chunk Loading: smart post-processing off").
+- **Disk space is the limit.** The VM had about 6 GB free (2026-11-06), and modded region files grow fast. Start with a small radius (e.g. 1000 blocks, about 15,600 chunks) and check usage before going further.
 
 #### 5.5.7 Lower mob caps
 
@@ -507,22 +543,22 @@ Fewer hostiles near players means less AI and path searching. Vanilla has no set
 
 #### 5.5.9 Faster CPU
 
-A current desktop-class CPU is about 2.5× faster per core than the E5-2650 v2. Moving only this VM onto such a machine would put today's tick (about 137 ms) near the 50 ms budget before any other change. Combined with the shim, it would leave headroom for more players and bigger bases.
+A current desktop-class CPU is about 2.5× faster per core than the E5-2650 v2. Moving only the VM onto such a machine would put the profiled tick (about 137 ms) near the 50 ms budget before any other change. Combined with the shim, it would leave headroom for more players and bigger bases.
 
 #### 5.5.10 Considered and rejected
 
 - **Parallel entity ticking within a dimension.** The Async mod's Forge 1.20.1 ports (HariMultiThread, HariEntity, kingniu4/Async-1.20.1) and MCMT (original for 1.15/1.16; newer forks) split a dimension's entity list across a thread pool. Rejected:
   - entity ticks aren't independent (pushing, damage, block changes, spawning and removing entities, the world's shared random number generator);
-  - several mods here assume one thread per dimension (Full Immersion records a single "projection thread"; The Obsessed sends packets from mob ticks; Canary keeps single-threaded collision and entity caches; Alex's Caves, Citadel, Farm & Charm and Incendium keep shared tables);
-  - DimThreads has already hit this class of bug three times in this pack (Immersive Portals' thread check, Chunk Sending 4.1's void world, the Better Chunk Loading deadlock);
-  - the mods call themselves experimental alpha and expect a `synchronizedEntities` list, which here would be long and would shrink the gain.
-  
+  - several mods in the pack assume one thread per dimension (Full Immersion records a single "projection thread"; The Obsessed sends packets from mob ticks; Canary keeps single-threaded collision and entity caches; Alex's Caves, Citadel, Farm & Charm and Incendium keep shared tables);
+  - DimThreads has already hit this class of bug three times in the pack (Immersive Portals' thread check, Chunk Sending 4.1's void world, the Better Chunk Loading deadlock);
+  - the mods call themselves experimental alpha and expect a `synchronizedEntities` list, which in the pack would be long and would shrink the gain.
+
   If ever tried: last, on a copy, with backups.
 - **Splitting by chunk or region.** Entities affect things well beyond 16 blocks within one tick (targeting 16–64, path searches up to the follow range, arrows, teleports up to 150 blocks, `@e` commands across the whole dimension). Block updates also cross chunk borders. Checkerboard scheduling only fixes contact interactions. Folia (Paper) does region threading with a buffer between regions, but:
   - it gains only with players far apart (one player means one region);
   - it rewrote all global systems;
   - it runs no Forge mods.
-  
+
   This is the same reason multi-node sharding was ruled out.
 - **Two threads, near and far.** See §5.5.1: about a 20% ceiling, plus the risks above.
 - **Calculating the next tick in advance.** Tick N+1 starts from exactly what tick N produces, plus the player input that arrives during tick N. Guesses would almost always be wrong, and there's no idle time between ticks while the server is behind. The safe forms of "precompute" are already covered: pregeneration (§5.5.6), predictive chunk loading (Better Chunk Loading, installed), path searching on worker threads (MineColonies, Alex's Mobs, Citadel), and skipping work whose answer can't have changed (§5.3).
@@ -533,7 +569,7 @@ A current desktop-class CPU is about 2.5× faster per core than the E5-2650 v2. 
 
 | Area | What to watch | Lever *(research unless stated)* |
 |---|---|---|
-| MineColonies | `colonyloadstrictness = 1` with `loadtime = 40` keeps every claimed chunk ticking for 40 minutes after the owner leaves (stated in CONFIG_CHANGES 2026-11-04) | Raise strictness, lower loadtime |
+| MineColonies | `colonyloadstrictness = 1` with `loadtime = 40` keeps every claimed chunk ticking for 40 minutes after the owner leaves (CONFIG_CHANGES "2026-11-04 — MineColonies: server config replaced"). (Corrected 2026-11-08: those values were in `defaultconfigs/` only. The VM world's `world/serverconfig/minecolonies-server.toml` kept the old values, strictness 3 and loadtime 10, when checked on 2026-11-07. The new file was uploaded to the world on 2026-11-08 and is live after the next VM restart.) | Raise strictness, lower loadtime |
 | Mekanism | Logistical transporters with item backlogs re-path every tick (#8602, open) | Avoid long backed-up transporter lines |
 | AE2 | Storage buses polling external inventories | Fewer or narrower storage buses |
 | Create | Filtered brass funnels/tunnels pulling from large vaults (#5448); contraption assembly spikes | `maxBlocksMoved` in `create-server.toml` |
@@ -581,8 +617,10 @@ Savings were summed as if independent, which overstates slightly where they over
 
 Profiles: https://spark.lucko.me/LnjBFaG1Y8 · https://spark.lucko.me/ulUxjide6w · https://spark.lucko.me/UFcKxbb5UP
 
+Related documents: `CONFIG_CHANGES.md` (the Baseline "Performance — …" sections, "2026-11-02 — Immersive Portals × DimThreads: compat shim", "2026-11-03 — Better Chunk Loading: smart post-processing off"), `UPDATE_REVIEW_2026-11-01.md`, `SERVER_MODS.md`, `tools/spooky_tick_fixes/README.md` (the implemented patches).
+
 Research references (not re-verified locally):
-- DimThreads README (total MSPT = slowest dimension): https://github.com/SrRapero720/DimensionalThreading-Reforked
+- DimThreads README (total MSPT = slowest dimension; not true of 1.2.1, see §4.1): https://github.com/SrRapero720/DimensionalThreading-Reforked
 - ServerCore Forge: https://modrinth.com/mod/servercore/version/rx1c7m6q · MineColonies exclusion issue: https://github.com/Wesley1808/ServerCore/issues/101
 - MineColonies config and conflicting mods: https://minecolonies.com/wiki/misc/configfile/
 - Dynamic View: https://www.curseforge.com/minecraft/mc-mods/dynamic-view/files/5345889

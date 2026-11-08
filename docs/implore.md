@@ -1,33 +1,41 @@
-Old Civilisation Lore Implementation Specification
-KubeJS + Existing Mod Integration
-Purpose
+# Old Civilisation lore: item specification
 
-This document defines the storytelling layer to be added to the modpack.
+KubeJS + existing mod integration
+
+> **Status:** Implemented as KubeJS items in the `oldcivilisation:` namespace (scripts committed 2026-07-08). How each
+> item is built, where it drops and what is not verified in game: `docs/implore_implementation_plan.md`.
+> **Related:** `docs/thelore.md` (hidden truth), `docs/ftbquest.md` (quest-book design), `docs/sanity_mechanic.md`
+> (the two clarity consumables that share the item pipeline)
+
+## Purpose
+
+This document defines the pack's storytelling layer.
 
 The goal is not to create a linear adventure map. The world remains a sandbox.
 
-The player should slowly uncover:
+The player slowly uncovers:
 
-The existence of The Old Civilisation
-The existence of The Correction
-The HS-LGTFO Mission
-The relationship between technology, magic, and the horrors
-The truth that the disaster was not caused by one faction, but by an attempt to understand something beyond reality
+- The existence of The Old Civilisation
+- The existence of The Correction
+- The HS-LGTFO Mission
+- The relationship between technology, magic, and the horrors
+- The truth that the disaster was not caused by one faction, but by an attempt to understand something beyond reality
 
-The story should be conveyed through:
+The story is conveyed through:
 
-items
-environmental discoveries
-existing structures
-machine progression
-exploration
-rare encounters
+- items
+- environmental discoveries
+- existing structures
+- machine progression
+- exploration
+- rare encounters
 
-The player should never receive a complete explanation.
+The player never receives a complete explanation.
 
-Every discovery should answer one question while creating two more.
+Every discovery answers one question while creating two more.
 
-The biggest danger with lore items is that players find one and immediately understand the plot. You want a world where players collect dozens of fragments and only later realise they form a picture.
+The biggest danger with lore items is that players find one and immediately understand the plot. The aim is a world
+where players collect dozens of fragments and only later realise they form a picture.
 
 Three categories:
 
@@ -134,10 +142,10 @@ oldcivilisation:id_badge
 
 Random:
 
-* Research Division
 * Infrastructure Division
 * Energy Division
 * Atmospheric Studies
+* Reality Stabilisation Research
 
 ---
 
@@ -165,7 +173,8 @@ Reality Stabilisation Research
 
 # 3. Damaged Photograph
 
-Since you have Camerapture, this fits perfectly.
+Camerapture is in the pack, and the photograph fits its theme. It is a normal item with a randomised tooltip, not a
+Camerapture picture (a picture needs a runtime-uploaded image, so it can't be prebaked into loot).
 
 ## ID
 
@@ -277,11 +286,8 @@ Rare loot.
 
 ## Implementation
 
-Could be:
-
-* renamed Goat Horn
-* music disc style item
-* CC:Tweaked playback
+A music-disc-style item: right-click plays an existing eerie sound and prints a transcript line. Alternatives
+considered: a renamed Goat Horn, CC:Tweaked playback.
 
 ---
 
@@ -361,9 +367,9 @@ Magic remembers them.
 
 # 7. Memory Fragment Variants
 
-Do not have one Memory Fragment.
+There is no single Memory Fragment.
 
-Have multiple.
+There are three.
 
 ---
 
@@ -489,7 +495,7 @@ Rare occultism interactions.
 
 # CATEGORY 4 — Horror Evidence
 
-These should be unsettling.
+These are unsettling.
 
 ---
 
@@ -506,8 +512,8 @@ oldcivilisation:biological_sample
 ## Drops From
 
 * Born in Chaos
-* The Pale Hound (if installed)
-* horror mobs
+* Foes
+* chests: ancient cities, mansions, undead and plague dungeons
 
 ---
 
@@ -571,9 +577,7 @@ Exploration.
 
 ## Effect
 
-When combined:
-
-Creates a map.
+Four fragments combine into a map (`oldcivilisation:corrupted_map`).
 
 But:
 
@@ -588,6 +592,11 @@ Map shows:
 * a continent that does not exist
 * a city beneath the ocean
 * structures underground
+
+---
+
+The marquee horrors (the Mimicer, the Cave Dweller, CANTBREATHE, Weeping Angels) each leave a unique residue instead:
+Distorted Replica, Deep Echo, Breathless Residue and Temporal Residue (`implore_implementation_plan.md` §5).
 
 ---
 
@@ -671,9 +680,9 @@ The Correction followed.
 
 # 15. HS-LGTFO Black Box Variants
 
-Do not have one flight recorder.
+There is no single flight recorder.
 
-Have fragments.
+There are four fragments.
 
 ---
 
@@ -712,6 +721,9 @@ flight_recorder_arrival
 flight_recorder_final
 ```
 
+The four fragments, the Colony Manifest and the Navigation Fragment combine into the HS-LGTFO Mission Data
+(`oldcivilisation:hs_lgtfo_mission_data`).
+
 ---
 
 # CATEGORY 6 — Items That Change Over Time
@@ -732,7 +744,7 @@ oldcivilisation:unstable_memory
 
 ## Mechanic
 
-The tooltip changes after discoveries.
+The tooltip changes after discoveries (at 4, 9 and 16 distinct kinds of evidence).
 
 Early:
 
@@ -766,7 +778,7 @@ Rare.
 
 ## Use:
 
-Right-click occasionally:
+Right-click:
 
 ```
 SIGNAL DETECTED.
@@ -777,7 +789,7 @@ UNKNOWN.
 
 ---
 
-Later:
+After 10 discoveries:
 
 ```
 SIGNAL SOURCE:
@@ -814,12 +826,6 @@ Tooltip:
 
 ---
 
-Useful for:
-
-MineColonies trading.
-
----
-
 # 19. Employee Handbook
 
 ## ID
@@ -848,7 +854,7 @@ Ends disturbing:
 
 # 20. Final Item: The Correction Fragment
 
-Do not add this until endgame.
+Endgame only.
 
 ## ID
 
@@ -866,6 +872,9 @@ Only after:
 * magic
 * engineering
 
+It is never looted: it is granted once the player has recovered a technical, a magical and an exodus record and 12
+distinct kinds of evidence.
+
 ---
 
 Tooltip:
@@ -874,9 +883,9 @@ Tooltip:
 
 ---
 
-# Recommended Total Item Pool
+# Item pool
 
-I would aim for:
+Target:
 
 | Category           | Number |
 | ------------------ | -----: |
@@ -889,20 +898,18 @@ I would aim for:
 
 Around **30 items total**.
 
-Not all need complex mechanics.
+Many of those slots are text variants of one item. 31 story items are registered: 5 personal, 3 technical, 5
+magical, 8 horror (including the Corrupted Map and the four residues), 7 exodus (including the Mission Data), 2
+anomalous, and the Correction Fragment.
 
-Many can simply be:
-
-* loot additions
-* Patchouli entries
-* CC archive text files
-* randomised descriptions
+Not every item needs complex mechanics. Most are loot additions with randomised descriptions, and the CC:Tweaked
+`archive` program holds archive text.
 
 ---
 
-The biggest improvement over the first design is adding **perspective**.
+The design's central device is **perspective**.
 
-The player should find:
+The player finds:
 
 * an engineer saying "we succeeded"
 * a mage saying "we should not have tried"
@@ -911,3 +918,13 @@ The player should find:
 * a horror fragment implying "something noticed"
 
 Then the player builds the truth themselves.
+
+---
+
+# Not implemented
+
+- Old Currency as a MineColonies trade good.
+- Biological Sample drops from The Pale Hound. Built: Born in Chaos and Foes mob loot, and chests.
+- Patchouli entries.
+- An ID Badge naming the "Research Division". The badges name Infrastructure, Energy, Atmospheric Studies and Reality
+  Stabilisation Research.

@@ -43,17 +43,19 @@ def natural(s: str):
 NOTES = """\
 > **Notes** (hand-maintained in `tools/generate_server_modlist.py`; everything else here is generated):
 >
-> - **Live server:** the Proxmox VM, deployed over FTP by `scripts/sync_server_mods.py`. `Servers/Server v2`
->   (built 2026-11-02) is now a local test bed (`--server`), and `Servers/spookydookie` (July 2026, TFC-era) is kept
->   unchanged for reference; neither is synced by default.
+> - **Live server:** the Proxmox VM since 2026-11-06, deployed over FTP by `scripts/sync_server_mods.py`.
+>   `Servers/Server v2` (built 2026-11-02) is a local test bed (`--server`), and `Servers/spookydookie` (July 2026,
+>   TFC-era) is kept unchanged for reference; neither is synced by default.
 > - **Runtime:** the VM runs Java 21 (Ubuntu OpenJDK 21.0.12, `-Xms8G -Xmx32G`, G1). Forge 1.20.1 targets Java 17.
 > - **Pinned on both sides — never sync newer versions:** `chunksending-1.20.1-2.8` (4.1 never delivers chunks
 >   under DimThreads), `farsight-1.20.1-5.1`, `hardcoretruedarkness-4.0.0` (v6 blacks out the view under shaders and
 >   is a hard client/server protocol gate). The newer jars are parked in the client's `local/mods-rolled-back-2026-11-01/`.
 > - **Pack-built** (category *Local Fixes*, source in `tools/`): `spooky_tick_fixes` holds the server-tick fixes, the
 >   activation range, the chunk guards and chunk-safe ticking, and (1.4.0) the provoke-only Wendigo (config
->   `config/spooky_tick_fixes-common.toml`), on clients and the server. `spooky_pregen` runs Chunky while the server is empty (config `config/spooky_pregen.json`, `/pregen`); it
->   is inert on clients. `farsight_immptl_compat` is client-only. `immptl_dimthread_compat` is disabled with DimThreads.
+>   `config/spooky_tick_fixes-common.toml`), on clients and the server. `spooky_pregen` runs Chunky while the server
+>   is empty (config `config/spooky_pregen.json`, `/pregen`); it is inert on clients. `spooky_ultimine_shapes` adds
+>   FTB Ultimine shapes and must match on both sides. `farsight_immptl_compat` is client-only.
+>   `immptl_dimthread_compat` is disabled with DimThreads.
 > - **DimThreads disabled 2026-11-06:** version 1.2.1 ticks every dimension under one global lock (no parallelism), and
 >   a 46-minute profile with it off was no slower. Its jar and `immptl_dimthread_compat` are `.jar.disabled` on both sides.
 > - **Server-side helpers added 2026-11-06:** Let Me Despawn (+ its library Almanac) lets mobs that picked up items

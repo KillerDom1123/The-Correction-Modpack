@@ -23,7 +23,12 @@ const CONFIG = {
   baseline: 100.0,
   drain:   { dark: 0.6, deepMin: 0.2, deepMax: 0.6, deepStartY: 0, deepFullY: -40,
              horror: 1.2, horrorRadius: 16, selfEvent: 2.0 },
-  restore: { firelight: 0.5, daylight: 0.8, sleep: 8.0, clarityItem: 30.0 },
+  // Slower recovery (2026-11-08; was firelight 0.5 + daylight 0.8 stacked, sleep 8.0, no delay, no cap):
+  //  - firelight and daylight don't stack: the larger of the two applies;
+  //  - firelight only restores up to firelightCap (torchlight stops the bleeding; Calm needs daylight, sleep or an item);
+  //  - passive recovery (firelight, daylight) only starts settleTicks after the last acute drain (darkness, a horror nearby).
+  //    Depth pressure doesn't reset that clock. Sleep and the clarity items are exempt.
+  restore: { firelight: 0.2, daylight: 0.4, sleep: 5.0, clarityItem: 30.0, firelightCap: 70, settleTicks: 600 },
   light:   { darkBelow: 4, litAtOrAbove: 10 },
   bands:   { unease: 70, dread: 40, breakdown: 15, hysteresis: 5 },
   cooldown:{ unease: 12000, dread: 6000, breakdown: 2400, jitter: 0.25 }, // ticks
@@ -210,13 +215,18 @@ PlayerEvents.tick(event => {
     var hc = 0
     var ow = isOverworld(player)
     var y = player.y
+    var now = gameTime(player)
+    var inDark = false
+    var inLight = false
+    var inDaylight = false
+    var settled = false
 
-    // light: darkness drains, firelight restores
+    // light: darkness drains; firelight (light >= litAtOrAbove) is a restore source, applied below
     if (oc_sn_lightOk) {
       try { light = readLight(player) } catch (e) { oc_sn_lightOk = false; warnOnce('getLight', e) }
       if (light >= 0) {
-        if (light < CONFIG.light.darkBelow) delta -= CONFIG.drain.dark
-        else if (light >= CONFIG.light.litAtOrAbove) delta += CONFIG.restore.firelight
+        if (light < CONFIG.light.darkBelow) { delta -= CONFIG.drain.dark; inDark = true }
+        else if (light >= CONFIG.light.litAtOrAbove) inLight = true
       }
     }
 
@@ -229,13 +239,13 @@ PlayerEvents.tick(event => {
       }
     } catch (e) { warnOnce('depth', e) }
 
-    // daylight restore (day + open sky)
+    // daylight (day + open sky) is a restore source, applied below
     if (oc_sn_dayOk) {
-      try { if (isDaylightSafe(player)) delta += CONFIG.restore.daylight }
+      try { inDaylight = isDaylightSafe(player) }
       catch (e) { oc_sn_dayOk = false; warnOnce('daylight', e) }
     }
 
-    // sleep restore
+    // sleep restore (exempt from the settle delay: going to bed is the deliberate reset)
     if (oc_sn_sleepOk) {
       try { if (player.isSleeping()) delta += CONFIG.restore.sleep }
       catch (e) { oc_sn_sleepOk = false; warnOnce('isSleeping', e) }
@@ -245,10 +255,23 @@ PlayerEvents.tick(event => {
     try { hc = countHorrorsNear(player, CONFIG.drain.horrorRadius); if (hc > 0) delta -= CONFIG.drain.horror }
     catch (e) { warnOnce('proximity', e) }
 
+    // passive recovery: the larger of daylight / firelight (no stacking), firelight only up to firelightCap,
+    // and only once settleTicks have passed since the last acute drain (darkness or a horror nearby)
+    if (inDark || hc > 0) pd.putLong('oc_sanity_last_drain', now)
+    settled = (now - pd.getLong('oc_sanity_last_drain')) >= CONFIG.restore.settleTicks
+    if (settled) {
+      var passive = inDaylight ? CONFIG.restore.daylight : 0
+      if (inLight && sanity < CONFIG.restore.firelightCap) {
+        passive = Math.max(passive, Math.min(CONFIG.restore.firelight, CONFIG.restore.firelightCap - sanity))
+      }
+      delta += passive
+    }
+
     // --- DIAG per-evaluation breakdown (temporary): every drain/restore input + the resulting delta.
     if (CONFIG.debug) {
       console.info(LOG + 'DIAG eval ' + player.username + ': sanity=' + round1(sanity) +
         ' light=' + light + ' y=' + round1(y) + ' overworld=' + ow + ' horrors=' + hc +
+        ' dark=' + inDark + ' lit=' + inLight + ' daylight=' + inDaylight + ' settled=' + settled +
         ' dayOk=' + oc_sn_dayOk + ' sleepOk=' + oc_sn_sleepOk +
         ' => delta=' + round2(delta) + ' newSanity=' + round1(clamp(sanity + delta, 0, 100)))
     }
@@ -271,7 +294,6 @@ PlayerEvents.tick(event => {
 
     // Channel A — roll an ambient event if past this band's cooldown
     if (band > 0) {
-      var now = gameTime(player)
       var last = pd.getLong('oc_sanity_last_event')
       var jitter = 1 + (Math.random() - 0.5) * 2 * CONFIG.cooldown.jitter
       if (now - last >= COOLDOWNS[band] * jitter) {

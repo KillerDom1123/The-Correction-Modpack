@@ -84,6 +84,8 @@ All per-world (`-server.toml`) changes below have been copied to `defaultconfigs
 
 **`WaystonesGate` datapack** — `warp_stone` recipe center **emerald → Eye of Ender**.
 
+> **Superseded 2026-11-08:** warping is free again (base costs zeroed, see "Waystones: no XP cost" near the end). The Eye of Ender gate stays.
+
 **Why:** every teleport now costs XP (min 1 level, scaling with distance), and the shared Warp Stone core (used by all waystones/sharestones) requires a post-nether item, so waystones arrive mid-game. "Require activation" is already Waystones' built-in default (must visit a stone to use it) — no change possible or needed.
 
 ---
@@ -1788,6 +1790,20 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - At Breakdown in the dark, a targeter should appear within a minute or so and lock on only once you look at it. Stalks should then stop when you recover, and never appear inside 48 blocks of a bed.
   - **Gap:** The Obsessed's intruder form can still walk into a base after spawning outside one.
 - **Revert:** the six switches in `[sanityHorror]`, or the 1.4.0 jar.
+
+### Waystones: no XP cost (2026-11-08) — *client instance; VM upload pending*
+- **Why:** the user asked to remove the XP cost of Waystone warping.
+- **How the cost works (read from `PlayerWaystoneManager#getExperienceLevelCost`, Waystones 14.1.21):** cost = round((base + leashed animals × `xpCostPerLeashed`) × the warp mode's multiplier × `globalWaystoneXpCostMultiplier` for a global waystone). Creative players pay nothing.
+  - **Base, between dimensions:** `dimensionalWarpXpCost`, at least `minimumBaseXpCost`.
+  - **Base, otherwise:** distance ÷ `blocksPerXpLevel`, clamped between `minimumBaseXpCost` and `maximumBaseXpCost`.
+- **Change (`config/waystones-common.toml`, `[xpCost]`):** `minimumBaseXpCost` 1.0 → **0.0**, `maximumBaseXpCost` 3.0 → **0.0** (the mod's own "disable all distance-based XP costs"), `dimensionalWarpXpCost` 3 → **0**. `xpCostPerLeashed` was already 0.
+  - With a base of 0, every warp is free: waystone to waystone, Warp Stone, sharestone, portstone, warp plate, inventory button, and global waystones.
+  - The multipliers (all 1.0) are left as they are; they have nothing to multiply.
+- **Unchanged:** the Eye of Ender gate on the Warp Stone (`WaystonesGate`), activation by visiting, and cooldowns.
+- **Side note:** the 2026-07 Mahou Tsukai displacement cap (256 blocks) was justified by long trips going "through the XP-costed Waystones". That reason no longer holds; the cap is left as it is.
+- **VM:** not applied yet. The automated upload was refused by the session's permission check (production deploy). The VM's current file matches the old repo copy. To apply: back it up, upload `config/waystones-common.toml` to `files/server/config/`, and restart. Forge config edits don't hot-reload on the VM.
+- **Client:** the instance's file is changed. Players get it with the next pack update; the server's values are what count in multiplayer.
+- **Revert:** set the three values back (1.0 / 3.0 / 3).
 
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `WendigoTrophies` (2026-11-07; Wendigo loot), `QuestChecks` (2026-11-08; structure and biome tags for the quest book), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)

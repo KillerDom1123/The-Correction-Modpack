@@ -80,13 +80,13 @@
 	#The amount of blocks per xp level requirement. If set to 500, the base xp cost for travelling 1000 blocks will be 2 levels.
 	blocksPerXpLevel = 1000
 	#The minimum base xp cost (may be subceeded by multipliers defined below)
-	minimumBaseXpCost = 1.0
+	minimumBaseXpCost = 0.0
 	#The maximum base xp cost (may be exceeded by multipliers defined below), set to 0 to disable all distance-based XP costs
-	maximumBaseXpCost = 3.0
+	maximumBaseXpCost = 0.0
 	#How much xp is needed per leashed animal to travel with you
 	xpCostPerLeashed = 0
 	#The base xp level cost when travelling between dimensions. Ignores block distance.
-	dimensionalWarpXpCost = 3
+	dimensionalWarpXpCost = 0
 	#The multiplier applied to the base xp cost when teleporting to a global waystone through any method.
 	globalWaystoneXpCostMultiplier = 1.0
 	#The multiplier applied to the base xp cost when teleporting using a Warp Stone item (not the Waystone block, Konstantin)

@@ -1098,6 +1098,23 @@
 			x: -5.5d
 			y: 0.0d
 		}
+		{
+			description: [
+				"High in the canopy, a house built into a jungle giant. Rope bridges, hidden rooms, and whatever moved in after the builders left. Watch your footing."
+			]
+			hide_dependency_lines: true
+			id: "7A09000000000101"
+			rewards: [
+				{ id: "7A09000000000301", type: "xp", xp: 5 }
+				{ exclude_from_claim_all: true, id: "7A09000000000302", table_id: 2501998888776764148L, type: "random" }
+			]
+			subtitle: "Find a Jungle Tree House"
+			tasks: [
+				{ id: "7A09000000000201", structure: "dungeons_arise:jungle_tree_house", type: "structure" }
+			]
+			x: -8.5d
+			y: -3.0d
+		}
 	]
 	title: "When Dungeons Arise"
 }

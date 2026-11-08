@@ -14,6 +14,13 @@
 //   oc_q_power          The Machines That Remain / "The Power Question": any advancement in POWER_ADVANCEMENTS.
 //   oc_q_cast_spell     The Other Science / "A Different Kind of Power": set by startup_scripts/oc_quest_spellcast.js
 //                       when the player casts an Ars Nouveau spell.
+// Mirrored from state other scripts keep (qcMirror):
+//   oc_q_evidence_tech / _magic / _space   The Final Question / "The Answer": the oc_interactions.js path flags, the
+//                       same three the Correction Fragment grant waits for.
+//   oc_q_discoveries_4 / _10 / _12 / _16   distinct lore items held (oc_discoveries): Recovered Evidence milestones,
+//                       and 12 for "The Answer" (the grant's threshold).
+//   oc_q_contact        Field Reports / "Unidentified Contact": has held a Biological Sample or an Impossible Bone.
+//   oc_q_breakdown      Field Reports / "Breakdown" (hidden): sanity has reached the Breakdown band (oc_sanity.js).
 //
 // "Whole night": seen at or before 14000 and at or after 22000 (dayTime of day; night is 13000-23000), alive throughout
 // (a death that night voids it), in the Overworld at every check. Nights in other dimensions don't count.
@@ -31,6 +38,7 @@ const QC = {
   shelterShare: 0.75,
   silentNights: 5,
   watcherNights: 10,
+  discoveries: [4, 10, 12, 16],   // distinct lore items held (oc_interactions.js oc_discoveries)
 }
 const POWER_ADVANCEMENTS = [
   'create:water_wheel', 'create:windmill', 'create:steam_engine',            // generating torque
@@ -102,6 +110,22 @@ function qcFinishNight(p, pd) {
   }
 }
 
+// Mirror state other scripts already keep (oc_interactions.js, oc_sanity.js) into tags the quest book can check.
+function qcMirror(p, pd) {
+  if (pd.getBoolean('oc_flag_tech')) qcGrant(p, 'oc_q_evidence_tech', null)
+  if (pd.getBoolean('oc_flag_magic')) qcGrant(p, 'oc_q_evidence_magic', null)
+  if (pd.getBoolean('oc_flag_space')) qcGrant(p, 'oc_q_evidence_space', null)
+  var d = pd.getInt('oc_discoveries')
+  for (var i = 0; i < QC.discoveries.length; i++) {
+    if (d >= QC.discoveries[i]) qcGrant(p, 'oc_q_discoveries_' + QC.discoveries[i], null)
+  }
+  var seen = pd.getString('oc_seen') || ''
+  if (seen.indexOf('[oldcivilisation:biological_sample]') >= 0 || seen.indexOf('[oldcivilisation:impossible_bone]') >= 0) {
+    qcGrant(p, 'oc_q_contact', null)
+  }
+  if (pd.getInt('oc_sanity_band') >= 3) qcGrant(p, 'oc_q_breakdown', null)   // 3 = Breakdown (oc_sanity.js BAND_NAMES)
+}
+
 function qcCheckPower(p) {
   if (qcHasTag(p, 'oc_q_power')) return
   for (var i = 0; i < POWER_ADVANCEMENTS.length; i++) {
@@ -150,6 +174,7 @@ PlayerEvents.tick(event => {
         }
       }
     }
+    qcMirror(p, pd)
     if (p.age % (QC.interval * 30) === 0) qcCheckPower(p)   // backfill every minute (cheap: 8 lookups)
   } catch (e) { qcWarn('tick', e) }
 })

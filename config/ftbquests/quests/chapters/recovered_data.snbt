@@ -34,7 +34,6 @@
 			tasks: [
 				{ id: "7A04000000000201", item: "ae2:inscriber", type: "item" }
 				{ id: "7A04000000000202", item: "ae2:controller", type: "item" }
-				{ id: "7A04000000000203", item: "ae2:drive", type: "item" }
 				{ id: "7A04000000000204", item: "ae2:terminal", type: "item" }
 			]
 			x: 0.0d
@@ -62,6 +61,7 @@
 				{ id: "7A04000000000205", item: "ae2:wireless_terminal", type: "item" }
 				{ id: "7A04000000000206", item: "ae2:import_bus", type: "item" }
 				{ id: "7A04000000000207", item: "ae2:export_bus", type: "item" }
+				{ id: "7A04000000000203", item: "ae2:drive", type: "item" }
 			]
 			x: 2.5d
 			y: 0.0d
@@ -78,7 +78,7 @@
 			id: "7A04000000000103"
 			rewards: [
 				{ id: "7A04000000000309", type: "xp", xp: 30 }
-				{ count: 8, id: "7A0400000000030A", item: "ae2:matter_ball", type: "item" }
+				{ id: "7A0400000000030A", item: "oldcivilisation:incident_report", type: "item" }
 				{ count: 16, id: "7A0400000000030B", item: "ae2:blank_pattern", type: "item" }
 				{ id: "7A0400000000030C", item: "ae2:item_storage_cell_4k", type: "item" }
 			]
@@ -228,6 +228,28 @@
 			]
 			x: 2.5d
 			y: -2.0d
+		}
+		{
+			dependencies: ["7A04000000000102", "7A0200000000010D"]
+			description: [
+				"&8[ SYSTEM ANALYSIS — CHEMICAL MEMORY ]&r"
+				""
+				"&7The network did not stop at solid things. Gases, slurries, anything their factories made, it stored the same way it stored everything else.&r"
+				""
+				"&8Objective: link the network to the steel-cased machines. A Chemical Storage Cell and a Chemical P2P Tunnel.&r"
+			]
+			icon: "appmek:chemical_storage_cell_1k"
+			id: "7A04000000000109"
+			rewards: [
+				{ id: "7A0400000000031B", type: "xp", xp: 30 }
+			]
+			subtitle: "Chemical Memory"
+			tasks: [
+				{ id: "7A0400000000021A", item: "appmek:chemical_storage_cell_1k", type: "item" }
+				{ id: "7A0400000000021B", item: "appmek:chemical_p2p_tunnel", type: "item" }
+			]
+			x: 2.5d
+			y: 2.0d
 		}
 	]
 	title: "Recovered Data"

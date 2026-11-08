@@ -19,13 +19,15 @@ The chapters below are therefore **parallel investigations**, not a campaign ord
 Every quest checks something real; none can be completed by clicking a checkmark. The requirements below are the design.
 For each quest's actual task, see `CONFIG_CHANGES.md` ("Quest book: real checks instead of click-to-complete").
 
-- **Built-in tasks:** items, advancements, dimensions, biomes and structures. Biome and structure tasks also use tags
-  from the OpenLoader pack `QuestChecks`: `#oldcivilisation:abandoned_places`, `#oldcivilisation:creeping_woods` and
-  `#oldcivilisation:dense_forests`.
+- **Built-in tasks:** items, advancements, dimensions, biomes, structures and (two optional reports) kills. Biome and
+  structure tasks also use tags from the OpenLoader pack `QuestChecks`: `#oldcivilisation:abandoned_places`,
+  `#oldcivilisation:creeping_woods`, `#oldcivilisation:dense_forests` and `#oldcivilisation:nether_strongholds`.
 - **Script-checked tasks:** anything FTB Quests can't express (counting nights, "any one of" several mods, casting a
-  spell) is a *stage* task. Without a stage mod, FTB Quests reads stages from vanilla player tags, so
-  `kubejs/server_scripts/oc_quest_checks.js` and `kubejs/startup_scripts/oc_quest_spellcast.js` add an `oc_q_*` tag
-  when the player has done it.
+  spell, sanity, evidence counts) is a *stage* task. Without a stage mod, FTB Quests reads stages from vanilla player
+  tags, so `kubejs/server_scripts/oc_quest_checks.js` and `kubejs/startup_scripts/oc_quest_spellcast.js` add an
+  `oc_q_*` tag when the player has done it.
+- **Residues without a kill:** the residue quests in Field Reports also pay out when a player lives through an
+  encounter (`kubejs/server_scripts/oc_encounters.js`). Observation, not killing, stays the way through that chapter.
 - **Where the implementation differs from the design below:**
   - **"The Silent Nights":** 5 whole nights at least 256 blocks from spawn, *awake* on each counted night (rather than
     "sleep in fewer than half").
@@ -34,6 +36,25 @@ For each quest's actual task, see `CONFIG_CHANGES.md` ("Quest book: real checks 
   - **"People Return":** 25 citizens, MineColonies' nearest population milestone (it has none at 20).
   - **"Knowledge, Power, Shelter":** no task of its own. Its dependencies already require one quest from each path,
     and it completes when they do.
+  - **"The Second Civilisation":** its first two quests appear once the opening quests of two of the four paths are
+    done.
+  - **"The First Survey":** no waystone. `WaystonesGate` puts waystones behind an Ender Eye, so the waystone comes with
+    a later quest, "Through the Portal" (enter the Nether and stand in a fortress or bastion).
+  - **"A Familiar Design":** a Crusher instead of the Digital Miner, which `MekanismProgression` makes endgame. The
+    Digital Miner is in "Distant Hands".
+  - **"The Unacceptable Solution":** completes on any one of three sub-quests: fission, fusion, or an Extreme Reactors
+    reinforced reactor.
+  - **"Unidentified Contact":** holding a Biological Sample or an Impossible Bone Fragment, the remains these
+    encounters leave.
+  - **"The Final Question" order:** The Skyward Project, Following Their Path, The Departure Records, The Answer. The
+    flight recorders are found in space, so the records come after the flights. "The Answer" lists its conditions:
+    the technical, magical and exodus evidence, 12 kinds of evidence, and the assembled HS-LGTFO Mission Data.
+- **Added since the original design (2026-11-08):** quests for the mods added later (Extreme Reactors, Applied
+  Mekanistics, Blood Magic, Mahou Tsukai, Deeper and Darker), a Nether quest, four MineColonies milestones, optional
+  Field Reports for the newer horrors (The Obsessed, the Creeping Woods Figure, the Wendigo, the Nightmare Stalker),
+  three optional endings after "The Answer" (Follow Them, Launch Again, Stay), and quests that stay invisible until
+  done (sanity Breakdown, evidence milestones at 4, 10 and 16). The full list is in `CONFIG_CHANGES.md` ("Quest book:
+  fixes and additions").
 
 ---
 
@@ -102,8 +123,7 @@ Discover:
 
 ### Reward
 
-* Waystone
-* Travel supplies
+* Travel supplies (the waystone comes later, with "Through the Portal")
 
 ### Lore
 
@@ -307,7 +327,7 @@ Mekanism:
 ```pseudo
 - Enrichment Chamber
 - Metallurgic Infuser
-- Digital Miner
+- Crusher
 ```
 
 ### Reward
@@ -330,6 +350,8 @@ Mekanism:
 Fission Reactor
 OR
 Fusion Reactor
+OR
+Extreme Reactors reinforced reactor
 ```
 
 ### Reward
@@ -590,7 +612,7 @@ This chapter is the most important.
 
 ---
 
-No kill quests.
+No kill quests on the main line. (Two optional side reports, the Wendigo and the Nightmare Stalker, are kills.)
 
 No mob lists.
 
@@ -696,9 +718,9 @@ Triggers:
 
 ```pseudo
 Encounter:
-- Man From The Fog
+- CANTBREATHE
 - Mimicer
-- Knocker
+- Cave Dweller
 - Weeping Angel
 ```
 

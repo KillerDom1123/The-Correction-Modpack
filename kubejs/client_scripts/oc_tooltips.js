@@ -132,7 +132,7 @@ const OC_POOLS = {
   // ---- marquee-horror residues ----
   'oldcivilisation:distorted_replica': [['"It copied something."', '"We do not know what."']],
   'oldcivilisation:deep_echo': [['"Recording origin:"', '~Below known geological limits."']],
-  'oldcivilisation:fog_residue': [['"Composition unknown."', '~It has not evaporated in weeks.']],
+  'oldcivilisation:fog_residue': [['"Composition unknown."', '~The air around it is thinner.']],
   'oldcivilisation:temporal_residue': [['~This object is older than it was a moment ago.', '"Do not look away from it."']],
 
   // ---- assembled exodus record ----

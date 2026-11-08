@@ -289,6 +289,115 @@
 			x: 6.5d
 			y: 2.0d
 		}
+		{
+			dependencies: ["7A03000000000101"]
+			description: [
+				"&8[ RECOVERED DOCUMENT — THE PRICE ]&r"
+				""
+				"&7One school asked nothing of spirits or stars. It paid in blood, its own first, and kept careful accounts of what each drop bought.&r"
+				""
+				"&8Objective: a Sacrificial Dagger, a Blood Altar, a Weak Blood Orb.&r"
+			]
+			icon: "bloodmagic:altar"
+			id: "7A0300000000010C"
+			rewards: [
+				{ id: "7A03000000000324", type: "xp", xp: 25 }
+			]
+			subtitle: "The Price"
+			tasks: [
+				{ id: "7A0300000000021D", item: "bloodmagic:sacrificialdagger", type: "item" }
+				{ id: "7A0300000000021E", item: "bloodmagic:altar", type: "item" }
+				{ id: "7A0300000000021F", item: "bloodmagic:weakbloodorb", type: "item" }
+			]
+			x: -2.5d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A0300000000010C"]
+			description: [
+				"&8[ RECOVERED DOCUMENT — THE LEDGER ]&r"
+				""
+				"&7Blood was only the opening entry. The later ledgers trade in souls: caught, stored and melted down into tools.&r"
+				""
+				"&8Objective: a Soul Snare and a Hellfire Forge.&r"
+			]
+			icon: "bloodmagic:soulforge"
+			id: "7A0300000000010D"
+			rewards: [
+				{ id: "7A03000000000325", type: "xp", xp: 30 }
+			]
+			subtitle: "What the Blood Bought"
+			tasks: [
+				{ id: "7A03000000000220", item: "bloodmagic:soulsnare", type: "item" }
+				{ id: "7A03000000000221", item: "bloodmagic:soulforge", type: "item" }
+			]
+			x: -2.5d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A0300000000010D"]
+			description: [
+				"&8[ RECOVERED DOCUMENT — THE GREAT WORK ]&r"
+				""
+				"&7Their rituals needed no caster once begun. A stone at the centre, runes around it, and an orb to draw the price from whoever stood nearest.&r"
+				""
+				"&8Objective: a Master Ritual Stone and an Apprentice Blood Orb.&r"
+			]
+			icon: "bloodmagic:masterritualstone"
+			id: "7A0300000000010E"
+			rewards: [
+				{ id: "7A03000000000326", type: "xp", xp: 40 }
+			]
+			subtitle: "The Great Work"
+			tasks: [
+				{ id: "7A03000000000222", item: "bloodmagic:masterritualstone", type: "item" }
+				{ id: "7A03000000000223", item: "bloodmagic:apprenticebloodorb", type: "item" }
+			]
+			x: -2.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["7A03000000000101"]
+			description: [
+				"&8[ FIELD NOTE — A THIRD SCHOOL ]&r"
+				""
+				"&7Some practitioners needed no altar at all. A circle drawn on the ground in the right powder, and the world listened.&r"
+				""
+				"&8Objective: grind powder with a Mortar and Pestle and draw your first magic circle.&r"
+			]
+			icon: "mahoutsukai:mortar_and_pestle"
+			id: "7A0300000000010F"
+			rewards: [
+				{ id: "7A03000000000327", type: "xp", xp: 25 }
+			]
+			subtitle: "Circles on the Floor"
+			tasks: [
+				{ id: "7A03000000000224", item: "mahoutsukai:mortar_and_pestle", type: "item" }
+				{ advancement: "mahoutsukai:root", criterion: "", id: "7A03000000000225", title: "Draw your first magic circle", type: "advancement" }
+			]
+			x: -2.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["7A0300000000010F"]
+			description: [
+				"&8[ FIELD NOTE — THE CUP ]&r"
+				""
+				"&7The circles led somewhere. The texts call it a grail, and treat it with more fear than any reactor in the engineering files.&r"
+				""
+				"&8Objective: activate a Lesser Grail.&r"
+			]
+			id: "7A03000000000110"
+			rewards: [
+				{ id: "7A03000000000328", type: "xp", xp: 35 }
+			]
+			subtitle: "The Lesser Grail"
+			tasks: [
+				{ advancement: "mahoutsukai:lesser_grail", criterion: "", id: "7A03000000000226", title: "Activate a Lesser Grail", type: "advancement" }
+			]
+			x: -2.5d
+			y: -3.5d
+		}
 	]
 	title: "The Other Science"
 }

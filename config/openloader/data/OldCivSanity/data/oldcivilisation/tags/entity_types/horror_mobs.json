@@ -11,8 +11,13 @@
     "weeping_angels:weeping_angel",
     "themimic_er:mimicer",
     "cave_dweller:cave_dweller",
-    { "id": "man:manfromthefog", "required": false },
-    { "id": "man:managgresive", "required": false },
-    { "id": "pale_hound:pale_hound", "required": false }
+    {
+      "id": "cant_breathe:cant_breathe",
+      "required": false
+    },
+    {
+      "id": "pale_hound:pale_hound",
+      "required": false
+    }
   ]
 }

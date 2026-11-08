@@ -56,7 +56,6 @@
 			id: "7A01000000000102"
 			rewards: [
 				{ id: "7A01000000000307", type: "xp", xp: 25 }
-				{ id: "7A01000000000308", item: "waystones:waystone", type: "item" }
 				{ count: 2, id: "7A01000000000309", item: "waystones:warp_scroll", type: "item" }
 				{ id: "7A0100000000030A", item: "comforts:sleeping_bag_red", type: "item" }
 				{ id: "7A0100000000030B", item: "minecraft:map", type: "item" }
@@ -97,7 +96,7 @@
 			rewards: [
 				{ id: "7A0100000000030C", type: "xp", xp: 40 }
 				{ id: "7A0100000000030D", item: "artifacts:night_vision_goggles", type: "item" }
-				{ id: "7A0100000000030E", item: "minecraft:writable_book", type: "item" }
+				{ id: "7A0100000000030E", item: "oldcivilisation:familiar_photograph", type: "item" }
 				{ count: 4, id: "7A0100000000030F", item: "farmersdelight:glow_berry_custard", type: "item" }
 			]
 			subtitle: "The Silent Nights"
@@ -151,6 +150,29 @@
 			]
 			x: -3.0d
 			y: 3.0d
+		}
+		{
+			dependencies: ["7A01000000000102"]
+			description: [
+				"&8[ FIELD SURVEY — ENTRY 019 ]&r"
+				""
+				"&7The ruined portals are not ruins. They are doors, and someone closed them from this side. On the far side they built strongholds, the same as here, and left them the same way.&r"
+				""
+				"&8Objective: cross over and stand inside one of their strongholds: a fortress, a bastion, a forbidden castle.&r"
+			]
+			icon: "minecraft:crying_obsidian"
+			id: "7A01000000000104"
+			rewards: [
+				{ id: "7A01000000000319", type: "xp", xp: 30 }
+				{ id: "7A0100000000031A", item: "waystones:waystone", type: "item" }
+			]
+			subtitle: "Through the Portal"
+			tasks: [
+				{ dimension: "minecraft:the_nether", id: "7A0100000000020E", title: "Enter the Nether", type: "dimension" }
+				{ id: "7A0100000000020F", structure: "#oldcivilisation:nether_strongholds", title: "Stand inside a Nether fortress, a bastion or an Incendium castle", type: "structure" }
+			]
+			x: 5.0d
+			y: 0.0d
 		}
 	]
 	title: "The Broken World"

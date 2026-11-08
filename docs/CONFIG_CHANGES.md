@@ -1535,7 +1535,15 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Tested on the scratch server:** both tables load with no loot warnings. A test copy without the kill condition, rolled 25 times, gave the antlers plus one relic every time. The real table dropped nothing without a player killer, as intended.
 - **On the VM:** the pack folder was uploaded to `config/openloader/data/WendigoTrophies/` and read back identical. It loads at the next restart.
 
-### Quest book: real checks instead of click-to-complete (2026-11-08) — *client instance; VM upload pending*
+### SimpleBackups: every 6 hours, keep 5 (2026-11-08) — *client instance + VM*
+- `config/simplebackups-common.toml`: `timer` 120 → **360** minutes and `backupsToKeep` 10 → **5**, at the user's request.
+- **Why keep fewer:** pre-generation grew the world, and full backups grew from about 1 GB (2026-11-06) to about 3.3 GB (2026-11-07). Ten of them would be about 33 GB, past the 25 GB `maxDiskSize`. Five are about 17 GB, which still covers at least a day and a half at 6-hourly backups.
+- **Unchanged:** full backups (`FULL_BACKUPS`), the 25 GB cap, and `noPlayerBackups = false`, so nothing is backed up while the server is empty. Pre-generation runs only while it's empty.
+- **Effect:** at its next backup, SimpleBackups deletes the oldest backups beyond five.
+- **On the VM:** uploaded and read back identical; the old file is `config/simplebackups-common.toml.bak-20261108-every2h`. Forge's config watcher hasn't fired on the VM before, so expect it to apply at the next restart.
+- **Disk:** the backups live in the server's `simplebackups/` folder and come out of the same free space `spooky_pregen` stops at (2 GB). A 3.3 GB backup needs that much room when it runs.
+
+### Quest book: real checks instead of click-to-complete (2026-11-08) — *client instance + VM*
 - **Why:** 15 of the 186 tasks were FTB Quests "checkmark" tasks, which complete when the player clicks them. They were concentrated in the chapters players see first: The Broken World (6 of 8 tasks), The Second Civilisation (3 of 3) and Field Reports (4 of 10). The other 171 tasks (items, advancements, dimensions) already check something, and every item, advancement, dimension, reward and icon they name exists in the pack.
 - **What FTB Quests can check here** (read from the 2001.4.22 jar):
   - item (exact item only; there's no filter mod for tags), advancement, dimension, biome and structure (both accept `#tags`), stat (vanilla custom stats), kill, location and observation;
@@ -1564,6 +1572,86 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - OpenLoader pack `QuestChecks`: the tags `oldcivilisation:abandoned_places` and `creeping_woods` (structures) and `dense_forests` (biomes). Every entry is `required: false`, so removing a mod can't break the tag.
 - **Progress kept:** each replaced checkmark's task ID is reused for its first replacement, so players who already clicked one keep it. Added tasks have new IDs in their chapter's range.
 - **Check a player's tags:** `/tag <player> list`. Grant one by hand: `/tag <player> add oc_q_power`.
+- **On the VM:** uploaded together with the next entry (see its "On the VM").
+
+### Quest book: fixes and additions (2026-11-08) — *client instance + VM*
+- **Why:** a review of the quest book against the mods and scripts added since July. Some quests couldn't be finished as written, some text no longer matched the pack, and the newer mods had no quests.
+- **Quests that couldn't be finished:**
+  - **The Final Question ran backwards.** "The Departure Records" (the four flight recorders) came first, but the recorders are space loot, and the Launch recorder was only in three Ad Astra tables that no structure places (`common_moon`, `common_other`, `rare_moon`; checked by scanning every structure file in the pack). New order: The Skyward Project → Following Their Path → The Departure Records → The Answer. In `oc_loot.js`:
+    - the Launch recorder moved to the moon tables that are placed (`ad_astra:chests/dungeon/moon/dungeon_chest`, `village/moon/house`, `village/moon/blacksmith`; 10%);
+    - Transit moved to the moon dungeon chest and `ad_astra_more_structures:chests/common_mars`;
+    - the Unstable Memory's `rare_moon` slot moved to the moon dungeon chest.
+  - **The Skyward Project** is now the chapter's first quest. It also depends on the quests behind each NASA Workbench part (`AdAstraSpaceGate`): Brass and Precision, A Familiar Design, Storage Is Not Enough, and a new Enchanter quest (teleport scroll). It still depends on The Missing Years and Unidentified Contact. Its text names the four parts.
+  - **A Familiar Design** asked for a Digital Miner, which `MekanismProgression` makes endgame (atomic alloy, ultimate control circuit, Robit, teleportation cores). It now asks for a Crusher; the Digital Miner moved to Distant Hands.
+  - **The four residue quests** (It Wears Faces, The One Below, The Breathless, It Was Not There Before) only paid out on a kill, but these horrors rarely die: CANTBREATHE gives up a chase after 60 s, and the Mimic and the Cave Dweller after 30 s. New `kubejs/server_scripts/oc_encounters.js` gives the residue when the horror leaves without being killed:
+    - the encounter starts when one of the four comes within 24 blocks of a survival player;
+    - it pays out if the horror then disappears without being killed and the player hasn't died meanwhile;
+    - the player gets the residue and a one-line message;
+    - a kill still drops the residue as before (`oc_interactions.js`);
+    - open encounters are kept in memory only, so a restart forgets them.
+  - **The First Survey gave a waystone** as the second quest, which skipped `WaystonesGate` (warp stones need an Ender Eye). The waystone moved to a new Nether quest, "Through the Portal".
+- **Text and rewards brought up to date:**
+  - **Breathless Residue:** Fog Residue was renamed (display name and tooltip only; the item ID stays `oldcivilisation:fog_residue`). The residue now comes from CANTBREATHE.
+  - **The Answer** lists what it waits for. Before, these conditions were invisible:
+    - the three evidence kinds (technical, magical, exodus) and 12 kinds of evidence, which are the conditions of the Correction Fragment grant in `oc_interactions.js`;
+    - the assembled HS-LGTFO Mission Data.
+  - **Blank books replaced:** three rewards promised a fragment and gave a blank Book and Quill. Automation now gives an Incident Report Fragment, The Silent Nights a Familiar Photograph, and Unidentified Contact a Containment Label.
+  - **The Unacceptable Solution** has no task of its own now. It completes on any one of three new sub-quests: The Split Atom (fission reactor port), A Star in a Box (fusion controller), or The Reinforced Core (Extreme Reactors).
+  - **Unidentified Contact:** holding a Biological Sample **or** an Impossible Bone Fragment (stage `oc_q_contact`), not only the sample.
+  - **The Watchers:** "No claimed ground" (there's no claim mod) became "Nowhere near a bed, a colony…".
+  - **The Second Civilisation:** People Return and Secure The Future stay hidden until the opening quests of two of the four paths are done.
+  - **A Moving World** no longer gives a second backpack (A World Left Behind already gives one).
+  - **AE2 Drive:** `ae2:drive` moved from Storage Is Not Enough to Networks.
+  - **Residue objectives** now read "Survive an encounter, or end one."
+  - **Sanity horror list:** `oc_sanity.js` `HORROR_IDS` and the `OldCivSanity` tag `horror_mobs` gained `cant_breathe:cant_breathe` and lost `man:*` (The Man From The Fog was removed on 2026-11-06).
+- **New quests (31):**
+
+  | Chapter | Quest | Checks |
+  |---|---|---|
+  | The Broken World | Through the Portal | enter the Nether, and structure `#oldcivilisation:nether_strongholds` (fortress, Better Fortresses' fortress, bastion, Incendium's Forbidden Castle and Sanctum). Gives the waystone |
+  | The Machines That Remain | The Split Atom, A Star in a Box, The Reinforced Core | fission reactor port; fusion reactor controller; Extreme Reactors reinforced reactor controller |
+  | The Machines That Remain | The Yellow Ore | Yellorium ingot, basic reactor controller, basic turbine controller |
+  | The Other Science | The Price → What the Blood Bought → The Great Work | Blood Magic: dagger, altar, weak orb; soul snare, Hellfire Forge; master ritual stone, apprentice orb |
+  | The Other Science | Circles on the Floor → The Lesser Grail | Mahou Tsukai: mortar and pestle plus advancement `mahoutsukai:root` (first circle); `mahoutsukai:lesser_grail` |
+  | Recovered Data | Chemical Memory | Applied Mekanistics: chemical storage cell 1k, chemical P2P tunnel |
+  | Field Reports | Below the Bedrock | Deeper and Darker: enter the Otherside; find an Ancient Temple |
+  | Field Reports (optional) | Fixation, The Figure, Hunger, Day Three | The Obsessed `first_impressions`; Creeping Woods `demons_of_the_forest` (encounter the Figure); kill a Wendigo; Born in Chaos `fighting_nightmares` (kill the Nightmare Stalker) |
+  | Field Reports (invisible until done) | Breakdown | stage `oc_q_breakdown`: sanity reaches Breakdown. Gives 4 Sedative Ampoules |
+  | The Second Civilisation | The Centrepiece, The Enchanter's Tower, A Village Again, Take Arms | MineColonies: town hall level 5, enchanter, 50 citizens, barracks |
+  | The Final Question (optional, after The Answer) | Follow Them, Launch Again, Stay | reach Glacio; a Tier 4 rocket; 75 citizens |
+  | Recovered Evidence (optional) | Deeper Memories, The Map That Lies, Coping | Distorted and Forbidden Memory; Corrupted Map; Sedative Ampoule and Familiar Photograph |
+  | Recovered Evidence (invisible until done) | Four Entries, Ten Entries, Sixteen Entries | stages `oc_q_discoveries_4`, `_10`, `_16` |
+  | When Dungeons Arise | Find a Jungle Tree House | structure `dungeons_arise:jungle_tree_house` (WDA has no advancement for it) |
+
+- **Script changes:** `oc_quest_checks.js` also turns state that other scripts already keep into tags:
+  - `oc_q_evidence_tech`, `_magic` and `_space`, from the `oc_flag_*` path flags;
+  - `oc_q_discoveries_4`, `_10`, `_12` and `_16`, from `oc_discoveries`;
+  - `oc_q_contact`, when `oc_seen` has a sample or a bone;
+  - `oc_q_breakdown`, when `oc_sanity_band` is 3.
+
+  These are checked every 2 s, so existing players catch up the first time they're online.
+- **Progress kept:**
+  - Task IDs moved with their tasks: the Crusher keeps the Digital Miner's ID, the Drive and the fusion controller keep theirs, and Unidentified Contact keeps its task ID.
+  - FTB Quests records completion per quest, so a quest that was already complete stays complete when it gains a task.
+- **Checked offline:** every quest parses; all 714 IDs are unique, 16-hex and every dependency resolves; every item, advancement, dimension, entity, reward and icon exists in the pack; every stage is one a script grants; every `#oldcivilisation:` structure tag exists.
+- **Tested on the scratch server:**
+  - FTB Quests loaded the chapters with no errors and didn't rewrite them;
+  - all server scripts loaded, including `oc_encounters.js`, and the sanity horror set has 12 IDs; `kubejs errors startup` found nothing;
+  - `locate` found `#oldcivilisation:nether_strongholds` (a Better Fortresses fortress, 440 blocks) and `dungeons_arise:jungle_tree_house` (2,012 blocks).
+  - **Not tested:** anything that needs a player, such as the encounter payout, the mirrored tags and the quest screens. Check those in game.
+- **Also deleted:** `config/ftbquests/quests/chapters/broken_world.snbt.bak`, which git ignores and which is identical to `broken_world.snbt` in commit `85ada22`.
+- **On the VM (2026-11-08):** 21 files uploaded with this entry's changes and the previous entry's:
+  - what went up:
+    - the nine chapter files;
+    - the `QuestChecks` pack (new);
+    - `OldCivSanity`'s `horror_mobs.json`;
+    - `kubejs/server_scripts/` `oc_quest_checks.js` (new), `oc_encounters.js` (new), `oc_sanity.js` and `oc_loot.js`;
+    - `kubejs/startup_scripts/` `oc_items.js` and `oc_quest_spellcast.js` (new).
+  - Each upload was read back identical.
+  - **Checked first:** every VM file that was replaced matched a committed version, so there were no VM-only edits to lose.
+  - **Rollback:** the replaced files were moved to `files/server/deploy-backups/2026-11-08-quests/`, under the same relative paths. To roll back, move them back and delete the new files.
+  - **Takes effect** at the next restart.
+- **Client pack update:** players see the Breathless Residue name and tooltip (`oc_items.js`, `oc_tooltips.js`) only after updating the pack. Until then, the old name shows on their side.
 
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `WendigoTrophies` (2026-11-07; Wendigo loot), `QuestChecks` (2026-11-08; structure and biome tags for the quest book), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)

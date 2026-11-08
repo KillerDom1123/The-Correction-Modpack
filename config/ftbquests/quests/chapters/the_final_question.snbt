@@ -1,5 +1,5 @@
 {
-	autofocus_id: "7A07000000000101"
+	autofocus_id: "7A07000000000102"
 	default_hide_dependency_lines: false
 	default_quest_shape: ""
 	filename: "the_final_question"
@@ -13,7 +13,7 @@
 	quest_links: [ ]
 	quests: [
 		{
-			dependencies: ["7A04000000000104", "7A05000000000105"]
+			dependencies: ["7A07000000000103"]
 			dependency_requirement: "all_completed"
 			description: [
 				"&8[ ASSEMBLED FROM MULTIPLE FRAGMENTS ]&r"
@@ -25,7 +25,7 @@
 				"&7\"They did not fight.\"&r"
 				"&7\"They prepared.\"&r"
 				""
-				"&8Prepared for what? The next fragments only ever point upward.&r"
+				"&8Prepared for what? I found these fragments where they went. Not where they came from.&r"
 			]
 			id: "7A07000000000101"
 			rewards: [
@@ -34,8 +34,6 @@
 				{ id: "7A07000000000303", item: "minecraft:writable_book", type: "item" }
 				{ count: 8, id: "7A07000000000304", item: "ad_astra:steel_ingot", type: "item" }
 			]
-			shape: "hexagon"
-			size: 1.5d
 			subtitle: "The Departure Records"
 			tasks: [
 				{ id: "7A07000000000201", item: "oldcivilisation:flight_recorder_launch", type: "item" }
@@ -43,11 +41,12 @@
 				{ id: "7A0700000000020A", item: "oldcivilisation:flight_recorder_arrival", type: "item" }
 				{ id: "7A0700000000020B", item: "oldcivilisation:flight_recorder_final", type: "item" }
 			]
-			x: 0.0d
+			x: 5.0d
 			y: 0.0d
 		}
 		{
-			dependencies: ["7A07000000000101"]
+			dependencies: ["7A04000000000104", "7A05000000000105", "7A04000000000101", "7A02000000000108", "7A02000000000106", "7A06000000000105"]
+			dependency_requirement: "all_completed"
 			description: [
 				"&8[ RECONSTRUCTED PROJECT — DESIGNATION: HS-LGTFO ]&r"
 				""
@@ -56,6 +55,8 @@
 				"&8The purpose was not to conquer. Not to fight. To leave.&r"
 				""
 				"&8Objective: build what they built. A rocket. A suit that survives the outside. Fuel enough to reach it.&r"
+				""
+				"&8Their workbench asks something of every discipline: a Precision Mechanism, Atomic Alloy, an ME Controller, and a teleport scroll from a colony Enchanter.&r"
 			]
 			icon: "ad_astra:space_suit"
 			id: "7A07000000000102"
@@ -65,13 +66,15 @@
 				{ count: 8, id: "7A07000000000307", item: "ad_astra:desh_ingot", type: "item" }
 				{ count: 8, id: "7A07000000000308", item: "ad_astra:steel_ingot", type: "item" }
 			]
+			shape: "hexagon"
+			size: 1.5d
 			subtitle: "The Skyward Project"
 			tasks: [
 				{ id: "7A07000000000202", item: "ad_astra:tier_1_rocket", type: "item" }
 				{ id: "7A07000000000203", item: "ad_astra:space_suit", type: "item" }
 				{ id: "7A07000000000204", item: "ad_astra:fuel_bucket", type: "item" }
 			]
-			x: 2.5d
+			x: 0.0d
 			y: 0.0d
 		}
 		{
@@ -97,11 +100,11 @@
 				{ id: "7A07000000000206", dimension: "ad_astra:mars", type: "dimension" }
 				{ id: "7A07000000000207", dimension: "ad_astra:earth_orbit", type: "dimension" }
 			]
-			x: 5.0d
+			x: 2.5d
 			y: 0.0d
 		}
 		{
-			dependencies: ["7A07000000000103"]
+			dependencies: ["7A07000000000101"]
 			description: [
 				"&8[ FINAL ENTRY — RECOVERED AT HS-LGTFO SITE ]&r"
 				""
@@ -133,13 +136,85 @@
 			shape: "diamond"
 			size: 2.0d
 			subtitle: "The Answer"
-			tasks: [{
-				id: "7A07000000000208"
-				item: "oldcivilisation:correction_fragment"
-				type: "item"
-			}]
+			tasks: [
+				{ id: "7A0700000000020C", stage: "oc_q_evidence_tech", title: "Recover a technical record: an Incident Report, Audio Log, Containment Label or ID Badge", type: "gamestage" }
+				{ id: "7A0700000000020D", stage: "oc_q_evidence_magic", title: "Recover a magical record: any Memory, Arcane Research Notes or a Bound Thought", type: "gamestage" }
+				{ id: "7A0700000000020E", stage: "oc_q_evidence_space", title: "Recover an exodus record: a Colony Manifest, a Navigation Fragment or a Flight Recorder", type: "gamestage" }
+				{ id: "7A0700000000020F", stage: "oc_q_discoveries_12", title: "Hold 12 different kinds of recovered evidence", type: "gamestage" }
+				{ id: "7A07000000000210", item: "oldcivilisation:hs_lgtfo_mission_data", type: "item" }
+				{ id: "7A07000000000208", item: "oldcivilisation:correction_fragment", type: "item" }
+			]
 			x: 7.5d
 			y: 0.0d
+		}
+		{
+			dependencies: ["7A07000000000104"]
+			description: [
+				"&8[ ADDENDUM — UNSENT ]&r"
+				""
+				"&7The last flight recorder names one more destination, outside this system entirely. A cold world. The route is still open.&r"
+				""
+				"&8Objective: follow them. Reach Glacio and see what they found there.&r"
+			]
+			hide_until_deps_complete: true
+			id: "7A07000000000105"
+			optional: true
+			rewards: [
+				{ id: "7A07000000000312", type: "xp", xp: 100 }
+				{ id: "7A07000000000313", type: "xp_levels", xp_levels: 5 }
+			]
+			subtitle: "Follow Them"
+			tasks: [
+				{ dimension: "ad_astra:glacio", id: "7A07000000000211", type: "dimension" }
+			]
+			x: 10.0d
+			y: -1.5d
+		}
+		{
+			dependencies: ["7A07000000000104"]
+			description: [
+				"&8[ ADDENDUM — THE ENGINEERS' ANSWER ]&r"
+				""
+				"&7Knowing how it ended has not stopped me. I understand them better now. You do not build the next rocket because you think it will save you.&r"
+				""
+				"&8Objective: build what they would have built next. A Tier 4 rocket.&r"
+			]
+			hide_until_deps_complete: true
+			id: "7A07000000000106"
+			optional: true
+			rewards: [
+				{ id: "7A07000000000314", type: "xp", xp: 100 }
+				{ id: "7A07000000000315", type: "xp_levels", xp_levels: 5 }
+			]
+			subtitle: "Launch Again"
+			tasks: [
+				{ id: "7A07000000000212", item: "ad_astra:tier_4_rocket", type: "item" }
+			]
+			x: 10.0d
+			y: 0.0d
+		}
+		{
+			dependencies: ["7A07000000000104"]
+			description: [
+				"&8[ ADDENDUM — THE OTHER ANSWER ]&r"
+				""
+				"&7They left, and it did not matter. So I am going to try the one thing the records never mention anyone trying.&r"
+				""
+				"&8Objective: stay. Grow a colony to 75 citizens and let it be noticed.&r"
+			]
+			hide_until_deps_complete: true
+			id: "7A07000000000107"
+			optional: true
+			rewards: [
+				{ id: "7A07000000000316", type: "xp", xp: 100 }
+				{ id: "7A07000000000317", type: "xp_levels", xp_levels: 5 }
+			]
+			subtitle: "Stay"
+			tasks: [
+				{ advancement: "minecolonies:minecolonies/colony_population_75", criterion: "", id: "7A07000000000213", title: "Grow a colony to 75 citizens", type: "advancement" }
+			]
+			x: 10.0d
+			y: 1.5d
 		}
 	]
 	title: "The Final Question"

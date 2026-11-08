@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "minecraft:fortress",
+      "required": false
+    },
+    {
+      "id": "betterfortresses:fortress",
+      "required": false
+    },
+    {
+      "id": "minecraft:bastion_remnant",
+      "required": false
+    },
+    {
+      "id": "incendium:forbidden_castle",
+      "required": false
+    },
+    {
+      "id": "incendium:sanctum",
+      "required": false
+    }
+  ]
+}

@@ -27,15 +27,17 @@ const T_OCEAN = [
   'minecraft:chests/shipwreck_treasure', 'minecraft:chests/buried_treasure',
   'minecraft:chests/underwater_ruin_big', 'minecraft:chests/underwater_ruin_small',
 ]
-// Ad Astra More Structures — off-world chests
-const T_SPACE_COMMON = ['ad_astra_more_structures:chests/common_moon', 'ad_astra_more_structures:chests/common_mars']
-const T_SPACE_COMMON_ALL = [
-  'ad_astra_more_structures:chests/common_moon', 'ad_astra_more_structures:chests/common_mars',
-  'ad_astra_more_structures:chests/common_mercury', 'ad_astra_more_structures:chests/common_venus',
-  'ad_astra_more_structures:chests/common_glacio', 'ad_astra_more_structures:chests/common_other',
+// Off-world chests. Only tables that a structure in the pack actually places (checked 2026-11-08 against every jar's
+// structure NBT): Ad Astra's own moon dungeon/village chests, and Ad Astra More Structures' common_mars, rare_mars,
+// rare_venus, rare_mercury, rare_glacio and rare_other. Its common_moon / common_other / rare_moon (and common_mercury,
+// common_venus, common_glacio) are never placed, so loot routed only there could never be found.
+const T_MOON = [
+  'ad_astra:chests/dungeon/moon/dungeon_chest', 'ad_astra:chests/village/moon/house', 'ad_astra:chests/village/moon/blacksmith',
 ]
+const T_SPACE_COMMON = T_MOON.concat(['ad_astra_more_structures:chests/common_mars'])
+const T_SPACE_COMMON_ALL = T_SPACE_COMMON.concat(['ad_astra:chests/temple/mars/temple'])
 const T_SPACE_RARE = [
-  'ad_astra_more_structures:chests/rare_moon', 'ad_astra_more_structures:chests/rare_mars',
+  'ad_astra:chests/dungeon/moon/dungeon_chest', 'ad_astra_more_structures:chests/rare_mars',
   'ad_astra_more_structures:chests/rare_mercury', 'ad_astra_more_structures:chests/rare_venus',
   'ad_astra_more_structures:chests/rare_glacio', 'ad_astra_more_structures:chests/rare_other',
 ]
@@ -73,13 +75,13 @@ LootJS.modifiers(event => {
   // ---- Category 5: exodus / space ----
   add(T_SPACE_RARE, 0.10, 'oldcivilisation:colony_manifest')
   add(T_SPACE_COMMON, 0.12, 'oldcivilisation:navigation_fragment')
-  add(['ad_astra_more_structures:chests/common_moon', 'ad_astra_more_structures:chests/common_other'], 0.10, 'oldcivilisation:flight_recorder_launch')
-  add(['ad_astra_more_structures:chests/common_moon', 'ad_astra_more_structures:chests/common_mars'], 0.10, 'oldcivilisation:flight_recorder_transit')
+  add(T_MOON, 0.10, 'oldcivilisation:flight_recorder_launch')
+  add(['ad_astra:chests/dungeon/moon/dungeon_chest', 'ad_astra_more_structures:chests/common_mars'], 0.10, 'oldcivilisation:flight_recorder_transit')
   add(['ad_astra_more_structures:chests/common_mars', 'ad_astra_more_structures:chests/rare_mars'], 0.10, 'oldcivilisation:flight_recorder_arrival')
   add(['ad_astra_more_structures:chests/rare_mars', 'ad_astra_more_structures:chests/rare_venus', 'ad_astra_more_structures:chests/rare_mercury'], 0.06, 'oldcivilisation:flight_recorder_final')
 
   // ---- Category 6: anomalous ----
-  add(T_ANCIENT.concat(T_MANSION, T_LIBRARY, ['ad_astra_more_structures:chests/rare_moon', 'ad_astra_more_structures:chests/rare_mars']), 0.02, 'oldcivilisation:unstable_memory')
+  add(T_ANCIENT.concat(T_MANSION, T_LIBRARY, ['ad_astra:chests/dungeon/moon/dungeon_chest', 'ad_astra_more_structures:chests/rare_mars']), 0.02, 'oldcivilisation:unstable_memory')
   add(T_ANCIENT.concat(['ad_astra_more_structures:chests/rare_other', 'ad_astra_more_structures:chests/rare_venus']), 0.02, 'oldcivilisation:signal_device')
 
   // ---- Sanity: clarity consumables (relief items — see oc_sanity.js). Modest, so relief is earned. ----
@@ -105,8 +107,8 @@ LootJS.modifiers(event => {
   // equivalents above (this is a heavily-modded-structure pack; the vanilla-table
   // modifiers above rarely fire in practice). Added 2026-07-09.
   //   - YUNG's Better Dungeons/Mineshafts REUSE the vanilla tables above → already covered.
-  //   - Nether fortresses (betterfortresses) are intentionally skipped: TFC disables
-  //     nether portals in this pack (enableNetherPortals=false), so they're unreachable.
+  //   - Nether fortresses (betterfortresses) are not routed yet. They were skipped while TFC disabled
+  //     nether portals; TFC is gone (2026-11-01), so the Nether is reachable again.
   // ============================================================================
 
   // ---- When Dungeons Arise (dungeons_arise:chests/<structure>/...) — routed by theme ----

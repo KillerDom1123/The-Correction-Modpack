@@ -56,7 +56,6 @@
 			rewards: [
 				{ id: "7A02000000000305", type: "xp", xp: 20 }
 				{ count: 4, id: "7A02000000000306", item: "create:brass_casing", type: "item" }
-				{ id: "7A02000000000307", item: "sophisticatedbackpacks:backpack", type: "item" }
 				{ id: "7A02000000000308", item: "sophisticatedbackpacks:pickup_upgrade", type: "item" }
 				{ id: "7A02000000000309", item: "sophisticatedbackpacks:magnet_upgrade", type: "item" }
 			]
@@ -175,13 +174,14 @@
 			tasks: [
 				{ id: "7A02000000000211", item: "mekanism:enrichment_chamber", type: "item" }
 				{ id: "7A02000000000212", item: "mekanism:metallurgic_infuser", type: "item" }
-				{ id: "7A02000000000213", item: "mekanism:digital_miner", type: "item" }
+				{ id: "7A02000000000213", item: "mekanism:crusher", type: "item" }
 			]
 			x: 7.5d
 			y: 2.0d
 		}
 		{
-			dependencies: ["7A02000000000106"]
+			dependencies: ["7A0200000000010F", "7A02000000000110", "7A02000000000111"]
+			dependency_requirement: "one_completed"
 			description: [
 				"&8[ RECOVERED DOCUMENT — HEAVILY REDACTED ]&r"
 				""
@@ -191,6 +191,8 @@
 				"&8Every reference to it has been deliberately cut from the archive. The redactions are clean. Someone did not want this reconstructed.&r"
 				""
 				"&8I am reconstructing it anyway. I want to see what they were so afraid of.&r"
+				""
+				"&8Objective: bring one of their reactors back. Fission, fusion, or the yellow-ore reactors: any one is enough.&r"
 				""
 				"&8[ cause of abandonment: unknown ]&r"
 			]
@@ -203,10 +205,8 @@
 				{ id: "7A0200000000031C", item: "minecraft:gunpowder", type: "item" }
 			]
 			subtitle: "The Unacceptable Solution"
-			tasks: [
-				{ id: "7A02000000000214", item: "mekanismgenerators:fusion_reactor_controller", type: "item" }
-			]
-			x: 10.0d
+			tasks: [ ]
+			x: 13.0d
 			y: 2.0d
 		}
 		{
@@ -363,7 +363,7 @@
 				""
 				"&7By the end, they had stopped moving materials at all. They moved them&r &8instantly&r&7. A logistics network with no carts, no rails, no distance. And the generators to feed it never stopped burning.&r"
 				""
-				"&8Objective: a Teleporter, a QIO Dashboard, a Gas-Burning Generator. Make distance stop mattering.&r"
+				"&8Objective: a Teleporter, a QIO Dashboard, a Gas-Burning Generator, a Digital Miner. Make distance stop mattering.&r"
 			]
 			icon: "mekanism:qio_dashboard"
 			id: "7A0200000000010E"
@@ -376,9 +376,98 @@
 				{ id: "7A02000000000229", item: "mekanism:teleporter", type: "item" }
 				{ id: "7A0200000000022A", item: "mekanism:qio_dashboard", type: "item" }
 				{ id: "7A0200000000022B", item: "mekanismgenerators:gas_burning_generator", type: "item" }
+				{ id: "7A0200000000022C", item: "mekanism:digital_miner", type: "item" }
 			]
 			x: 9.5d
 			y: 4.0d
+		}
+		{
+			dependencies: ["7A02000000000106"]
+			description: [
+				"&8[ CROSS-REFERENCE — THE FIRST REACTOR ]&r"
+				""
+				"&7The redacted file has one surviving appendix: a fission reactor, drawn in full. Whoever cut the rest of the archive missed it, or wanted it found.&r"
+				""
+				"&8Objective: build a Fission Reactor Port. The rest of the reactor follows from it.&r"
+			]
+			hide_until_deps_complete: true
+			id: "7A0200000000010F"
+			rewards: [
+				{ id: "7A0200000000032E", type: "xp", xp: 40 }
+				{ id: "7A0200000000032F", item: "mekanism:hazmat_mask", type: "item" }
+			]
+			subtitle: "The Split Atom"
+			tasks: [
+				{ id: "7A0200000000022D", item: "mekanismgenerators:fission_reactor_port", type: "item" }
+			]
+			x: 11.0d
+			y: 0.75d
+		}
+		{
+			dependencies: ["7A0200000000010F"]
+			description: [
+				"&8[ CROSS-REFERENCE — PAST FISSION ]&r"
+				""
+				"&7The fission notes keep pointing past themselves, to a reactor that burns what fission leaves behind. The controller is all that survives of the design.&r"
+				""
+				"&8Objective: build a Fusion Reactor Controller.&r"
+			]
+			hide_until_deps_complete: true
+			id: "7A02000000000110"
+			rewards: [
+				{ id: "7A02000000000330", type: "xp", xp: 50 }
+			]
+			subtitle: "A Star in a Box"
+			tasks: [
+				{ id: "7A02000000000214", item: "mekanismgenerators:fusion_reactor_controller", type: "item" }
+			]
+			x: 11.0d
+			y: 2.0d
+		}
+		{
+			dependencies: ["7A0200000000010D"]
+			description: [
+				"&8[ SURVEY NOTE — THE YELLOW ORE ]&r"
+				""
+				"&7A second lineage of reactors, running on an ore I had been throwing away. The designs are blunter than the steel-cased machines, and older.&r"
+				""
+				"&8Objective: smelt Yellorium, then build a basic Reactor Controller and a basic Turbine Controller.&r"
+			]
+			icon: "bigreactors:basic_reactorcontroller"
+			id: "7A02000000000112"
+			rewards: [
+				{ id: "7A02000000000331", type: "xp", xp: 30 }
+				{ count: 8, id: "7A02000000000332", item: "bigreactors:yellorium_ingot", type: "item" }
+			]
+			subtitle: "The Yellow Ore"
+			tasks: [
+				{ id: "7A0200000000022E", item: "bigreactors:yellorium_ingot", type: "item" }
+				{ id: "7A0200000000022F", item: "bigreactors:basic_reactorcontroller", type: "item" }
+				{ id: "7A02000000000230", item: "bigreactors:basic_turbinecontroller", type: "item" }
+			]
+			x: 7.5d
+			y: 5.5d
+		}
+		{
+			dependencies: ["7A02000000000112"]
+			description: [
+				"&8[ CROSS-REFERENCE — HARDENED ]&r"
+				""
+				"&7The reinforced reactors were built to run for decades with no one to tend them. Some of them may still be running.&r"
+				""
+				"&8Objective: build a Reinforced Reactor Controller.&r"
+			]
+			hide_until_deps_complete: true
+			id: "7A02000000000111"
+			rewards: [
+				{ id: "7A02000000000333", type: "xp", xp: 40 }
+			]
+			subtitle: "The Reinforced Core"
+			tasks: [
+				{ id: "7A02000000000231", item: "bigreactors:reinforced_reactorcontroller", type: "item" }
+			]
+			x: 11.0d
+			y: 3.25d
 		}
 	]
 	title: "The Machines That Remain"

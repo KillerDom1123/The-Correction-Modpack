@@ -35,15 +35,14 @@ const CONFIG = {
 
 // Horror entity ids — used for the proximity drain AND Channel B suppression.
 // Mirrors config/openloader/data/OldCivSanity/.../entity_types/horror_mobs.json.
-// (Timer-summoned horrors — mimic/cave_dweller/man — never trigger checkSpawn, so listing
+// (Timer-summoned horrors — mimic/cave_dweller/cant_breathe/pale_hound — never trigger checkSpawn, so listing
 //  them here only affects the proximity drain, which is intended.)
 const HORROR_IDS = [
   'rake_the_arrival:rake_stalking', 'rake_the_arrival:rake_following', 'rake_the_arrival:rake_spawn_trigger',
   'the_one_who_watches:toww_staring', 'the_one_who_watches:toww_stalking',
   'whispering_spirits:whispering_spirit', 'antlers:wendigo', 'weeping_angels:weeping_angel',
-  'themimic_er:mimicer', 'cave_dweller:cave_dweller',
-  'man:manfromthefog', 'man:managgresive', 'pale_hound:pale_hound',
-]
+  'themimic_er:mimicer', 'cave_dweller:cave_dweller', 'cant_breathe:cant_breathe', 'pale_hound:pale_hound',
+]  // Man From The Fog (man:*) removed 2026-11-08: disabled since 2026-11-06
 const HORROR_ID_SET = {}
 HORROR_IDS.forEach(function (id) { HORROR_ID_SET[id] = true })
 

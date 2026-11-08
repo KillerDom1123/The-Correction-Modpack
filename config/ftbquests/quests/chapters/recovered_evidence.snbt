@@ -151,6 +151,125 @@
 			x: 4.5d
 			y: 0.0d
 		}
+		{
+			dependencies: ["7A08000000000104"]
+			description: [
+				"&8[ CATALOGUE: DEEPER MEMORIES ]&r"
+				""
+				"&7The faded memories were a mercy. These are not faded.&r"
+			]
+			id: "7A08000000000109"
+			optional: true
+			rewards: [
+				{ id: "7A0800000000030B", type: "xp", xp: 30 }
+			]
+			subtitle: "Deeper Memories"
+			tasks: [
+				{ id: "7A08000000000214", item: "oldcivilisation:memory_fragment_distorted", type: "item" }
+				{ id: "7A08000000000215", item: "oldcivilisation:memory_fragment_forbidden", type: "item" }
+			]
+			x: 4.0d
+			y: -2.5d
+		}
+		{
+			dependencies: ["7A08000000000105"]
+			description: [
+				"&8[ CATALOGUE: THE MAP THAT LIES ]&r"
+				""
+				"&7Four fragments make one map. It shows this region accurately, except for the places that are not there.&r"
+			]
+			id: "7A0800000000010A"
+			optional: true
+			rewards: [
+				{ id: "7A0800000000030C", type: "xp", xp: 25 }
+			]
+			subtitle: "The Map That Lies"
+			tasks: [
+				{ id: "7A08000000000216", item: "oldcivilisation:corrupted_map", type: "item" }
+			]
+			x: 4.0d
+			y: 2.5d
+		}
+		{
+			dependencies: ["7A08000000000101"]
+			description: [
+				"&8[ CATALOGUE: COPING ]&r"
+				""
+				"&7Not evidence. The things people carried to stay steady while they gathered it. I am cataloguing them because I have started carrying them too.&r"
+			]
+			id: "7A0800000000010B"
+			optional: true
+			rewards: [
+				{ id: "7A0800000000030D", type: "xp", xp: 20 }
+			]
+			subtitle: "Coping"
+			tasks: [
+				{ id: "7A08000000000217", item: "oldcivilisation:sedative_ampoule", type: "item" }
+				{ id: "7A08000000000218", item: "oldcivilisation:familiar_photograph", type: "item" }
+			]
+			x: -4.0d
+			y: 0.0d
+		}
+		{
+			description: [
+				"&8[ CATALOGUE: 4 DISTINCT OBJECTS ]&r"
+				""
+				"&7The catalogue grows. I keep expecting the entries to start contradicting each other. They keep agreeing.&r"
+			]
+			icon: "oldcivilisation:personal_data_chip"
+			id: "7A0800000000010C"
+			invisible: true
+			optional: true
+			rewards: [
+				{ id: "7A0800000000030E", type: "xp", xp: 10 }
+			]
+			subtitle: "Four Entries"
+			tasks: [
+				{ id: "7A08000000000219", stage: "oc_q_discoveries_4", title: "Hold 4 different kinds of recovered evidence", type: "gamestage" }
+			]
+			x: -2.0d
+			y: 4.0d
+		}
+		{
+			description: [
+				"&8[ CATALOGUE: 10 DISTINCT OBJECTS ]&r"
+				""
+				"&7The catalogue grows. I keep expecting the entries to start contradicting each other. They keep agreeing.&r"
+			]
+			icon: "oldcivilisation:personal_data_chip"
+			id: "7A0800000000010D"
+			invisible: true
+			optional: true
+			rewards: [
+				{ id: "7A0800000000030F", type: "xp", xp: 25 }
+			]
+			subtitle: "Ten Entries"
+			tasks: [
+				{ id: "7A0800000000021A", stage: "oc_q_discoveries_10", title: "Hold 10 different kinds of recovered evidence", type: "gamestage" }
+			]
+			x: 0.0d
+			y: 4.0d
+		}
+		{
+			description: [
+				"&8[ CATALOGUE: 16 DISTINCT OBJECTS ]&r"
+				""
+				"&7The catalogue grows. I keep expecting the entries to start contradicting each other. They keep agreeing.&r"
+			]
+			icon: "oldcivilisation:personal_data_chip"
+			id: "7A0800000000010E"
+			invisible: true
+			optional: true
+			rewards: [
+				{ id: "7A08000000000310", type: "xp", xp: 50 }
+			]
+			subtitle: "Sixteen Entries"
+			tasks: [
+				{ id: "7A0800000000021B", stage: "oc_q_discoveries_16", title: "Hold 16 different kinds of recovered evidence", type: "gamestage" }
+			]
+			x: 2.0d
+			y: 4.0d
+		}
 	]
 	title: "Recovered Evidence"
 }

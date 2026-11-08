@@ -44,7 +44,7 @@ StartupEvents.registry('item', event => {
   // marquee-horror residues (dropped by the named horrors on death; see oc_interactions.js)
   oc('distorted_replica', 'Distorted Replica', { rarity: 'rare', glow: true })
   oc('deep_echo', 'Deep Echo', { rarity: 'rare' })
-  oc('fog_residue', 'Fog Residue', { rarity: 'rare' })
+  oc('fog_residue', 'Breathless Residue', { rarity: 'rare' })   // id kept from Man From The Fog; now CANTBREATHE's (2026-11-06)
   oc('temporal_residue', 'Temporal Residue', { rarity: 'rare', glow: true })
 
   // ---- Category 5: Exodus / space (Engineer -> Horror) ----

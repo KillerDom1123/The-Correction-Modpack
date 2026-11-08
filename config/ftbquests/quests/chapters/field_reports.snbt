@@ -135,14 +135,12 @@
 			rewards: [
 				{ id: "7A05000000000314", type: "xp", xp: 40 }
 				{ id: "7A05000000000315", item: "artifacts:cross_necklace", type: "item" }
-				{ id: "7A05000000000316", item: "minecraft:writable_book", type: "item" }
+				{ id: "7A05000000000316", item: "oldcivilisation:containment_label", type: "item" }
 			]
 			subtitle: "Unidentified Contact"
-			tasks: [{
-				id: "7A05000000000205"
-				item: "oldcivilisation:biological_sample"
-				type: "item"
-			}]
+			tasks: [
+				{ id: "7A05000000000205", stage: "oc_q_contact", title: "Recover a Biological Sample or an Impossible Bone Fragment", type: "gamestage" }
+			]
 			x: 6.5d
 			y: 1.5d
 		}
@@ -151,7 +149,7 @@
 			description: [
 				"&8[ FIELD REPORT — ONGOING ]&r"
 				""
-				"&7I stayed out. No claimed ground, no walls that mean anything. Ten nights. By the fourth I was certain I was not being hunted.&r"
+				"&7I stayed out. Nowhere near a bed, a colony or any walls that mean anything. Ten nights. By the fourth I was certain I was not being hunted.&r"
 				""
 				"&7I was being observed.&r"
 				""
@@ -178,7 +176,7 @@
 				""
 				"&7Witnesses describe a thing that is almost right. It reproduces a shape, a voice, a habit — and gets one detail wrong, always. Whatever is left behind after it is dealt with does not stay one shape for long.&r"
 				""
-				"&8Objective: recover a Distorted Replica. However you come by it.&r"
+				"&8Objective: recover a Distorted Replica. Survive an encounter, or end one.&r"
 			]
 			hide_dependency_lines: true
 			icon: "oldcivilisation:distorted_replica"
@@ -200,7 +198,7 @@
 				""
 				"&7Every deep expedition that recorded it agrees on one thing: you hear it long before you see it, and it comes from further down than the surveys go. What it leaves behind is a recording of a sound that has no source.&r"
 				""
-				"&8Objective: recover a Deep Echo.&r"
+				"&8Objective: recover a Deep Echo. Survive an encounter, or end one.&r"
 			]
 			hide_dependency_lines: true
 			icon: "oldcivilisation:deep_echo"
@@ -220,9 +218,9 @@
 			description: [
 				"&8[ FIELD REPORT — THE BREATHLESS ]&r"
 				""
-				"&7Every account agrees that it noticed them first, from further away than anything should see. Doors did not slow it. Survivors describe the air going thin around it. Where it falls it leaves a residue our instruments cannot name, and it does not disperse.&r"
+				"&7Every account agrees that it noticed them first, from further away than anything should see. Doors did not slow it. Survivors describe the air going thin around it. Where it has been it leaves a residue our instruments cannot name, and it does not disperse.&r"
 				""
-				"&8Objective: recover Fog Residue.&r"
+				"&8Objective: recover Breathless Residue. Survive an encounter, or end one.&r"
 			]
 			hide_dependency_lines: true
 			icon: "oldcivilisation:fog_residue"
@@ -244,7 +242,7 @@
 				""
 				"&7Do not look away. Every account repeats the same rule, underlined. The object it leaves reads as older each time it is measured, though it has sat untouched on the bench.&r"
 				""
-				"&8Objective: recover Temporal Residue.&r"
+				"&8Objective: recover Temporal Residue. Survive an encounter, or end one.&r"
 			]
 			hide_dependency_lines: true
 			icon: "oldcivilisation:temporal_residue"
@@ -258,6 +256,150 @@
 			tasks: [{ id: "7A0500000000020A", item: "oldcivilisation:temporal_residue", type: "item" }]
 			x: 8.0d
 			y: -1.5d
+		}
+		{
+			dependencies: ["7A05000000000104"]
+			description: [
+				"&8[ FIELD REPORT — BELOW THE BEDROCK ]&r"
+				""
+				"&7The oldest warnings point down, and down did not stop at bedrock. Under the ancient cities there is a door, and on the far side a world that sound does not leave.&r"
+				""
+				"&8Objective: pass through to the Otherside and find one of its temples. Quietly.&r"
+			]
+			icon: "minecraft:sculk_shrieker"
+			id: "7A0500000000010B"
+			rewards: [
+				{ id: "7A05000000000323", type: "xp", xp: 40 }
+				{ count: 32, id: "7A05000000000324", item: "minecraft:torch", type: "item" }
+			]
+			subtitle: "Below the Bedrock"
+			tasks: [
+				{ advancement: "deeperdarker:main/enter_otherside", criterion: "", id: "7A0500000000020D", title: "Enter the Otherside", type: "advancement" }
+				{ advancement: "deeperdarker:main/find_ancient_temple", criterion: "", id: "7A0500000000020E", title: "Find an Ancient Temple in the Otherside", type: "advancement" }
+			]
+			x: 4.5d
+			y: 4.0d
+		}
+		{
+			dependencies: ["7A05000000000101"]
+			description: [
+				"&8[ FIELD REPORT — FIXATION ]&r"
+				""
+				"&7Some witnesses were never attacked. They were watched, followed and studied for days by one thing that had decided they were interesting.&r"
+				""
+				"&8Objective: none. It will find you.&r"
+			]
+			hide_dependency_lines: true
+			icon: "minecraft:spyglass"
+			id: "7A0500000000010C"
+			optional: true
+			rewards: [
+				{ id: "7A05000000000325", type: "xp", xp: 30 }
+				{ count: 8, id: "7A05000000000326", item: "minecraft:paper", type: "item" }
+			]
+			subtitle: "Fixation"
+			tasks: [
+				{ advancement: "the_obsessed:first_impressions", criterion: "", id: "7A0500000000020F", title: "Catch the eye of The Obsessed", type: "advancement" }
+			]
+			x: 2.5d
+			y: -2.0d
+		}
+		{
+			dependencies: ["7A05000000000103"]
+			description: [
+				"&8[ FIELD REPORT — THE FIGURE ]&r"
+				""
+				"&7The Creeping Woods notes all describe the same tall shape between the trees. It never moves while anyone is looking at it.&r"
+				""
+				"&8Objective: encounter the Figure. Leave if you can.&r"
+			]
+			hide_dependency_lines: true
+			icon: "minecraft:dark_oak_sapling"
+			id: "7A0500000000010D"
+			optional: true
+			rewards: [
+				{ id: "7A05000000000327", type: "xp", xp: 30 }
+				{ count: 16, id: "7A05000000000328", item: "minecraft:torch", type: "item" }
+			]
+			subtitle: "The Figure"
+			tasks: [
+				{ advancement: "creepingwoods:demons_of_the_forest", criterion: "", id: "7A05000000000210", title: "Encounter the Figure in the Creeping Woods", type: "advancement" }
+			]
+			x: 4.5d
+			y: -3.0d
+		}
+		{
+			dependencies: ["7A05000000000103"]
+			description: [
+				"&8[ FIELD REPORT — THE COLD ONES ]&r"
+				""
+				"&7In the cold forests something tall keeps its distance. Every account agrees it leaves people alone, until someone gets too close or stares too long.&r"
+				""
+				"&8Objective: provoke one, and survive long enough to end it.&r"
+			]
+			hide_dependency_lines: true
+			icon: "minecraft:bone"
+			id: "7A0500000000010E"
+			optional: true
+			rewards: [
+				{ id: "7A05000000000329", type: "xp", xp: 40 }
+				{ count: 2, id: "7A0500000000032A", item: "farmersdelight:vegetable_soup", type: "item" }
+			]
+			subtitle: "Hunger"
+			tasks: [
+				{ entity: "antlers:wendigo", id: "7A05000000000211", title: "Kill a Wendigo", type: "kill", value: 1L }
+			]
+			x: 6.5d
+			y: -3.0d
+		}
+		{
+			dependencies: ["7A05000000000106"]
+			description: [
+				"&8[ FIELD REPORT — DAY THREE ]&r"
+				""
+				"&7Several expedition logs carry the same entry on their third night out: something is chasing you. None of them say what. The later pages say it was the wrong thing to ignore.&r"
+				""
+				"&8Objective: face the Nightmare Stalker, and end it.&r"
+			]
+			hide_dependency_lines: true
+			icon: "minecraft:wither_rose"
+			id: "7A0500000000010F"
+			optional: true
+			rewards: [
+				{ id: "7A0500000000032B", type: "xp", xp: 40 }
+				{ id: "7A0500000000032C", item: "artifacts:night_vision_goggles", type: "item" }
+			]
+			subtitle: "Day Three"
+			tasks: [
+				{ advancement: "born_in_chaos_v1:fighting_nightmares", criterion: "", id: "7A05000000000212", title: "Kill the Nightmare Stalker", type: "advancement" }
+			]
+			x: 0.5d
+			y: 3.5d
+		}
+		{
+			dependencies: ["7A05000000000101"]
+			description: [
+				"&8[ FIELD REPORT — PERSONAL ]&r"
+				""
+				"&7I have stopped trusting what I see out here. The notes I wrote last week are in handwriting I do not recognise.&r"
+				""
+				"&8The field kits had ampoules for this. Use them sparingly. Shelter and sleep help more.&r"
+			]
+			hide_dependency_lines: true
+			icon: "oldcivilisation:sedative_ampoule"
+			id: "7A05000000000110"
+			invisible: true
+			optional: true
+			rewards: [
+				{ id: "7A0500000000032D", type: "xp", xp: 10 }
+				{ count: 4, id: "7A0500000000032E", item: "oldcivilisation:sedative_ampoule", type: "item" }
+			]
+			subtitle: "Breakdown"
+			tasks: [
+				{ id: "7A05000000000213", stage: "oc_q_breakdown", title: "Let your sanity fall to Breakdown", type: "gamestage" }
+			]
+			x: -2.0d
+			y: 2.0d
 		}
 	]
 	title: "Field Reports"

@@ -7,6 +7,15 @@ Scope: every horror and horror-adjacent mod in the pack, reviewed against player
 
 **Since then (2026-11-07), outside this review's proposals:** Antlers' **Wendigo** was reworked after it attacked players without warning. It keeps away from players and attacks only a player who provokes it, and it now despawns like other monsters (`spooky_tick_fixes` 1.4.0, `[antlersWendigo]`). Its roar and scream now carry 128 blocks instead of 1,600 and 640, and it has loot (`WendigoTrophies`). Details: `CONFIG_CHANGES.md`, "Antlers Wendigo" and "Wendigo loot".
 
+**2026-11-08, instead of removing The Obsessed (§5.3):** The Obsessed and CANTBREATHE were made sanity-bound in `spooky_tick_fixes` 1.5.0 (`[sanityHorror]`):
+- they only come for a player at Breakdown sanity;
+- they never appear inside a base (48 blocks of a respawn point, or a MineColonies colony);
+- The Obsessed's targeter locks on only when you look at it, and CANTBREATHE no longer chases whoever comes within 15 blocks.
+
+The Obsessed's window lurker and sleep paralysis are kept. Built, not yet deployed. Details: `CONFIG_CHANGES.md`.
+
+**Correction to §3:** the "server-wide cave noise" below is wrong. The timer stalkers' noise plays at the victim's position and carries about 32 blocks. Their timer is mostly exactly 1 h (the cooldown chance replaces the range), not 1–2 h.
+
 Related: `thelore.md`, `blurb.md`, `configcheck.md`, `ftbquest.md` (Horror Investigation path), `sanity_mechanic.md`, `CONFIG_CHANGES.md` (every horror section), `SERVER_TICK_AUDIT_2026-11-06.md`.
 
 ---

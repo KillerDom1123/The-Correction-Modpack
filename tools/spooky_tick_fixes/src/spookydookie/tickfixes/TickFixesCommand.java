@@ -28,6 +28,9 @@ import net.minecraftforge.event.RegisterCommandsEvent;
  *   <li>{@code /tickfixes wendigo}: no arguments. A header (on/off, despawnNormally, provoke/calm/vanish counts since
  *       start), then every loaded Antlers Wendigo (night form): position, distance from the sender, and its state
  *       (calm, keeping away, provoked by whom and how, or retreating). See WendigoTemper.</li>
+ *   <li>{@code /tickfixes horror}: no arguments. The sanity-bound horror switches and counters since start, then every
+ *       online player: their sanity (band, critical or not), whether they stand in a base, and their Obsessed state
+ *       (target or not, its timer); then CANTBREATHE's overworld victim and timers. See SanityHorror.</li>
  *   <li>{@code /tickfixes probe <x> <z>}: tests what chunk-safe ticking does at a position.
  *     <ul>
  *       <li><b>x</b>, <b>z</b>: whole-number block coordinates in the sender's dimension; y is always 64.</li>
@@ -56,6 +59,11 @@ final class TickFixesCommand {
                 .then(Commands.m_82127_("wendigo").executes(ctx -> {
                     CommandSourceStack src = ctx.getSource();
                     for (String line : WendigoTemper.describe(src.m_230896_())) src.m_288197_(() -> Component.m_237113_(line), false);
+                    return 1;
+                }))
+                .then(Commands.m_82127_("horror").executes(ctx -> {
+                    CommandSourceStack src = ctx.getSource();
+                    for (String line : SanityHorror.describe(src.m_81377_())) src.m_288197_(() -> Component.m_237113_(line), false);
                     return 1;
                 }))
                 // probe <x> <z>: block coordinates in the sender's dimension (y = 64); runs at the start of its next tick

@@ -50,6 +50,17 @@ public final class TickFixesConfig {
     private static final ForgeConfigSpec.DoubleValue WENDIGO_SOUND_RANGE;
     private static final ForgeConfigSpec.BooleanValue WENDIGO_DESPAWN;
 
+    private static final ForgeConfigSpec.IntValue SANITY_CRITICAL_BAND;
+    private static final ForgeConfigSpec.IntValue BASE_RADIUS;
+    private static final ForgeConfigSpec.IntValue BASE_VERTICAL;
+    private static final ForgeConfigSpec.BooleanValue BASE_COLONIES;
+    private static final ForgeConfigSpec.BooleanValue OBSESSED_SANITY_GATE;
+    private static final ForgeConfigSpec.BooleanValue OBSESSED_LOOK;
+    private static final ForgeConfigSpec.BooleanValue OBSESSED_NO_BASE;
+    private static final ForgeConfigSpec.BooleanValue CB_SANITY_GATE;
+    private static final ForgeConfigSpec.BooleanValue CB_LOOK;
+    private static final ForgeConfigSpec.BooleanValue CB_NO_BASE;
+
     private static final ForgeConfigSpec.BooleanValue AR_ENABLED;
     private static final ForgeConfigSpec.DoubleValue AR_RANGE;
     private static final ForgeConfigSpec.IntValue AR_INTERVAL;
@@ -101,6 +112,17 @@ public final class TickFixesConfig {
     public static volatile double wendigoSoundRange = 128.0D;
     public static volatile boolean wendigoDespawnNormally = true;
 
+    public static volatile int sanityCriticalBand = 3;
+    public static volatile int baseRadius = 48;
+    public static volatile int baseVerticalRange = 32;
+    public static volatile boolean baseColonies = true;
+    public static volatile boolean obsessedSanityGate = true;
+    public static volatile boolean obsessedLookToProvoke = true;
+    public static volatile boolean obsessedNoBaseSpawns = true;
+    public static volatile boolean cantBreatheSanityGate = true;
+    public static volatile boolean cantBreatheLookToProvoke = true;
+    public static volatile boolean cantBreatheNoBaseSpawns = true;
+
     public static volatile boolean activationEnabled = true;
     public static volatile double activationRangeBlocks = 48.0D;
     public static volatile int activationInterval = 4;
@@ -124,7 +146,7 @@ public final class TickFixesConfig {
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
         b.comment("Spooky Dookie tick fixes. Most patches skip work that cannot change the outcome; [activationRange],",
-                  "antlersDayCounterOverworldOnly and [antlersWendigo] change behaviour on purpose. Set a switch to false to restore the",
+                  "antlersDayCounterOverworldOnly, [antlersWendigo] and [sanityHorror] change behaviour on purpose. Set a switch to false to restore the",
                   "mod's own behaviour (watcherFollowRange keeps the lower default for new watchers). See tools/spooky_tick_fixes/README.md.")
          .push("patches");
         MIMIC_SLEEP = b.comment("Artifacts: a dormant mimic skips its tick while no player is within mimicWakeRange (it can only wake by targeting a player within 16 blocks, being hurt, or being in water).")
@@ -227,6 +249,38 @@ public final class TickFixesConfig {
                 .define("despawnNormally", true);
         b.pop();
 
+        b.comment("Sanity-bound horror (1.5.0): The Obsessed and CANTBREATHE only come for players whose sanity is critical (read from the",
+                  "pack's sanity mechanic, kubejs/server_scripts/oc_sanity.js), never appear inside a base, and are provoked by being looked",
+                  "at. Changes behaviour. Kept as they were: The Obsessed's lurker at your windows and its sleep-paralysis hallucination.",
+                  "/tickfixes horror shows each player's sanity, whether they are in a base, and what was held or blocked.").push("sanityHorror");
+        SANITY_CRITICAL_BAND = b.comment("The sanity band that counts as critical, or worse: 1 Unease (70 and below), 2 Dread (40 and below),",
+                                         "3 Breakdown (below 15; a player leaves it at 20).")
+                .defineInRange("criticalBand", 3, 1, 3);
+        BASE_RADIUS = b.comment("Blocks, horizontally. Within this distance of an online player's respawn point (bed or respawn anchor) is their base. 0 = beds don't count.")
+                .defineInRange("baseRadius", 48, 0, 256);
+        BASE_VERTICAL = b.comment("Blocks, vertically, above or below the respawn point (or the colony centre) that still count as the base.",
+                                  "Caves further down count as caves.")
+                .defineInRange("baseVerticalRange", 32, 4, 384);
+        BASE_COLONIES = b.comment("A MineColonies colony's claimed chunks (within baseVerticalRange of its centre) also count as a base.")
+                .define("baseColonies", true);
+        OBSESSED_SANITY_GATE = b.comment("The Obsessed: a targeter only appears for a critical player and only locks on to a critical player; a stalk only",
+                                         "happens while its target is critical (held and retried every ~20 s otherwise). Also the block-break surprise.")
+                .define("obsessedSanityGate", true);
+        OBSESSED_LOOK = b.comment("The Obsessed: its targeter locks on when the player looks at it (the Enderman stare test, with a clear line of sight),",
+                                  "instead of when it has line of sight to the player.")
+                .define("obsessedLookToProvoke", true);
+        OBSESSED_NO_BASE = b.comment("The Obsessed: a stalk spot inside a base is moved out of it before it can spawn; a targeter, the behind-you/spider",
+                                     "hallucinations and the block-break surprise don't spawn inside a base. Its intruder form can still walk in afterwards.")
+                .define("obsessedNoBaseSpawns", true);
+        CB_SANITY_GATE = b.comment("CANTBREATHE: it only spawns for a critical victim (picked first among critical players), and its cave noise only",
+                                   "plays for a critical victim and only reaches critical players. Its timer still runs on everyone's time.")
+                .define("cantBreatheSanityGate", true);
+        CB_LOOK = b.comment("CANTBREATHE: no chase just because a player came within 15 blocks. Looking at it or hitting it still provokes it.")
+                .define("cantBreatheLookToProvoke", true);
+        CB_NO_BASE = b.comment("CANTBREATHE: spawn spots inside a base are rejected.")
+                .define("cantBreatheNoBaseSpawns", true);
+        b.pop();
+
         b.comment("Activation range (audit section 5.5.1): mobs far from every player tick less often. Changes behaviour of far mobs",
                   "(slow motion); MineColonies, guards, scripted horror and bosses are excluded by default.").push("activationRange");
         AR_ENABLED = b.comment("Master switch.").define("enabled", true);
@@ -289,6 +343,16 @@ public final class TickFixesConfig {
         wendigoKeepAwayRange = WENDIGO_KEEP_AWAY_RANGE.get();
         wendigoSoundRange = WENDIGO_SOUND_RANGE.get();
         wendigoDespawnNormally = WENDIGO_DESPAWN.get();
+        sanityCriticalBand = SANITY_CRITICAL_BAND.get();
+        baseRadius = BASE_RADIUS.get();
+        baseVerticalRange = BASE_VERTICAL.get();
+        baseColonies = BASE_COLONIES.get();
+        obsessedSanityGate = OBSESSED_SANITY_GATE.get();
+        obsessedLookToProvoke = OBSESSED_LOOK.get();
+        obsessedNoBaseSpawns = OBSESSED_NO_BASE.get();
+        cantBreatheSanityGate = CB_SANITY_GATE.get();
+        cantBreatheLookToProvoke = CB_LOOK.get();
+        cantBreatheNoBaseSpawns = CB_NO_BASE.get();
         activationEnabled = AR_ENABLED.get();
         activationRangeBlocks = AR_RANGE.get();
         activationInterval = AR_INTERVAL.get();
@@ -314,6 +378,9 @@ public final class TickFixesConfig {
                 + " keepAway=" + wendigoKeepAwayRange + " stare=" + wendigoStareRange + "@" + wendigoStareSeconds + "s calm=" + wendigoCalmRange
                 + " vanishAfterCalm=" + wendigoVanishAfterCalm + " sound=" + wendigoSoundRange
                 + " despawnNormally=" + wendigoDespawnNormally
+                + " | sanityHorror criticalBand=" + sanityCriticalBand + " base=" + baseRadius + "/" + baseVerticalRange
+                + (baseColonies ? "+colonies" : "") + " obsessed(sanity/look/noBase)=" + obsessedSanityGate + "/" + obsessedLookToProvoke
+                + "/" + obsessedNoBaseSpawns + " cantBreathe=" + cantBreatheSanityGate + "/" + cantBreatheLookToProvoke + "/" + cantBreatheNoBaseSpawns
                 + " | activationRange enabled=" + activationEnabled + " range=" + activationRangeBlocks
                 + " interval=" + activationInterval + " adaptive=" + activationAdaptive + "(" + activationEnableAboveMspt + "/"
                 + activationDisableBelowMspt + " ms)";

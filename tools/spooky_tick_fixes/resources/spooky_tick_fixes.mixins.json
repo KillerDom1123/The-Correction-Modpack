@@ -44,7 +44,13 @@
     "wendigo.WendigoPlayerTargetGoalMixin",
     "wendigo.WendigoEntityMixin",
     "wendigo.WendigomadEntityMixin",
-    "wendigo.WendigoScreamRangeMixin"
+    "wendigo.WendigoScreamRangeMixin",
+    "obsessed.ObsessedSanityTickMixin",
+    "obsessed.ObsessedTargeterLookMixin",
+    "obsessed.ObsessedSurpriseMixin",
+    "cantbreathe.CantBreatheLogicMixin",
+    "cantbreathe.CantBreatheSpawnSpotMixin",
+    "cantbreathe.CantBreatheTooCloseMixin"
   ],
   "injectors": {
     "defaultRequire": 1

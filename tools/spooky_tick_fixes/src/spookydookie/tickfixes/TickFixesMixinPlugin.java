@@ -51,7 +51,13 @@ public final class TickFixesMixinPlugin implements IMixinConfigPlugin {
             Map.entry("wendigo.WendigoPlayerTargetGoalMixin", "antlers"),
             Map.entry("wendigo.WendigoEntityMixin", "antlers"),
             Map.entry("wendigo.WendigomadEntityMixin", "antlers"),
-            Map.entry("wendigo.WendigoScreamRangeMixin", "antlers"));
+            Map.entry("wendigo.WendigoScreamRangeMixin", "antlers"),
+            Map.entry("obsessed.ObsessedSanityTickMixin", "the_obsessed"),
+            Map.entry("obsessed.ObsessedTargeterLookMixin", "the_obsessed"),
+            Map.entry("obsessed.ObsessedSurpriseMixin", "the_obsessed"),
+            Map.entry("cantbreathe.CantBreatheLogicMixin", "cant_breathe"),
+            Map.entry("cantbreathe.CantBreatheSpawnSpotMixin", "cant_breathe"),
+            Map.entry("cantbreathe.CantBreatheTooCloseMixin", "cant_breathe"));
 
     /** Patches on vanilla classes: always applied, but logged like the others. */
     private static final Set<String> VANILLA_PATCHES = Set.of("VillagerSleepChunkMixin", "OffThreadChunkLogMixin", "LevelReadGuardMixin", "ChunkTaskSuspendMixin");

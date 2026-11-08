@@ -1690,6 +1690,15 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Shape order:** FTB Ultimine links client and server shape lists by index. This mod registers in the parallel part of common setup, after FTB's constructor-registered built-ins (0–5) and before Ultimine Shapes+'s `enqueueWork` (Flatten, now 9–11). That gives the same order on every start. A scan of every jar in `mods/` found no other mod that registers shapes. The log line `[spooky_ultimine_shapes] registered 3 shapes at indices 6..8` confirms the order.
 - **Both sides:** a client without the jar can still join, because the mod has no network channel. That client would show the wrong names from index 6 onward, including the Flatten shapes. So the server and the players' pack should update together. Sync dry run against the VM: 309 active − 24 client-only = 285, and the only change is `copy + spooky_ultimine_shapes-1.0.0.jar`.
 - **On the VM (2026-11-08, at the user's request):** uploaded with `scripts/sync_server_mods.py --yes`; the script verified parity (285 jars). Takes effect at the next restart. `docs/SERVER_MODS.md` was regenerated from the VM.
+- **Disabled again the same day, at the user's request, until a client update ships.** The server must not run it while players' packs lack it. The VM was never restarted with it loaded.
+  - **Client:** `mods/spooky_ultimine_shapes-1.0.0.jar.disabled` (a local build, so the CurseForge app won't re-enable it). The copy in `local/` is unchanged.
+  - **VM:** the sync moved it to `mods/spooky_ultimine_shapes-1.0.0.jar.disabled` and verified parity (284 jars).
+  - **Docs:** `docs/SERVER_MODS.md`, `modlist.md`, `modlist.json` and the README block were regenerated.
+- **Re-enabled on both sides shortly after, at the user's request:**
+  - **Client:** the jar is back to `.jar` in `mods/`.
+  - **VM:** the `.jar.disabled` file was renamed back over FTP; it's the same 6,183-byte file, not a new upload. The sync dry run reports *nothing to do* (285 jars).
+  - **Docs:** `docs/SERVER_MODS.md`, `modlist.md`, `modlist.json` and the README block were regenerated.
+  - **Takes effect** at the next VM restart. Players need the pack update with the jar, or their shape names will be wrong (see *Both sides* above).
 - **Tested:** the shape layout offline: 14 cases (every wall direction, floor, ceiling, and head- and foot-height aims), all pass. Not yet tested in game.
 - **Docs:** `modlist.md`, `modlist.json` and the README block were regenerated. `spooky_ultimine_shapes` was added to the Local Fixes rule in `tools/generate_modlist.py`.
 - **Revert:** delete the jar from `mods/` on both sides.
@@ -1737,6 +1746,48 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Using it:** `^darkred` finds one shade. `^grey brick` finds grey blocks with "brick" in the name. `^teal|^cyan` means either. `^grey -^light` leaves out the light greys.
 - **Scope:** both files are client config, with nothing on the server. Players get them with the next pack update. JEI rewrites its config files on launch but keeps these values.
 - **Revert:** set `colorSearchMode = DISABLED`. To get JEI's own palette back, delete the `searchColors` line from `jei-colors.ini` and JEI writes its default again.
+
+### The Obsessed and CANTBREATHE: sanity-bound, never in a base, provoked by a look — `spooky_tick_fixes` 1.5.0 (2026-11-08) — *built; not yet installed or deployed*
+- **Why:** the user asked for The Obsessed to be sanity-bound ("critical" sanity enables spawning), for its first contact to need you to look at it rather than it seeing you, and for its stalks never to spawn in a base, keeping the window lurker and the sleep-paralysis hallucination. CANTBREATHE gets the same three rules.
+- **How each mod schedules things (bytecode reads, 2026-11-08):**
+  - **The Obsessed** has no biome spawns.
+    - A per-player targeter timer (3 min with our config) puts a "targeter" 40–80 blocks away, at light below 9, behind you.
+    - It locked on to the nearest player it had line of sight to (not sneaking), and that player became the target.
+    - From then on a stalk timer spawns it 37–70 blocks away, day or night, anywhere in the Overworld, while you face away.
+    - Its gap is `rand − min(K, Stalk Frequency)` by stage. Our 2000 doesn't slow the intense/extreme stages, because K is capped at 1800.
+    - The countdown runs at quarter speed except during the world's first night: the mod checks absolute day time.
+  - **CANTBREATHE** (Cave Dweller code):
+    - It keeps one Overworld timer, and keeps the same victim across cycles.
+    - A victim stops qualifying only when they die, log off, leave the Overworld or switch to creative/spectator (our config passes every height, light and biome), or when a spawn attempt fails. The mod then picks a random qualifying player.
+- **Change** (`[sanityHorror]` in `config/spooky_tick_fixes-common.toml`; full table in `tools/spooky_tick_fixes/README.md`, 1.5.0):
+  - **Critical sanity** = the band `oc_sanity.js` stores at or past `criticalBand` (3, Breakdown: below 15, left at 20). It's read from KubeJS's own persistent data (`KubeJSPersistentData`), not Forge's.
+  - **Base** = within 48 blocks (±32 y) of any online player's respawn point, or inside a MineColonies colony's claim (±32 y of its centre).
+  - **The Obsessed:**
+    - A targeter only appears for a critical player, outside a base. Its timer is held just short of zero while you aren't critical, so it comes 10–60 s into a breakdown if it was due.
+    - It locks on only when a critical player **looks at it**: the Enderman stare test plus a clear line of sight.
+    - Stalks only happen while the target is critical, retried every ~20 s otherwise. A stalk spot inside a base is moved out of it.
+    - The behind-you/spider hallucinations and the block-break surprise don't happen inside a base. The surprise also needs critical sanity.
+    - **Unchanged:** the lurker at your windows and sleep paralysis (both need an existing obsession).
+  - **CANTBREATHE:**
+    - Its timer still runs on everyone's time (the hourly cap stays).
+    - A spawn only goes ahead for a critical victim, and victims are picked among critical players first.
+    - Its cave noise only plays for a critical victim, and only critical players get it.
+    - Spawn spots inside a base are rejected.
+    - The "any player within 15 blocks" chase is off. Looking at it or hitting it still provokes it.
+  - With the gate, "stops qualifying" effectively also includes leaving Breakdown: the next spawn attempt fails for a sane victim, and the mod re-picks.
+- **Tested:**
+  - Compiles against the installed jars (javac, 67 sources).
+  - Every injection target (owner, name, descriptor and call-site count) was checked against the class files: 9/9 match.
+  - **Not boot-tested:** the user's game was running, with 2.7 GB of RAM free, too little for a headless server next to it. Do that before deploying (any mixin error stops startup with the patch named).
+  - Not tested in game: everything that needs a player.
+- **Not installed yet:** the jar is at `tools/spooky_tick_fixes/build/spooky_tick_fixes-1.5.0.jar`. Installing it means replacing 1.4.0 in `mods/` and `local/` (`build.py --install`), which shouldn't happen while the game holds the old jar open.
+  - The `[sanityHorror]` section wasn't added to the config file by hand: the running 1.4.0 could strip unknown keys on a reload. Forge adds it with the defaults on the first 1.5.0 start.
+- **To deploy:** `python tools/spooky_tick_fixes/build.py --install`, then a headless boot check, then `python scripts/sync_server_mods.py` and a VM restart. The server can run it alone; clients only gain singleplayer behaviour.
+- **Check in game:**
+  - `/sanity <player>` and `/tickfixes horror` show each player's band, base status and Obsessed state.
+  - At Breakdown in the dark, a targeter should appear within a minute or so and lock on only once you look at it. Stalks should then stop when you recover, and never appear inside 48 blocks of a bed.
+  - **Gap:** The Obsessed's intruder form can still walk into a base after spawning outside one.
+- **Revert:** the six switches in `[sanityHorror]`, or the 1.4.0 jar.
 
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `WendigoTrophies` (2026-11-07; Wendigo loot), `QuestChecks` (2026-11-08; structure and biome tags for the quest book), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)

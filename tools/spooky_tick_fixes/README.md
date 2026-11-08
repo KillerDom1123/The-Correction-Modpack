@@ -1,9 +1,11 @@
 # spooky_tick_fixes
 
 A small Forge 1.20.1 mod of behaviour-preserving server-tick fixes for the Spooky Dookie pack. Each patch skips work
-that provably cannot change the outcome. Three parts change behaviour on purpose, each with its own switch:
-`[activationRange]` (far mobs tick less often while the server is behind), `antlersDayCounterOverworldOnly` (a bug fix)
-and `[antlersWendigo]` (1.4.0: the Wendigo keeps away and only attacks when provoked). Evidence, measurements and the full proposal
+that provably cannot change the outcome. Four parts change behaviour on purpose, each with its own switch:
+`[activationRange]` (far mobs tick less often while the server is behind), `antlersDayCounterOverworldOnly` (a bug fix),
+`[antlersWendigo]` (1.4.0: the Wendigo keeps away and only attacks when provoked) and `[sanityHorror]` (1.5.0: The
+Obsessed and CANTBREATHE only come at critical sanity, never appear in a base, and must be looked at to be provoked).
+Evidence, measurements and the full proposal
 list: `docs/SERVER_TICK_AUDIT_2026-11-06.md` (§5.3). Applied changes: `docs/CONFIG_CHANGES.md`.
 
 ## Patches (first pass)
@@ -203,6 +205,79 @@ retreating. The log gets one line per event: `wendigo at x y z provoked by <play
 **Revert:** `enabled = false` restores the hunting and the sound ranges, and turns off the keep-away and the vanishing.
 `despawnNormally = false` restores permanence.
 
+## 1.5.0 — sanity-bound horror: The Obsessed and CANTBREATHE (`[sanityHorror]`)
+
+This changes behaviour, at the user's request (2026-11-08). Three rules, applied to both mods:
+1. They only come for a player whose sanity is **critical**.
+2. They never **appear inside a base**.
+3. They are **provoked by being looked at**, not by seeing you or by you coming near.
+
+**Sanity** comes from the pack's own mechanic (`kubejs/server_scripts/oc_sanity.js`, `docs/sanity_mechanic.md`).
+- **Where it is stored:** the script keeps it in the player's KubeJS persistent data. That is KubeJS's own tag (`kjs$persistentData`, saved as `KubeJSPersistentData`), not Forge's persistent data. `SanityGate` reads it through `kjs$getPersistentData()`, looked up once by reflection.
+- **What counts as critical:** the band the script stores (`oc_sanity_band`, which already has its 5-point hysteresis) at or past `criticalBand`. The default is 3, Breakdown: you enter it below 15 and leave it at 20.
+- **Fallback:** a player the script hasn't run for, or a server without KubeJS, counts as sane.
+
+**A base** (`HorrorBases`) is either of these:
+- within `baseRadius` (48) blocks horizontally and `baseVerticalRange` (32) vertically of any online player's respawn point (bed or anchor) in that dimension;
+- with `baseColonies`, inside a MineColonies colony's claimed chunks, within `baseVerticalRange` of the colony centre's height.
+
+MineColonies' lookup loads the chunk it asks about, so unloaded chunks count as no colony. Nothing spawns there anyway.
+
+**The Obsessed** (see `docs/CONFIG_CHANGES.md`, The Obsessed spawn rules, for how the mod schedules things):
+
+| What | The mod | Now |
+|---|---|---|
+| Targeter (first contact) appears | Per-player timer (3 min with our config), at a dark spot 40–80 blocks away, behind you | Same, but only for a critical player. While you're not critical the timer is held just short of zero, so it comes 10–60 s after a breakdown starts if it was due. Not inside a base |
+| Targeter locks on (you become its target) | It has line of sight to the nearest player within ±100 blocks, who isn't sneaking, immune or repellant-protected | That player has to **look at it**: vanilla's Enderman stare test (view within acos(1 − 0.025/d) of its eyes, about 1.7° at 60 blocks) with a clear line of sight. They must also be critical. The mod's other conditions still apply |
+| Stalk spawn (the target, every few minutes) | Day or night, anywhere, 37–70 blocks away while you face away | Only while the target is critical; otherwise it's retried every ~20 s (the mod's own 100-point delay). A spot inside a base is moved out of it along the line from the base's centre, then retried. Both checks run before the mod's spawn bookkeeping, so a blocked stalk doesn't advance its mood or timers |
+| Behind-you / ceiling-spider / nightmare-spider hallucinations (can follow a stalk) | Behind the player | Not inside a base |
+| Block-break surprise (1 in 100, then 53 min cooldown) | Any block you break | Only while critical and outside a base. A blocked one still uses up the cooldown |
+| **Lurker** at your windows (within 14 blocks of your respawn point) | Needs an obsession | **Unchanged**, as the user asked |
+| **Sleep-paralysis** hallucination in bed | Needs an obsession | **Unchanged**, as the user asked |
+| Saviour, opportunistic and the other forms | Transformations of an Obsessed that is already there | Unchanged (the one already there needed rules 1 and 2) |
+
+Its **intruder form** can still walk into a base after spawning outside it: it pathfinds to the target's respawn point,
+opens doors, swaps torches and can take one item from a chest. "No spawn in a base" doesn't cover that.
+
+**CANTBREATHE:**
+- **Timer:** it still runs on any survival player's time in the Overworld. `isRelevantPlayer` is untouched, so the
+  cadence (mostly exactly 1 h with our config) stays the cap.
+- **Victim:** picked first among critical players. A spawn attempt for a victim who isn't critical fails, the mod clears
+  the victim, and it picks again next tick. When the timer is due, a critical player gets it within about 20 s plus
+  the spot search.
+- **Cave noise:** skipped for a victim who isn't critical (the noise timer is still reset). It only reaches critical
+  players, and it plays at the victim's position (about 32 blocks of range).
+- **Spawn spots:** the mod tries 40 spots within 35 blocks of the victim; spots inside a base fail its spawn-rule check.
+- **Provocation:** `CantBreatheTargetTooCloseGoal` (any player within 15 blocks made it chase, seen or not) never
+  starts. What still provokes it: looking at it (its own goal, the nearest player within 128 blocks, view within about
+  8°, clear line of sight, then a roll of chase / stare / stare / flee), its stare goal (looking at it repeatedly), and
+  hitting it. Anyone can provoke it this way, not just critical players: it is physically there.
+- **Unchanged:** door breaking (1 s), the 1,000-block spotting range, leaving after 650 s or 60 s into a chase.
+
+**Hooks** (all `remap = false`, each target checked against the jars, single call sites unless noted):
+- `obsessed.ObsessedSanityTickMixin` (`PlayerTickProcedure#execute`, the private one with the event): HEAD; an
+  `@Inject` at the one `GETSTATIC TheObsessedModEntities.IDK_STALKER_SPAWN`, cancellable; an `@Redirect` on all
+  12 `EntityType.spawn` calls (`m_262496_`).
+- `obsessed.ObsessedTargeterLookMixin` (`IdkStalkerTargeterOnEntityTickUpdateProcedure#execute`): `@Redirect` on
+  `LivingEntity.hasLineOfSight`.
+- `obsessed.ObsessedSurpriseMixin` (`BlockBrokenProcedure#execute`): HEAD and an `@Redirect` on `EntityType.spawn`.
+  The rest of the method (no block breaking in its lair) is untouched.
+- `cantbreathe.CantBreatheLogicMixin` (`CantBreathe`): `@Redirect` on `List.get` (the victim pick) and
+  `Utils.trySpawnMob` in `handleLogic`; HEAD (cancellable) and an `@Redirect` on `List.forEach` in
+  `playCaveSoundToSpelunkers`.
+- `cantbreathe.CantBreatheSpawnSpotMixin` (`Utils#trySpawnMob`): `@Redirect` on `Mob.checkSpawnRules`.
+- `cantbreathe.CantBreatheTooCloseMixin` (`CantBreatheTargetTooCloseGoal#canUse`): HEAD, returns false.
+
+The PlayerTickProcedure hooks only act on the logical server. In singleplayer the client thread runs the same
+procedure, and it must not overwrite the player the server thread is handling.
+
+Nothing is written to the world beyond the timers the mods already keep in player data (`targeter_spawntime`,
+`idk_spawn`, `idk_x`/`idk_z`). The counters run from server start. `/tickfixes horror` shows the switches, the counters,
+and each online player's sanity, base status and Obsessed state, plus CANTBREATHE's victim and timers.
+
+**Revert:** each rule has its own switch per mod (`obsessedSanityGate`, `obsessedLookToProvoke`,
+`obsessedNoBaseSpawns`, `cantBreathe…`), or go back to the 1.4.0 jar.
+
 ## Activation range (1.1.0) — `[activationRange]`
 
 This changes behaviour, for far mobs only. (The other deliberate behaviour changes are the 1.2.0 Antlers day-counter fix
@@ -251,6 +326,13 @@ Operators only (permission level 2). The server console works too, and acts in t
   (<how>)`, or `calmed down, retreating`, with ` (moving away)` while it walks off. With none it says `no Wendigo
   loaded`. Only Wendigos that have ticked with `[antlersWendigo] enabled = true` are listed, so with the patch off the
   list is always empty.
+- **`/tickfixes horror`** (1.5.0): no arguments.
+  - **First line:** the critical band, the base definition and the six switches.
+  - **Then the counters since start:**
+    - The Obsessed: targeter holds, targeters blocked (sane / base), lock-ons refused (sane), stalks held (sane), stalks moved out of a base, stalks allowed, hallucinations blocked (base), surprises blocked (sane / base);
+    - CANTBREATHE: critical victims picked, attempts refused (sane victim), spots rejected (base), noises muted.
+  - **One line per online player:** their sanity (value, band, `critical`), whether they stand in a base (and whose respawn point or which colony), and their Obsessed state (`Obsessed target, stalk timer N`, or `not targeted, targeter timer N`).
+  - **Last line:** CANTBREATHE's overworld victim and its spawn and noise timers (seconds elapsed / target).
 - **`/tickfixes probe <x> <z>`**: tests chunk-safe ticking at one position.
   - **`x`, `z`:** whole-number block coordinates in your dimension. y is always 64.
   - **What it does:** queues one `getBlockState` read for the start of your dimension's next tick, inside the guarded
@@ -272,7 +354,7 @@ Operators only (permission level 2). The server console works too, and acts in t
 - **Fail-soft per target mod.** `TickFixesMixinPlugin` applies a patch only when its target mod is installed and logs
   one line per patch and target class (`... -> applying (modid)`, or `(vanilla)` for the 4 vanilla patches;
   `CreepingWoodsRayMixin` has 3 targets). The 3 accessors and the activation-range hook aren't gated and log nothing.
-  1.4.0 logs 38 lines. Applied patches keep `defaultRequire: 1`, so a target that changed shape fails loudly at startup.
+  1.5.0 logs 44 lines (1.4.0: 38). Applied patches keep `defaultRequire: 1`, so a target that changed shape fails loudly at startup.
 - **Switch per patch.** Each switch is read on the hot path, so a misbehaving patch can be turned off in the config
   without a rebuild. A config reload applies. In practice Forge's file watcher hasn't fired on the VM or the test
   server, so expect config edits to apply on restart.

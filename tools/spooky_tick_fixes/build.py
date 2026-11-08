@@ -40,4 +40,5 @@ build(__file__, [
     mod("WhisperingSpirits-forge-*.jar"),
     mod("letsdo-farm_and_charm-forge-*.jar"),
     mod("citadel-*.jar"),
+    mod("cant_breathe-*.jar"),
 ], lint="all,-options,-processing,-rawtypes,-unchecked,-serial")

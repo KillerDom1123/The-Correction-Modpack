@@ -185,6 +185,8 @@ Sanity is quantised into four **bands**. Events are driven by the band, not the 
 
 Sanity has exactly two outputs, both keyed off the band model (§7). Neither ever creates an entity: Channel A emits sounds/effects/particles, Channel B *removes* spawn attempts the game would otherwise have made.
 
+> **Third reader, outside this script (2026-11-08):** `spooky_tick_fixes` 1.5.0 (`[sanityHorror]`) reads the stored band (`oc_sanity_band`, from the player's KubeJS persistent data) to gate **The Obsessed** and **CANTBREATHE**. They only come for a player at Breakdown (`criticalBand`), and never appear inside a base. It follows the same rule as Channel B: it only ever holds back spawns those mods would have made, and never adds any. This reaches the timer-summoned horrors that Channel B can't (§8.2 table). Details: `tools/spooky_tick_fixes/README.md` (1.5.0) and `CONFIG_CHANGES.md`. Renaming `oc_sanity_band` or its values would break it.
+
 ### 8.1 Channel A — ambient events (atmosphere-only, by construction)
 
 Each band above Calm owns a **weighted pool** of events. On each interval, if the player is in that band **and** past the band's per-player cooldown, roll the pool once and fire one event, then stamp `oc_sanity_last_event = now` and shorten nothing — the cooldown is the band's fixed minimum gap plus a random jitter so events never feel metronomic.

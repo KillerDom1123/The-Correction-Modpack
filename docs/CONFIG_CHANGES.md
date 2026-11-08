@@ -1677,6 +1677,50 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
 - **Docs:** `modlist.md`, `modlist.json` and the README block were regenerated. An `ultimineshapes` rule was added to `tools/generate_modlist.py` (Storage, QoL & utility; FTB Ultimine itself lands in Quests, loot, data & guides through the `ftb` rule). `docs/SERVER_MODS.md` was regenerated from the VM.
 - **On the VM:** the jar was uploaded with the sync (284 jars, parity verified). The jar, the three example shapes (created on the server's first start) and the new block limit all take effect at the next restart.
 
+### JEI colour search on, with a palette for building blocks (2026-11-08) — *client only*
+- **Why:** finding blocks that suit a build's colour scheme. With 30 decoration mods, searching by name doesn't help.
+- **What JEI does** (read from the 15.56.0.205 jar):
+  - **Where the colours come from:** the particle texture of the block's default state (or the item model), multiplied by the block's tint. JEI takes the 2 dominant colours (`ColorThief`, a median cut).
+  - **How a colour gets its name:** JEI picks the nearest entry in `config/jei/jei-colors.ini`. The distance is `ColorUtil.slowPerceptualColorDistanceSquared`: the "redmean" RGB distance plus a penalty when the two colours differ in saturation, so greys keep to greys.
+  - **Duplicate names are allowed:** the palette is a plain list, so one name can have several anchors.
+  - **Matching:** colour names are matched as substrings. `^red` therefore finds DarkRed, BrickRed, RedBrown and the rest.
+  - **Tooltip:** while colour search is on, the JEI panel's tooltip shows each item's colour names ("Colors: DarkGrey, Grey").
+- **Changes:**
+  - `config/jei/jei-client.ini`: `colorSearchMode` **DISABLED → REQUIRE_PREFIX**. Colours are searched only with `^`, so a plain search for "red" still searches names only.
+  - `config/jei/jei-colors.ini`: JEI's 35 default colours were replaced with 50 anchors under 46 names. JEI's own list is tuned for bright item icons, and building blocks are mostly muted. Against the pack's blocks, the default list put:
+    - oak and jungle planks under "BrickRed";
+    - prismarine under "Gray, Silver" and purpur under "Gray, Pink";
+    - moss under "Brown" and nether bricks under "NetherBrick", which `^red` doesn't find.
+- **The new palette:**
+  - **Families:** Black, Grey, White, Brown, Beige, Tan, Red, Orange, Yellow, Green, Teal, Cyan, Blue, Purple, Magenta and Pink.
+  - **Shades:** `Dark…`, `Light…`, `Bright…` and `Pale…`.
+  - **In-between colours carry both family names:** BlueGrey, GreenGrey, BrownGrey, RedBrown, OliveGreen and RustOrange, so they turn up under either family.
+  - **Spelling:** British "Grey", like the rest of the pack. `^gray` finds nothing.
+  - **Extra anchors:** Grey has 3, DarkGrey and Brown 2 each. Without them, plain dark greys such as deepslate tiles came out as DarkGreen or BrownGrey.
+- **How it was tested:** offline. JEI's colour step (particle texture → 2-colour median cut → nearest name by JEI's exact distance) was rebuilt in Python and run over the 25,526 block items whose models resolve to a texture (Minecraft plus every enabled jar).
+  - **Examples with the new palette:**
+
+    | Block | Colours |
+    |---|---|
+    | Oak planks | LightBrown, Tan |
+    | Spruce planks | Brown |
+    | Dark oak planks | DarkBrown |
+    | Mangrove planks | RedBrown, Brown |
+    | Deepslate | DarkGrey, Grey |
+    | Blackstone | Black, DarkGrey |
+    | Nether bricks | Black, DarkRed |
+    | Prismarine | Teal, LightTeal |
+    | Moss block | OliveGreen |
+    | Mud bricks | BrownGrey, LightBrown |
+    | Calcite | PaleGrey, White |
+
+  - **Family sizes:** `^grey` matches about 10,300 blocks, `^brown` 6,900, `^red` 3,100, `^green` 2,600, `^teal` 1,950 and `^blue` 1,300.
+  - **Not tested in game.** Blocks with custom renderers (for example FramedBlocks frames, or blocks drawn by a block entity) are classed by their particle texture, whatever they look like placed.
+- **Load cost:** JEI now reads every ingredient's texture when it builds its search index on world join. Before the change, "Building ingredient filter took 1.642 seconds" (log, 2026-11-08 01:44). Compare that line after the next launch.
+- **Using it:** `^darkred` finds one shade. `^grey brick` finds grey blocks with "brick" in the name. `^teal|^cyan` means either. `^grey -^light` leaves out the light greys.
+- **Scope:** both files are client config, with nothing on the server. Players get them with the next pack update. JEI rewrites its config files on launch but keeps these values.
+- **Revert:** set `colorSearchMode = DISABLED`. To get JEI's own palette back, delete the `searchColors` line from `jei-colors.ini` and JEI writes its default again.
+
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `WendigoTrophies` (2026-11-07; Wendigo loot), `QuestChecks` (2026-11-08; structure and biome tags for the quest book), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)
 `config/openloader/resources/`: `QuietAmbience`, `TFCNoSizeTooltip`, `TFCHideInventoryTabs` (2026-11-01).

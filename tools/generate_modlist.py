@@ -107,7 +107,7 @@ CATEGORY_RULES = [
                                 "clientcrafting", "moreoverlays", "simplebackups",
                                 "farsight", "nochatreports", "betterf3", "enchdesc",
                                 "legendarytooltips", "subtle_effects", "sodiumdynamiclights", "simplezoom",
-                                "configured",
+                                "configured", "ultimineshapes",
                                 "toofast", "observable", "crash_assistant", "comforts",
                                 "dummmmmmy", "carry_on_back", "phantom_remover", "blur",
                                 "borderlesswindow", "mobdismemberment", "sbrc", "nochatrestrictions",

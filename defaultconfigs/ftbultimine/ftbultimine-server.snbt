@@ -1,4 +1,7 @@
 # Default config file that will be copied to saves\Test3\serverconfig\ftbultimine-server.snbt if it doesn't exist!
 # Just copy any values you wish to override in here!
 
-{ }
+{
+	# 81 so Ultimine Shapes+ 'Flatten 9x9' (81 blocks) completes; FTB Ultimine's default is 64
+	max_blocks: 81
+}

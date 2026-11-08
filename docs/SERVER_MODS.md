@@ -2,13 +2,13 @@
 
 **Server:** the live VM (`files/server` under the FTP login)  
 **Minecraft:** 1.20.1 · **Loader:** Forge 47.4.10  
-**Active jars:** 283 · **Disabled on the server:** 3  
-**Generated:** 2026-11-07 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
+**Active jars:** 284 · **Disabled on the server:** 3  
+**Generated:** 2026-11-08 by `tools/generate_server_modlist.py` from the server's own `mods/` folder — do not edit by hand.
 
 > The server is the client instance's `mods/` **minus the client-only list** below, kept in step by
 > `scripts/sync_server_mods.py`. Every jar here must match the client exactly, or players are refused at login.
 
-**Parity:** matches the client instance (307 active jars − 24 client-only = 283).
+**Parity:** matches the client instance (308 active jars − 24 client-only = 284).
 
 > **Notes** (hand-maintained in `tools/generate_server_modlist.py`; everything else here is generated):
 >
@@ -292,7 +292,7 @@
 - Supplementaries — `supplementaries-1.20-3.1.44-forge.jar`
 - Supplementaries Squared — `suppsquared-1.20-1.1.29.jar`
 
-## Storage, QoL & utility (43)
+## Storage, QoL & utility (44)
 
 - Artifacts — `artifacts-forge-9.5.19.jar`
 - Camerapture — `Camerapture-1.10.12+mc1.20.1-forge.jar`
@@ -332,6 +332,7 @@
 - Sophisticated Storage — `sophisticatedstorage-1.20.1-1.5.13.2212.jar`
 - Storage Drawers — `StorageDrawers-forge-1.20.1-12.15.1.jar`
 - Too Fast — `toofast-1.20-0.4.3.5.jar`
+- Ultimine Shapes+ — `ultimine-shapes-plus-forge-1.20.1-1.0.1.jar`
 - Visual Workbench — `VisualWorkbench-v8.0.1-1.20.1-Forge.jar`
 - Waystones — `waystones-forge-1.20.1-14.1.21.jar`
 - Waystones Teleport Pets — `WaystonesTeleportPets-1.20-1.20.1--1.2.jar`

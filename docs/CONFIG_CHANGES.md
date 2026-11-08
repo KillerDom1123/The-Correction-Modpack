@@ -1028,6 +1028,13 @@ All other values, including the guard multipliers, raid frequency and the other 
 
 **Live VM, checked 2026-11-07: not applied.** The VM's `defaultconfigs/minecolonies-server.toml` is the new file, but its world's `world/serverconfig/minecolonies-server.toml` still has the old values for all 10 settings above. `defaultconfigs/` only seeds new worlds. To apply it, copy the file over the world's copy and restart, bearing in mind the load note. The VM world's other per-world configs (`cant_breathe`, `cave_dweller`, `create`, `mahoutsukai`, `pale_hound`, `themimic_er`) match `defaultconfigs/`.
 
+**Applied to the VM world (2026-11-08, at the user's request):**
+- **Checked first:** the world's file differed from the new one in exactly the 10 settings above.
+- **Uploaded:** the new file to `world/serverconfig/minecolonies-server.toml`, and it read back identical.
+- **Backup:** the old file was moved to `files/server/deploy-backups/2026-11-08-minecolonies/world/serverconfig/`.
+- **Takes effect** at the next restart, because Forge configs don't hot-reload on the VM.
+- **Rollback:** move the backup back and restart.
+
 ### Server tick audit — phases 0–1 (2026-11-06) — *VM server + client instances*
 Plan, findings and estimates: `SERVER_TICK_AUDIT_2026-11-06.md`.
 
@@ -1650,8 +1657,25 @@ It replaces 1.0.0 everywhere (this instance's `mods/` and `local/`, "The Correct
   - Each upload was read back identical.
   - **Checked first:** every VM file that was replaced matched a committed version, so there were no VM-only edits to lose.
   - **Rollback:** the replaced files were moved to `files/server/deploy-backups/2026-11-08-quests/`, under the same relative paths. To roll back, move them back and delete the new files.
-  - **Takes effect** at the next restart.
+  - **Live since the 01:14 restart:** the log shows *Loaded 9 chapters, 133 quests*, and all KubeJS server and startup scripts loaded with 0 errors. `oc_quest_checks.js` granted its first mirrored tag (`oc_q_evidence_magic`) at 01:24.
+  - **Bug found live, fixed:**
+    - **Symptom:** `oc_encounters.js` stopped on its first player tick with *Cannot find function getUUID*, so the survive-an-encounter residues never paid out.
+    - **Cause:** this KubeJS/Rhino exposes `Entity#getUUID` as `getUuid()` (also `uuid` and `stringUuid`). A probe on the scratch server confirmed it, and also confirmed that the script's other calls (`isRemoved()`, `getRemovalReason()`, which reports e.g. `DISCARDED`, and `getEntities(entity, aabb)`) work as written.
+    - **Fix:** uploaded and read back identical. The broken copy is in `deploy-backups/2026-11-08-encounters-fix/`.
+    - **Takes effect** at the next restart, or after an op runs `/reload`.
 - **Client pack update:** players see the Breathless Residue name and tooltip (`oc_items.js`, `oc_tooltips.js`) only after updating the pack. Until then, the old name shows on their side.
+
+### Ultimine Shapes+ added, FTB Ultimine `max_blocks` 64 → 81 (2026-11-08) — *client instance + VM*
+- **Mod:** Ultimine Shapes+ 1.0.1, `ultimine-shapes-plus-forge-1.20.1-1.0.1.jar` (mod id `ultimineshapes`, MIT). It adds mining shapes to FTB Ultimine, defined as JSON files. It requires FTB Ultimine exactly 2001.1.8 (the pack's version), FTB Library 2001.2.1+ and Architectury 9.2.14+, all already in the pack.
+- **Shapes:** loaded at startup from `config/ultimineshapes/shapes/*.json` (files up to 2 MiB, sorted by id; duplicates are skipped). On first start it installs three examples once: Flatten 3×3, 5×5 and 9×9 (`"type": "plane"`), marked by `.examples-installed`, so deleted examples stay deleted. The game hasn't been started since the jar was added, so `config/ultimineshapes/` doesn't exist yet in this instance.
+- **Both sides:** the server holds each player's selected shape. The client only sends "next/previous shape" (`ModeChangedPacket`), and the server cycles its own shape list and sends the index back (`SendShapePacket`). So the server needs the jar and the same shape files, or the new shapes don't exist there. The mod has no network channel of its own, so a client without it can still join. It is not on the client-only list; the sync dry run against the VM: 308 active − 24 client-only = 284, and the only change is `copy + ultimine-shapes-plus-forge-1.20.1-1.0.1.jar`.
+- **Block limit raised to 81:** FTB Ultimine's `max_blocks` was 64 (its default). Flatten 9×9 is 81 blocks, so it stopped at 64 per use. 81 is the smallest value that completes it; it also lets vein mining (ores, trees) take up to 81 blocks. The hunger cost (`exhaustion_per_block` 20) is unchanged.
+  - **VM:** `world/serverconfig/ftbultimine-server.snbt`, uploaded and read back identical; the old file is `ftbultimine-server.snbt.bak-20261108-maxblocks`. FTB Ultimine reads it at startup.
+  - **New worlds:** `defaultconfigs/ftbultimine/ftbultimine-server.snbt` now sets `max_blocks: 81` (it was empty, so the defaults applied).
+  - **Not changed:** the singleplayer worlds in this instance's `saves/` keep 64.
+- **Custom shapes later:** a new or edited file in `config/ultimineshapes/shapes/` has to be copied to the VM's `config/ultimineshapes/shapes/` as well, and both sides restarted, so the two lists stay the same.
+- **Docs:** `modlist.md`, `modlist.json` and the README block were regenerated. An `ultimineshapes` rule was added to `tools/generate_modlist.py` (Storage, QoL & utility; FTB Ultimine itself lands in Quests, loot, data & guides through the `ftb` rule). `docs/SERVER_MODS.md` was regenerated from the VM.
+- **On the VM:** the jar was uploaded with the sync (284 jars, parity verified). The jar, the three example shapes (created on the server's first start) and the new block limit all take effect at the next restart.
 
 ## Appendix A — OpenLoader packs created
 `config/openloader/data/`: `MekanismProgression`, `AE2Progression`, `AdAstraSpaceGate`, `OccultismExpensiveRituals`, `WaystonesGate`, `SecurityCraftBalance`, `WeepingAngelsBuff`, `MineColoniesSlowResearch`, `DayLength30`, `HorrorSpawnRarity` (extended 2026-11-01: John Mod Reborn + Creeping Woods), `ExtremeReactorsProgression`, `BornInChaosNoInfectedOre` (2026-11-02), `HorrorQuietAdvancements` (2026-11-06), `IncendiumClockTrim` (2026-11-06; pins Incendium 5.3.5's `clocks/main`), `WendigoTrophies` (2026-11-07; Wendigo loot), `QuestChecks` (2026-11-08; structure and biome tags for the quest book), `PerfFixes`, `TFCLightItems`, `AntiLagEntities`, `TFCFoodHunger`, `OldCivSanity`, `TFCVanillaCraftingTable`. (~~`DayLength30`~~ — retired 2026-11-01: its tick function never compiled under TFC's `/time` override and its failure dropped the whole `minecraft:tick` tag; day length is now Simple Day Length Extender's config.) (~~`TFCModdedFood`~~ — retired 2026-07-12: its `#forge:foods` tag reference never loaded; superseded by `kubejs/server_scripts/tfc_vanilla_food.js`, folder parked in `config/openloader/data-disabled/`.)

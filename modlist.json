@@ -3,7 +3,7 @@
   "minecraft": "1.20.1",
   "loader": "forge",
   "counts": {
-    "enabled": 307,
+    "enabled": 308,
     "disabled": 8
   },
   "categories": {
@@ -18,7 +18,7 @@
     "Worldgen & structures": 28,
     "Food & farming": 7,
     "Decoration & building": 30,
-    "Storage, QoL & utility": 57,
+    "Storage, QoL & utility": 58,
     "Security & protection": 3,
     "Quests, loot, data & guides": 16
   },
@@ -2003,6 +2003,13 @@
       "version": "1.1.0",
       "file": "towntalk-1.20.1-1.1.0.jar",
       "category": "Colony / civilisation"
+    },
+    {
+      "name": "Ultimine Shapes+",
+      "modid": "ultimineshapes",
+      "version": "1.0.1",
+      "file": "ultimine-shapes-plus-forge-1.20.1-1.0.1.jar",
+      "category": "Storage, QoL & utility"
     },
     {
       "name": "Valhelsia Core",

@@ -1,7 +1,6 @@
 
-#Spooky Dookie tick fixes. Most patches skip work that cannot change the outcome; [activationRange],
-#antlersDayCounterOverworldOnly and [antlersWendigo] change behaviour on purpose. Set a switch to false to restore the
-#mod's own behaviour (watcherFollowRange keeps the lower default for new watchers). See tools/spooky_tick_fixes/README.md.
+#Spooky Dookie tick fixes. Each patch skips work that cannot change the outcome;
+#see docs/SERVER_TICK_AUDIT_2026-11-06.md section 5.3. Set a switch to false to restore the mod's own behaviour.
 [patches]
 	#Artifacts: a dormant mimic skips its tick while no player is within mimicWakeRange (it can only wake by targeting a player within 16 blocks, being hurt, or being in water).
 	mimicSleep = true
@@ -96,13 +95,13 @@
 	enabled = true
 	#Load chunks that are fully generated on disk, as vanilla would (milliseconds). False = barrier for every unloaded chunk.
 	allowDiskLoads = true
-	#Longest wait for the on-disk status check before answering with a barrier (answers are cached for 60 s, 5 s after a timeout).
+	#Longest wait for the on-disk status check before answering with a barrier (the answer is cached for 5 s).
 	#Range: 5 ~ 1000
 	diskCheckMillis = 50
 	#Log the first barrier read from each caller, with its stack. Counts are in /tickfixes stats.
 	logCallers = true
-	#Callers that may still generate terrain synchronously: class-name prefixes, matched against the first stack frame outside
-	#the JDK, Forge, Mixin, Canary and the level read itself (other vanilla classes count), e.g. com.example.mod. or com.example.mod.SomeClass.someMethod
+	#Callers that may still generate terrain synchronously: class-name prefixes, matched against the first frame
+	#outside Minecraft/Forge, e.g. com.example.mod. or com.example.mod.SomeClass.someMethod
 	exemptCallers = []
 
 #Antlers' Wendigo (1.4.0): keeps away from people and attacks only a player who provoked it, instead of hunting the
@@ -140,3 +139,4 @@
 	soundRange = 128.0
 	#Let the Wendigo and its daytime form despawn like other monsters (the mod never despawns them). Works without 'enabled'.
 	despawnNormally = true
+

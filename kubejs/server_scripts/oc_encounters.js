@@ -12,6 +12,9 @@
 // Keep RESIDUES in step with OC_RESIDUES in oc_interactions.js.
 //
 // Rhino note (see oc_sanity.js): every variable inside a repeatedly-invoked callback is `var`, never let/const.
+// Names: this KubeJS/Rhino exposes Entity#getUUID as getUuid() (also `uuid`, `stringUuid`); getUUID() does not exist
+// (tested on the scratch server, 2026-11-08). isRemoved(), getRemovalReason() and getEntities(entity, aabb) keep
+// their Mojang names.
 
 const ENC = {
   interval: 40,     // ticks between checks per player
@@ -43,7 +46,7 @@ PlayerEvents.tick(event => {
   if (!p || p.age % ENC.interval !== 0) return
   try {
     if (p.isSpectator() || p.isCreative()) return
-    var key = String(p.getUUID())
+    var key = String(p.getUuid())
     var open = oc_enc_open[key]
     if (!open) { open = {}; oc_enc_open[key] = open }
 
@@ -53,7 +56,7 @@ PlayerEvents.tick(event => {
       var e = near.get(i)
       var residue = RESIDUES[String(e.type)]
       if (!residue || !e.isAlive()) continue
-      var eid = String(e.getUUID())
+      var eid = String(e.getUuid())
       if (open[eid] === undefined) open[eid] = { ent: e, residue: residue }
     }
 
@@ -79,10 +82,10 @@ PlayerEvents.tick(event => {
 EntityEvents.death(event => {
   try {
     var e = event.entity
-    if (e && e.isPlayer()) delete oc_enc_open[String(e.getUUID())]
+    if (e && e.isPlayer()) delete oc_enc_open[String(e.getUuid())]
   } catch (err) { encWarn('death', err) }
 })
 
 PlayerEvents.loggedOut(event => {
-  try { delete oc_enc_open[String(event.player.getUUID())] } catch (err) { encWarn('logout', err) }
+  try { delete oc_enc_open[String(event.player.getUuid())] } catch (err) { encWarn('logout', err) }
 })

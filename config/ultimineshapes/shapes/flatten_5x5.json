@@ -1,0 +1,7 @@
+{
+  "id": "flatten_5x5",
+  "display_name": "Flatten 5x5",
+  "type": "plane",
+  "width": 5,
+  "depth": 5
+}
